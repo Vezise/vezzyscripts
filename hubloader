@@ -1,11 +1,7 @@
-local ID1 = 4643697430
-local ID2 = 8540168650
-local ID3 = 6910146292
-
-if game.PlaceId == ID1 then
+if game.PlaceId == 4643697430 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/sbrgui"))()
-elseif game.PlaceId == ID2 then
+elseif game.PlaceId == 8540168650 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/standuprightrebooted"))()
-elseif game.PlaceId == ID3 then
+elseif game.PlaceId == 6910146292 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/jojogoldenrecords"))()
 end
