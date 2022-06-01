@@ -1,8 +1,7 @@
 if game.PlaceId == "4643697430" then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/sbrgui"))()
-else
+elseif game.PlaceId == "8540168650" then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/standuprightrebooted"))()
-
+else
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/jojogoldenrecords"))()
-
 end
