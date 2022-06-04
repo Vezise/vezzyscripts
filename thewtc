@@ -2561,6 +2561,7 @@ MeshPart344.Rotation = Vector3.new(0, 88, 0)
 MeshPart344.Size = Vector3.new(63.349708557128906, 22.542198181152344, 94.92816162109375)
 MeshPart344.TextureID = "rbxassetid://441716524"
 MeshPart344.MeshId = "rbxassetid://441716520"
+MeshPart344.Anchored = true
 for i,v in pairs(mas:GetChildren()) do
 	v.Parent = workspace
 	pcall(function() v:MakeJoints() end)
