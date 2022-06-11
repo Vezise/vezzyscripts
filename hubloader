@@ -6,4 +6,6 @@ elseif game.PlaceId == 292439477 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/phantomforces"))()
 elseif game.PlaceId == 6910146292 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/jojogoldenrecords"))()
+elseif game.PlaceId == 2753915549 then
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/bloxfruits"))()
 end
