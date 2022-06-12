@@ -12,7 +12,7 @@ elseif game.PlaceId == 5130598377 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/aut-is-ass"))()
 else
 print("----------------------------------------------------------")
-print("Loaded Successfuly.. Checking game: ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
+print("Loaded Successfuly.. checking game: ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
 print("----------------------------------------------------------")
 game:GetService("StarterGui"):SetCore("SendNotification",{
     Title = "Vezzy Script Hub", 
