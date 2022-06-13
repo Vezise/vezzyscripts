@@ -1,0 +1,7 @@
+if RT == "R6" then
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/r6universal", true))()
+
+elseif RT == "R15" then
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/r15universal", true))()
+
+end
