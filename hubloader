@@ -8,7 +8,7 @@ elseif game.PlaceId == 6910146292 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/jojogoldenrecords"))()
 elseif game.PlaceId == 2753915549 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/bloxfruits"))()
-elseif game.PlaceId == 5130598377 then
+elseif game.PlaceId == 6846458508 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/aut-is-ass"))()
 elseif game.PlaceId == 6099256669 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/a-menacing-timeline"))()
