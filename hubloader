@@ -1,6 +1,6 @@
 if game.PlaceId == 4643697430 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/sbrgui"))()
-elseif game.PlaceId == 8540168650
+elseif game.PlaceId == 8540168650 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/standuprightrebooted"))()
 elseif game.PlaceId == 292439477 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/phantomforces"))()
