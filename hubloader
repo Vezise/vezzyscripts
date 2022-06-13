@@ -1,5 +1,7 @@
 if game.PlaceId == 4643697430 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/sbrgui"))()
+elseif game.PlaceId == 6099256669 and game.PlaceId ~= 8540168650 then
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/a-menacing-timeline"))()
 elseif game.PlaceId == 8540168650 and game.PlaceId ~= 6099256669 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/standuprightrebooted"))()
 elseif game.PlaceId == 292439477 then
@@ -10,8 +12,6 @@ elseif game.PlaceId == 2753915549 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/bloxfruits"))()
 elseif game.PlaceId == 6846458508 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/aut-is-ass"))()
-elseif game.PlaceId == 6099256669 and game.PlaceId ~= 8540168650 then
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/a-menacing-timeline"))()
 else
 print("----------------------------------------------------------")
 print("Loaded Successfuly.. checking game: ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
