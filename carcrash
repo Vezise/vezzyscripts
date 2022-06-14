@@ -1,0 +1,152 @@
+game.Lighting.TimeOfDay = 0
+game.Lighting.Brightness = 0
+function sandbox(var,func)
+	local env = getfenv(func)
+	local newenv = setmetatable({},{
+		__index = function(self,k)
+			if k=="script" then
+				return var
+			else
+				return env[k]
+			end
+		end,
+	})
+	setfenv(func,newenv)
+	return func
+end
+cors = {}
+mas = Instance.new("Model",game:GetService("Lighting"))
+Model7 = Instance.new("Model")
+MeshPart8 = Instance.new("MeshPart")
+MeshPart9 = Instance.new("MeshPart")
+Part10 = Instance.new("Part")
+Part11 = Instance.new("Part")
+Part12 = Instance.new("Part")
+Part13 = Instance.new("Part")
+Part14 = Instance.new("Part")
+Model7.Name = "CarCrash"
+Model7.Parent = mas
+Model7.PrimaryPart = Part13
+MeshPart8.Name = "Car"
+MeshPart8.Parent = Model7
+MeshPart8.CFrame = CFrame.new(6.1702003, 15, -0.116099998, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+MeshPart8.Position = Vector3.new(6.1702, 15, -0.1161)
+MeshPart8.Size = Vector3.new(0.3, 0.3, 0.35)
+MeshPart8.MeshId = "rbxassetid://7277966389"
+MeshPart8.TextureID = "rbxassetid://7277966441"
+MeshPart8.Anchored = true
+MeshPart9.Name = "Moon"
+MeshPart9.Parent = Model7
+MeshPart9.CFrame = CFrame.new(1203.60596, 1966.93225, -826.249939, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+MeshPart9.Position = Vector3.new(1203.60595703125, 1966.9322509765625, -826.2499389648438)
+MeshPart9.Size = Vector3.new(74.193, 74.764, 74.193)
+MeshPart9.MeshId = "rbxassetid://6723918305"
+MeshPart9.TextureID = "rbxassetid://6723918368"
+MeshPart9.Transparency = 0
+MeshPart9.Anchored = true
+Part10.Name = "CarLoc"
+Part10.Parent = Model7
+Part10.CFrame = CFrame.new(6.21999979, 16.20100000005, -76.9420013, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part10.Position = Vector3.new(6.21999979019165, 16.2010000000474974513, -76.94200134277344)
+Part10.Transparency = 1
+Part10.Size = Vector3.new(4, 0.0010000000474974513, 2)
+Part10.Anchored = true
+Part10.BottomSurface = Enum.SurfaceType.Smooth
+Part10.TopSurface = Enum.SurfaceType.Smooth
+Part11.Name = "Moon Hitbox"
+Part11.Parent = Model7
+Part11.CFrame = CFrame.new(1203.27832, 1971.32849, -826.579285, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part11.Position = Vector3.new(1203.2783203125, 1971.3284912109375, -826.5792846679688)
+Part11.Transparency = 1
+Part11.Size = Vector3.new(110.23389434814453, 110.23389434814453, 110.23389434814453)
+Part11.Anchored = true
+Part11.BottomSurface = Enum.SurfaceType.Smooth
+Part11.TopSurface = Enum.SurfaceType.Smooth
+Part11.Shape = Enum.PartType.Ball
+Part12.Name = "TPLocation"
+Part12.Parent = Model7
+Part12.CFrame = CFrame.new(1203.27832, 2026.44495, -826.579285, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part12.Position = Vector3.new(1203.2783203125, 2026.4449462890625, -826.5792846679688)
+Part12.Transparency = 1
+Part12.Size = Vector3.new(0.0010000000474974513, 0.0010000000474974513, 0.0010000000474974513)
+Part12.BottomSurface = Enum.SurfaceType.Smooth
+Part12.TopSurface = Enum.SurfaceType.Smooth
+Part12.Shape = Enum.PartType.Ball
+Part12.Anchored = true
+Part13.Name = "Primary"
+Part13.Parent = Model7
+Part13.CFrame = CFrame.new(627.766052, 1023.99255, -511.557373, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part13.Position = Vector3.new(627.7660522460938, 1023.9925537109375, -511.557373046875)
+Part13.Transparency = 1
+Part13.Size = Vector3.new(1489.55859375, 2048, 1045.07470703125)
+Part13.Anchored = true
+Part13.BottomSurface = Enum.SurfaceType.Smooth
+Part13.CanCollide = false
+Part13.TopSurface = Enum.SurfaceType.Smooth
+Part14.Name = "YourLoc"
+Part14.Parent = Model7
+Part14.CFrame = CFrame.new(6.21999979, 16.20100000005, -76.9420013, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part14.Position = Vector3.new(6.21999979019165, 16.2010000000474974513, -82.94200134277344)
+Part14.Transparency = 1
+Part14.Size = Vector3.new(4, 0.0010000000474974513, 2)
+Part14.Anchored = true
+Part14.BottomSurface = Enum.SurfaceType.Smooth
+Part14.TopSurface = Enum.SurfaceType.Smooth
+for i,v in pairs(mas:GetChildren()) do
+	v.Parent = workspace
+	pcall(function() v:MakeJoints() end)
+end
+mas:Destroy()
+for i,v in pairs(mas:GetChildren()) do
+	v.Parent = workspace
+	pcall(function() v:MakeJoints() end)
+end
+mas:Destroy()
+for i,v in pairs(cors) do
+	spawn(function()
+		pcall(v)
+	end)
+end
+
+task.wait(0.1)
+
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.CarCrash.YourLoc.CFrame - Vector3.new(0,0.9,0)
+
+task.wait(0.15)
+
+game.Players.LocalPlayer.Character.HumanoidRootPart.Anchored = true
+
+local K = workspace.CarCrash.CarLoc
+local TweeningSpeed = (workspace.CarCrash.Car.Position - K.Position).Magnitude / 26.5
+    game:GetService("TweenService"):Create(workspace.CarCrash.Car, TweenInfo.new(TweeningSpeed, Enum.EasingStyle.Linear), {
+    CFrame = K.CFrame
+}):Play()
+
+wait(2.75)
+
+local K = workspace.CarCrash.TPLocation
+local TweeningSpeed = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - K.Position).Magnitude / 850
+    game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(TweeningSpeed, Enum.EasingStyle.Linear), {
+    CFrame = K.CFrame
+}):Play()
+
+wait(3)
+
+for i = 1, 1000 do
+    local Explosion = Instance.new('Explosion', workspace.CarCrash.TPLocation)
+    local Fire = Instance.new('Fire', workspace.CarCrash.TPLocation)
+    Fire.Size = 30
+    Fire.Heat = 25
+    Explosion.BlastPressure = math.huge
+    Explosion.BlastRadius = math.huge
+    Explosion.Position = workspace.CarCrash.TPLocation.Position
+end
+
+wait(1)
+
+workspace.CarCrash:Destroy()
+
+wait(1)
+
+game.Lighting.TimeOfDay = 14
+game.Lighting.Brightness = 2
