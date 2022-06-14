@@ -1,0 +1,186 @@
+
+--Converted with ttyyuu12345's model to script plugin v4
+function sandbox(var,func)
+	local env = getfenv(func)
+	local newenv = setmetatable({},{
+		__index = function(self,k)
+			if k=="script" then
+				return var
+			else
+				return env[k]
+			end
+		end,
+	})
+	setfenv(func,newenv)
+	return func
+end
+cors = {}
+mas = Instance.new("Model",game:GetService("Lighting"))
+Model0 = Instance.new("Model")
+Part1 = Instance.new("Part")
+Part2 = Instance.new("Part")
+Part3 = Instance.new("Part")
+Part4 = Instance.new("Part")
+Part5 = Instance.new("Part")
+Part6 = Instance.new("Part")
+MeshPart7 = Instance.new("MeshPart")
+MeshPart8 = Instance.new("MeshPart")
+Part9 = Instance.new("Part")
+Part10 = Instance.new("Part")
+Model0.Name = "KTruck"
+Model0.Parent = mas
+Model0.PrimaryPart = Part9
+Part1.Name = "Point1"
+Part1.Parent = Model0
+Part1.CFrame = CFrame.new(-79.3038559, 3.91047072, 197.192551, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part1.Position = Vector3.new(-79.3038558959961, 3.910470724105835, 197.1925506591797)
+Part1.Transparency = 1
+Part1.Size = Vector3.new(6.137290954589844, 0.0010000000474974513, 2)
+Part1.Anchored = true
+Part1.BottomSurface = Enum.SurfaceType.Smooth
+Part1.CanCollide = false
+Part1.TopSurface = Enum.SurfaceType.Smooth
+Part2.Name = "Point2"
+Part2.Parent = Model0
+Part2.CFrame = CFrame.new(-68.2499619, 12.4689093, 187.735382, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part2.Position = Vector3.new(-68.24996185302734, 12.46890926361084, 187.73538208007812)
+Part2.Transparency = 1
+Part2.Size = Vector3.new(6.137290954589844, 0.0010000000474974513, 2)
+Part2.Anchored = true
+Part2.BottomSurface = Enum.SurfaceType.Smooth
+Part2.CanCollide = false
+Part2.TopSurface = Enum.SurfaceType.Smooth
+Part3.Name = "PointEnd"
+Part3.Parent = Model0
+Part3.CFrame = CFrame.new(-67.0066071, 6.22649097, 162.905945, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part3.Position = Vector3.new(-67.00660705566406, 6.2264909744262695, 162.90594482421875)
+Part3.Transparency = 1
+Part3.Size = Vector3.new(6.137290954589844, 0.0010000000474974513, 2)
+Part3.Anchored = true
+Part3.BottomSurface = Enum.SurfaceType.Smooth
+Part3.CanCollide = false
+Part3.TopSurface = Enum.SurfaceType.Smooth
+Part4.Name = "PointEnd2"
+Part4.Parent = Model0
+Part4.CFrame = CFrame.new(-67.0066071, 6.10154486, 163.618271, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part4.Position = Vector3.new(-67.00660705566406, 6.1015448570251465, 163.61827087402344)
+Part4.Transparency = 1
+Part4.Size = Vector3.new(11.506484985351562, 0.0010000000474974513, 8.851608276367188)
+Part4.Anchored = true
+Part4.BottomSurface = Enum.SurfaceType.Smooth
+Part4.CanCollide = true
+Part4.TopSurface = Enum.SurfaceType.Smooth
+Part5.Name = "PointEnd2"
+Part5.Parent = Model0
+Part5.CFrame = CFrame.new(-67.0066071, 12.9188976, 167.101181, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part5.Position = Vector3.new(-67.00660705566406, 12.91889762878418, 167.10118103027344)
+Part5.Transparency = 1
+Part5.Size = Vector3.new(11.506484985351562, 13.634016036987305, 1.8857731819152832)
+Part5.Anchored = true
+Part5.BottomSurface = Enum.SurfaceType.Smooth
+Part5.CanCollide = true
+Part5.TopSurface = Enum.SurfaceType.Smooth
+Part6.Name = "PointStart"
+Part6.Parent = Model0
+Part6.CFrame = CFrame.new(-103.239578, 3.91047072, 197.192551, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part6.Position = Vector3.new(-103.23957824707031, 3.910470724105835, 197.1925506591797)
+Part6.Transparency = 1
+Part6.Size = Vector3.new(6.137290954589844, 0.0010000000474974513, 2)
+Part6.Anchored = true
+Part6.BottomSurface = Enum.SurfaceType.Smooth
+Part6.CanCollide = false
+Part6.TopSurface = Enum.SurfaceType.Smooth
+MeshPart7.Name = "Truck"
+MeshPart7.Parent = Model0
+MeshPart7.CFrame = CFrame.new(-66.7599792, 17.9332514, 159.11969, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+MeshPart7.Position = Vector3.new(-66.76, 17, 159.12, 159.11968994140625)
+MeshPart7.Size = Vector3.new(0.5, 0.5, 0.5)
+MeshPart7.Anchored = true
+MeshPart7.MeshId = "rbxassetid://6094931872"
+MeshPart7.TextureID = "rbxassetid://6094931938"
+MeshPart8.Name = "lo"
+MeshPart8.Parent = Model0
+MeshPart8.CFrame = CFrame.new(-85.7923126, 16.55055308, 174.477875, -0.499999911, 0, 0.866025448, 0, 1, 0, -0.866025448, 0, -0.499999911)
+MeshPart8.Orientation = Vector3.new(0, 120, 0)
+MeshPart8.Position = Vector3.new(-85.79231262207031, 16.5505530834198, 174.47787475585938)
+MeshPart8.Rotation = Vector3.new(-180, 60, -180)
+MeshPart8.Size = Vector3.new(3,3,2)
+MeshPart8.Anchored = true
+MeshPart8.MeshId = "rbxassetid://7642462437"
+MeshPart8.TextureID = "rbxassetid://7642462498"
+Part9.Name = "Prim"
+Part9.Parent = Model0
+Part9.CFrame = CFrame.new(-72.9622803, 13.3185978, 160.364105, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part9.Position = Vector3.new(-72.9622802734375, 13.318597793579102, 160.36410522460938)
+Part9.Transparency = 1
+Part9.Size = Vector3.new(58.04353713989258, 32.642730712890625, 75.65689086914062)
+Part9.Anchored = true
+Part9.BottomSurface = Enum.SurfaceType.Smooth
+Part9.CanCollide = false
+Part9.TopSurface = Enum.SurfaceType.Smooth
+Part10.Name = "Party"
+Part10.Parent = Model0
+Part10.CFrame = CFrame.new(-66.76, 17, 50.128, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+Part10.Position = Vector3.new(-66.76, 17, -5500.128)
+Part10.Transparency = 1
+Part10.Size = Vector3.new(4,1,2)
+Part10.Anchored = true
+Part10.BottomSurface = Enum.SurfaceType.Smooth
+Part10.CanCollide = false
+Part10.TopSurface = Enum.SurfaceType.Smooth
+
+for i,v in pairs(mas:GetChildren()) do
+	v.Parent = workspace
+	pcall(function() v:MakeJoints() end)
+end
+mas:Destroy()
+for i,v in pairs(cors) do
+	spawn(function()
+		pcall(v)
+	end)
+end
+
+chars = game.Players.LocalPlayer.Character
+chars.HumanoidRootPart.CFrame = workspace.KTruck.PointStart.CFrame
+task.wait(1)
+
+local K = workspace.KTruck.Point1
+local TweeningSpeed = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - K.Position).Magnitude / 150
+    game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(TweeningSpeed, Enum.EasingStyle.Linear), {
+    CFrame = K.CFrame
+}):Play()
+
+task.wait(0.15)
+
+local K = workspace.KTruck.Point2
+local TweeningSpeed = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - K.Position).Magnitude / 150
+    game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(TweeningSpeed, Enum.EasingStyle.Linear), {
+    CFrame = K.CFrame
+}):Play()
+
+task.wait(0.15)
+
+local K = workspace.KTruck.PointEnd
+local TweeningSpeed = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - K.Position).Magnitude / 150
+    game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(TweeningSpeed, Enum.EasingStyle.Linear), {
+    CFrame = K.CFrame
+}):Play()
+
+task.wait(0.25)
+
+local K = workspace.KTruck.Party
+local TweeningSpeed = (workspace.KTruck.Truck.Position - K.Position).Magnitude / 550
+    game:GetService("TweenService"):Create(workspace.KTruck.Truck, TweenInfo.new(TweeningSpeed, Enum.EasingStyle.Linear), {
+    CFrame = K.CFrame
+}):Play()
+
+local K = workspace.KTruck.Party
+local TweeningSpeed = (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - K.Position).Magnitude / 550
+    game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(TweeningSpeed, Enum.EasingStyle.Linear), {
+    CFrame = K.CFrame
+}):Play()
+
+wait(8)
+
+Model0:Destroy()
+chars.Humanoid.Health = 0
