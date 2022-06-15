@@ -1,0 +1,1 @@
+_G.t = true while _G.t == true do wait(0) for i,v in pairs(workspace:GetDescendants()) do pcall(function() if v:IsA("Part") and v.Name == "Head" and v.Parent.Humanoid.Health ~= 100 then wait(0.5) v.Parent.Humanoid.Health = 0 end end) end end
