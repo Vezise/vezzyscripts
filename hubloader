@@ -12,6 +12,8 @@ elseif game.PlaceId == 5130598377 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/aut-is-ass"))()
 elseif game.PlaceId == 6099256669 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/a-menacing-timeline"))()
+elseif game.PlaceId == 5290908008 then
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/yba-colosseum"))()
 else
 print("----------------------------------------------------------")
 print("Loaded Successfuly.. checking game: ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
