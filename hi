@@ -1,0 +1,102 @@
+    local Keys_Pressed = {
+    	["Q"] = 0;
+    	["E"] = 0;
+    	["W"] = 0;
+    	["A"] = 0;
+    	["S"] = 0;
+    	["D"] = 0;
+    }
+    local Key_Info = {
+    	["Q"] = {
+    		["Operator"] = "-";
+    		["Direction"] = "UpVector";
+    	};
+    	["E"] = {
+    		["Operator"] = "+";
+    		["Direction"] = "UpVector";
+    	};
+    	["W"] = {
+    		["Operator"] = "+";
+    		["Direction"] = "LookVector";
+    	};
+    	["A"] = {
+    		["Operator"] = "-";
+    		["Direction"] = "RightVector";
+    	};
+    	["S"] = {
+    		["Operator"] = "-";
+    		["Direction"] = "LookVector";
+    	};
+    	["D"] = {
+    		["Operator"] = "+";
+    		["Direction"] = "RightVector";
+    	};
+    }
+    
+    local Settings = {
+    	Speed = 5;
+    }
+    
+    --// Begin fly script
+    
+    --// Variables
+    local Players = game:GetService("Players")
+    local UIS = game:GetService("UserInputService")
+    local RunService = game:GetService("RunService")
+    local TweenService = game:GetService("TweenService")
+    
+    --// Neat functions
+    local function GetKeyFromEnum(enum)
+    	return enum.KeyCode.Name
+    end
+    
+    local function GetMass(Model)
+    	local Mass = 0;
+    	for i,v in pairs(Model:GetDescendants()) do
+    		if v:IsA("BasePart") then Mass += v:GetMass() end
+    	end
+    	return Mass;
+    end
+    
+    local function Math(Operator, A, B)
+    	if Operator == "-" then return A-B elseif Operator == "+" then return A+B end
+    end
+    
+    --// Key detection
+    UIS.InputBegan:Connect(function(Key, Typing)
+    	if Typing then return end
+    	
+    	local Key_String = GetKeyFromEnum(Key)
+    	if Keys_Pressed[Key_String] then
+    		Keys_Pressed[Key_String] = 1
+    	end
+    end)
+    
+    UIS.InputEnded:Connect(function(Key, Typing)
+    	if Typing then return end
+    	
+    	local Key_String = GetKeyFromEnum(Key)
+    	if Keys_Pressed[Key_String] then
+    		Keys_Pressed[Key_String] = 0
+    	end
+    end)
+    
+    --// Fly loop
+    
+    _G.FlyLoop = RunService.RenderStepped:Connect(function()
+    	local Character = game.Players.LocalPlayer.Character
+    	if not Character then return end
+    	Character.Humanoid.WalkSpeed = 0; Character.Humanoid.JumpPower = 0;
+    	
+    	Character.PrimaryPart.CFrame = CFrame.new(Character.PrimaryPart.Position, Character.PrimaryPart.Position + workspace.CurrentCamera.CFrame.LookVector)
+    	local CharacterMass = GetMass(Character)
+    	--// Calculate new velocity
+    	
+    	local Velocity = Vector3.new(0, CharacterMass/workspace.Gravity, 0) --// Lets try not to decend
+    	for i,v in pairs(Keys_Pressed) do
+    		if v == 0 then continue end
+    		Velocity = Math(Key_Info[i].Operator, Velocity, Character.PrimaryPart.CFrame[Key_Info[i].Direction] * Settings.Speed * CharacterMass)
+    	end
+    	
+    	Character.PrimaryPart.Velocity = Velocity
+    end)
