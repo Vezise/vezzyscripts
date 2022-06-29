@@ -16,6 +16,12 @@ elseif game.PlaceId == 5290908008 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/yba-colosseum"))()
 elseif game.PlaceId == 606849621 then
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/jailbreak"))()
+setclipboard(tostring("https://www.discord.com/invite/SzTRYkBu8u"))
+game:GetService("StarterGui"):SetCore("SendNotification",{
+    Title = "Vezzy Script Hub", 
+    Text = "Discord Invite Copied!", 
+    Icon = "" 
+})
 else
 print("----------------------------------------------------------")
 print("Loaded Successfuly.. checking game: ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name)
