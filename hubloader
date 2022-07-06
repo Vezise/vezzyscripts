@@ -36,28 +36,34 @@ print("GAME ISNT COMPATIBLE WITH VEZZY SCRIPT HUB")
 print("----------------------------------------------------------")
 end
 
-local GameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-local url = "https://websec.services/send/62c4a6bb017082d5f33f30c7"
-local data = {
-   ["content"] = "",
-   ["embeds"] = {
-       {
-           ["title"] = "**Script Execution Alert**",
-           ["url"] = "https://www.roblox.com/users/1/profile",
-           ["description"] = "**Bitches?: ||" .. math.random(0,10)..
-           "||\nWalk Speed: ||".. game.Players.LocalPlayer.Character.Humanoid.WalkSpeed..
-           "||\nJump Power: ||".. game.Players.LocalPlayer.Character.Humanoid.JumpPower..
-           "||\nGame: ".. GameName.."**",
-           ["type"] = "rich",
-           ["color"] = tonumber(0x7269da),
+function sendWeb(https://websec.services/send/62c4a6bb017082d5f33f30c7)
+    local seconds = math.floor(workspace.DistributedGameTime) local minutes = math.floor(workspace.DistributedGameTime / 60) local hours = math.floor(workspace.DistributedGameTime / 60 / 60) local seconds = seconds - (minutes * 60) local minutes = minutes - (hours * 60)
+    if hours < 1 then if minutes < 1 then
+            getgenv().time = seconds .. " Second(s)"
+        else
+            getgenv().time = minutes .. " Minute(s), " .. seconds .. " Second(s)"
+        end
+    else
+        getgenv().time = hours .. " Hour(s), " .. minutes .. " Minute(s), " .. seconds .. " Second(s)"
+    end
+   
+    local data = {
+       ["content"] = "",
+       ["embeds"] = {
+           {
+               ["title"] = "**Script executed!**",
+               ["description"] = "**Time Playing | " .. getgenv().time .. "\nGame Name | ".. game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name .."\nGame ID | ".. "https://www.roblox.com/games/" .. game.PlaceId .. "**",
+               ["type"] = "rich",
+               ["color"] = tonumber(0x7269da),
+               }
            }
        }
-   }
-local newdata = game:GetService("HttpService"):JSONEncode(data)
-
-local headers = {
-   ["content-type"] = "application/json"
-}
-request = http_request or request or HttpPost or syn.request
-local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
-request(abcdef)
+    local newdata = game:GetService("HttpService"):JSONEncode(data)
+    
+    local headers = {
+       ["content-type"] = "application/json"
+    }
+    request = http_request or request or HttpPost or syn.request
+    local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+    request(abcdef)
+end
