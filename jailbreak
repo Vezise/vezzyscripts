@@ -1,4 +1,4 @@
-setclipboard(tostring("https://www.discord.com/invite/SzTRYkBu8u")
+setclipboard(tostring("https://www.discord.com/invite/SzTRYkBu8u"))
 print("copied discord link")
 wait(0.1)
 --[[
