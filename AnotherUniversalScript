@@ -1,0 +1,289 @@
+TPData = {
+    ["PlayerTable"] = {},
+    ["Selected"] = nil,
+    ["SelectedBody"] = nil
+}
+
+TPData.Refresh = function()
+    TPData["PlayerTable"] = {} --//clear the table
+
+    for i,v in pairs(game.Players:GetChildren()) do
+        table.insert(TPData["PlayerTable"],v.Name)
+    end
+end
+
+_G.Height = 1
+_G.Distance = 1
+_G.SmoothTP = false
+_G.Player = TPData["Selected"]
+_G.Build = ""
+_G.DeletePreviousBuilds = false
+_G.SelfDestruct = false
+_G.SelfDestructTime = 5
+_G.Steps = 25
+_G.PSize = 5
+_G.PSize = 15
+_G.Byp = false
+
+local Name = game:GetService("Players").LocalPlayer.Name
+local Player = game:GetService("Players").LocalPlayer
+
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+
+local Window = Library.CreateLib("simple universal gui - vez#1944", "Synapse")
+local Tab1 = Window:NewTab("Player")
+local Tab2 = Window:NewTab("Teleport")
+local Tab3 = Window:NewTab("Builds")
+local Tab4 = Window:NewTab("Other")
+
+local Section1 = Tab1:NewSection("Player")
+local Section2 = Tab2:NewSection("Teleport Settings")
+local Section3 = Tab3:NewSection("Builds")
+local Section4 = Tab4:NewSection("Other")
+
+TPData.Refresh()
+
+Section1:NewButton("WalkSpeed Bypass (most games not needed", "", function(t)
+    local Old;
+      Old = hookmetamethod(game, "__index", function(self, key)
+        if key == "WalkSpeed" and self == game.Players.LocalPlayer.Character.Humanoid then
+          return 10
+        end
+        return Old(self, key)
+    end)
+    _G.Byp = true
+end)
+
+Section1:NewSlider("Walkspeed", "", 200, 0, function(t)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = t
+end)
+
+Section1:NewSlider("Jump Power", "", 200, 0, function(t)
+    game.Players.LocalPlayer.Character.Humanoid.JumpPower = t
+end)
+
+Section1:NewSlider("Hip Height", "", 20,0, function(t)
+    game.Players.LocalPlayer.Character.Humanoid.HipHeight = t
+end)
+
+Section1:NewSlider("Gravity", "", 300,0, function(t)
+    workspace.Gravity = t
+end)
+
+Section1:NewButton("Reset Gravity", "", function(t)
+    workspace.Gravity = 196.2
+end)
+
+Section1:NewToggle("Auto-Walk", "auto walk", function(t)
+    _G.AutoWalk = t
+    AW = Instance.new("Part", workspace)
+    AW.Name = "Gaynig123$"
+    AW.Anchored = false
+    AW.Transparency = 1
+    
+    while _G.AutoWalk == true do wait()
+        AW.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame - game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame.LookVector * -10
+        game.Players.LocalPlayer.Character.Humanoid:MoveTo(AW.Position)
+    end
+end)
+
+Section2:NewDropdown("Select Player", "Select Player", TPData["PlayerTable"], function(selected)
+	TPData["Selected"] = selected
+end)
+
+game.Players.ChildAdded:Connect(function()
+    TPData.Refresh()
+end)
+
+game.Players.ChildRemoved:Connect(function()
+    TPData.Refresh()
+end)
+
+Section2:NewDropdown("Select Body Part", "Select bodypart", {"Head", "HumanoidRootPart"}, function(selected)
+	TPData["SelectedBody"] = selected
+end)
+
+Section2:NewSlider("Height", "height from player", 100,0, function(t)
+    _G.Height = t
+end)
+
+Section2:NewSlider("Distance", "Distance from player", 35,0, function(t)
+    _G.Distance = t
+end)
+
+Section2:NewToggle("Smooth TP", "", function(t)
+    _G.SmoothTP = t
+end)
+
+Section2:NewLabel("Teleports")
+
+Section2:NewButton("Teleport", "the name says it all", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players:FindFirstChild(TPData["Selected"]).Character:FindFirstChild(TPData["SelectedBody"]).CFrame - game.Players:FindFirstChild(TPData["Selected"]).Character:FindFirstChild(TPData["SelectedBody"]).CFrame.LookVector * _G.Distance + Vector3.new(0,_G.Height,0)
+end)
+
+Section2:NewToggle("Follow Teleport", "", function(t)
+_G.TP = t
+STPF = Instance.new("Folder", workspace)
+STPF.Name = "PPPOO"
+STP = Instance.new("Part", STPF)
+    while _G.TP == true do wait()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.Players:FindFirstChild(TPData["Selected"]).Character:FindFirstChild(TPData["SelectedBody"]).CFrame - game.Players:FindFirstChild(TPData["Selected"]).Character:FindFirstChild(TPData["SelectedBody"]).CFrame.LookVector * _G.Distance + Vector3.new(0,_G.Height,0) 
+        if _G.SmoothTP == true then
+            STP.Anchored = true
+            STP.CanCollide = true
+            STP.Transparency = 1
+            STP.Size = Vector3.new(2.5,1,2.5)
+            STP.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame - Vector3.new(0,3.2302,0)
+        else
+            STP.CanCollide = false
+        end
+    end
+end)
+
+Section3:NewDropdown("Select Building", "yes", {"None", "TwinTowers", "Platform", "Stairs", "Penis"}, function(selected)
+    _G.Build = selected
+end)
+
+Section3:NewButton("Build", "build", function()
+    if _G.DeletePreviousBuilds == true then
+        for i,v in pairs(workspace:GetChildren()) do
+            if v:IsA("Folder") and v.Name == "Tempp" or v.Name == "PenisHolder" or v.Name == "WTC" then
+                v:Destroy()
+            end
+        end
+    end
+    
+    if _G.Build == "None" then
+        print("No builds selected")
+    end
+    
+    if _G.Build == "TwinTowers" then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/thewtc"))()
+        Instance.new('SurfaceLight', workspace.WTC.WorldTrade)
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace.WTC.WorldTrade.CFrame
+        game:GetService("TweenService"):Create(workspace.WTC.PlaneMesh, TweenInfo.new(15), {Position = workspace.WTC.WorldTrade.Position}):Play()
+        task.wait(6)
+        for i = 1, 1000 do
+            local Explosion = Instance.new('Explosion', workspace.WTC.WorldTrade)
+            local Fire = Instance.new('Fire', workspace.WTC.WorldTrade)
+            Fire.Size = 30
+            Fire.Heat = 25
+            Explosion.BlastPressure = math.huge
+            Explosion.BlastRadius = math.huge
+            Explosion.Position = workspace.WTC.WorldTrade.Position
+        end
+            
+        if _G.SelfDestruct == true then
+            wait(SelfDestructTime)
+            workspace.WTC:Destroy()
+        else
+            warn(SelfDestruct)
+        end
+    end
+    
+    if _G.Build == "Platform" then
+        CG = Instance.new("Folder", workspace)
+        CG.Name = "Tempp"
+        PF = Instance.new("Part", CG)
+        PF.Anchored = true
+        PF.Size = Vector3.new(_G.PSize ,1, _G.PSize)
+        PF.Position = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(5,3,0)
+        if SelfDestruct == true then
+            wait(SelfDestructTime)
+            PF:Destroy()
+        else
+            warn(SelfDestruct)
+        end
+    end
+    
+    if _G.Build == "Stairs" then
+        CH = Instance.new("Folder", workspace)
+        CH.Name = "Tempp"
+            
+        local Position = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,-2.5,-2)
+        
+        function MakeSide(Part,Off)
+            wait(0.005)
+            local Side = Instance.new("Part", Part)
+            Side.Size = Vector3.new(1,3,2)
+            Side.Anchored = true
+            Side.CFrame = Part.CFrame * Off
+            return Side
+        end
+            
+        for i = 1, _G.Steps do
+            wait(0.005)
+            local Part = Instance.new("Part", CH)
+            Part.CFrame = Position
+            Part.Anchored = true
+            MakeSide(Part,CFrame.new(-2.5,1,0))
+            MakeSide(Part,CFrame.new(2.5,1,0))
+            Position*=CFrame.new(0,1,-2)
+        end
+            
+        if _G.SelfDestruct == true then
+            wait(SelfDestructTime)
+            CH:Destroy()
+        else
+            warn(SelfDestruct.. " - Self-Destruct")
+        end
+    end
+        
+    if _G.Build == "Penis" then
+        PH = Instance.new('Folder', workspace)
+        PH.Name = "PenisHolder"
+        Balls = Instance.new('Part', PH)
+        Shlong = Instance.new('Part', PH)
+        Balls.Anchored = true
+        Balls.Size = Vector3.new(5,1,2)
+        Shlong.Anchored = true
+        Shlong.Size = Vector3.new(2, _G.PLength, 2)
+        Balls.CFrame = game.Players.LocalPlayer.Character["HumanoidRootPart"].CFrame + Vector3.new(0,-2,0)
+        Shlong.CFrame = Balls.CFrame + Vector3.new(0,_G.PLength,0) / 2
+
+        if _G.SelfDestruct == true then
+            wait(SelfDestructTime)
+            PH:Destroy()
+        else
+            warn(SelfDestruct)
+        end
+    end
+end)
+
+Section3:NewLabel("Build Configuration")
+
+Section3:NewToggle("Auto-Delete Previous Builds", "", function(t)
+    _G.DeletePreviousBuilds = t 
+end)
+
+Section3:NewToggle("Self-Destruct", "", function(t)
+    _G.SelfDestruct = t 
+end)
+
+Section3:NewSlider("Self-Destruct (Sec)", "", 60,1, function(t)
+    _G.SelfDestructTime = t 
+end)
+
+Section3:NewSlider("Self-Destruct (Min)", "", 10,1, function(t)
+    _G.SelfDestructTime = t * 60
+end)
+
+Section3:NewSlider("Stair Steps", "", 400,1, function(t)
+    _G.Steps = t
+end)
+
+Section3:NewSlider("Platform Size", "", 50,1, function(t)
+    _G.PSize = t
+end)
+
+Section3:NewSlider("Penis Length", "", 50,1, function(t)
+    _G.PLength = t
+end)
+
+Section4:NewButton("Made by vez#1944", "", function()
+    setclipboard("vez#1944")
+end)
+
+Section4:NewButton("Copy Discord Invite", "", function()
+    setclipboard("https://discord.com/invite/SzTRYkBu8u")
+end)
