@@ -1,2 +1,2 @@
 --Boronide™ Premium Obfuscation, v0.5.0
-loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/michael%20loader"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/michaelsloader"))()
