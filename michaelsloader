@@ -5,7 +5,7 @@ local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHept
 
 local Window = Library.CreateLib("Michael's Zombies by vez#1944 - discord.gg/SzTRYkBu8u", colors)
 local Tab1 = Window:NewTab("main")
-local Tab2 = Window:NewTab("zombies")
+local Tab2 = Window:NewTab("zombies & weapons")
 local Tab4 = Window:NewTab("teleports")
 local Tab3 = Window:NewTab("other")
 
@@ -39,14 +39,14 @@ local CharStuff = {
 Section1:NewToggle("Toggle Speed", "", function(ws)
 getgenv().ws = ws
     if getgenv().ws then
-        someloop = game:GetService("RunService").RenderStepped:Connect(function()
+        _G.speedy = game:GetService("RunService").RenderStepped:Connect(function()
             Player.Character.Humanoid.WalkSpeed = CharStuff["WalkSpeed"]
         end)
     else
         spawn(function()
             Player.Character.Humanoid.WalkSpeed = 16
         end)
-        someloop:Disconnect()
+        _G.speedy:Disconnect()
     end
 end)
 
@@ -57,14 +57,14 @@ end)
 Section1:NewToggle("Toggle Jump", "", function(jp)
 getgenv().jp = jp
     if getgenv().jp then
-        someloop = game:GetService("RunService").RenderStepped:Connect(function()
+        _G.jumpy = game:GetService("RunService").RenderStepped:Connect(function()
             Player.Character.Humanoid.JumpPower = CharStuff["JumpPower"]
         end)
     else
         spawn(function()
             Player.Character.Humanoid.JumpPower = 50
         end)
-        someloop:Disconnect()
+        _G.jumpy:Disconnect()
     end
 end)
 
@@ -75,25 +75,34 @@ end)
 Section1:NewToggle("Toggle Hip Height", "", function(hh)
 getgenv().hh = hh
     if getgenv().hh then
-        someloop = game:GetService("RunService").RenderStepped:Connect(function()
+        _G.Height = game:GetService("RunService").RenderStepped:Connect(function()
             Player.Character.Humanoid.HipHeight = CharStuff["HipHeight"]
         end)
     else
         spawn(function()
             Player.Character.Humanoid.HipHeight = 0
         end)
-        someloop:Disconnect()
+        _G.Height:Disconnect()
     end
 end)
 
-Section1:NewSlider("Hip Height","hippy", 35, 0, function(hh)
+Section1:NewSlider("Hip Height","hippy", 235, 0, function(hh)
     CharStuff["HipHeight"] = hh
 end)
 
 Section1:NewLabel("More stuff")
 
+Section1:NewButton("Roll Mystery Box (auto takes)", "", function()
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = workspace._MapComponents.MysteryBox.PurchaseBox.CFrame - workspace._MapComponents.MysteryBox.PurchaseBox.CFrame.LookVector * 6
+    game.Players.LocalPlayer.Character.Humanoid:MoveTo(workspace._MapComponents.MysteryBox.PurchaseBox.Position)
+    local args = {[1] = workspace._MapComponents.MysteryBox.PurchaseBox}
+    game:GetService("Players").LocalPlayer.Character.Remotes.UpdateHoverObject:FireServer(unpack(args))
+    local args = {[1] = true}
+    game:GetService("Players").LocalPlayer.Character.Remotes.UpdateInputHold:FireServer(unpack(args))
+end)
+
 Section1:NewToggle("No-Reload", "reloads for you", function(a)
-    while a == true do wait(1.159)
+    while a == true do wait(0.1)
         game.Players.LocalPlayer.Character.Remotes.Reload:FireServer()
     end
 end)
@@ -150,8 +159,17 @@ end)
 
 local ESP3 = loadstring(game:HttpGet("https://pastebin.com/raw/1KPn58Z3"))()
 
+workspace.Ignore.Zombies.ChildAdded:Connect(function(child)
+    if _G.zbe == true then
+        wait(1)
+        ESP3:DrawBox(child)
+    end
+end)
+    
+
 Section2:NewToggle("Zombie Box ESP", "", function(t)
-    if t == true then
+    _G.zbe = t
+    if _G.zbe == true then
         for i,v in pairs(workspace.Ignore.Zombies:GetChildren()) do
             if v:IsA("Model") then
                 ESP3:DrawBox(v)
@@ -160,6 +178,193 @@ Section2:NewToggle("Zombie Box ESP", "", function(t)
     else
         ESP3:CleanUp()
     end
+end)
+
+Section2:NewLabel("Weapons")
+
+FireRate = 500
+
+Section2:NewToggle("Gun Fire-Rate", "", function(t)
+    for i,v in pairs(getgc(true)) do
+        if type(v) == "table" and rawget(v, "RPM") then
+            print(i, v.RPM)
+            v.RPM = FireRate
+        end
+    end
+end)
+
+Section2:NewSlider("Fire-Rate Changer", "", 4500,100, function(t)
+    FireRate = t
+end)
+
+Section2:NewButton("Remove Recoil", "", function(t)
+    for i,v in pairs(getgc(true)) do
+        if type(v) == "table" and rawget(v, "RPM") then
+            v.CAMERA_RECOIL = {
+                IDLE = function()
+                    return Vector3.new(0,0,0) 
+                end;
+                CROUCH = function()
+                    return Vector3.new(0,0,0) 
+                end;
+                AIM = function()
+                    return Vector3.new(0,0,0) 
+                end;
+            }
+        end
+    end
+end)
+
+Section2:NewButton("Turn Semi-Auto to Auto", "", function(t)
+    for i,v in pairs(getgc(true)) do
+        if type(v) == "table" and rawget(v, "RPM") then
+            v.FIRE_TYPE = "AUTO"
+        end
+    end
+end)
+
+Section2:NewToggle("Silent Kill Aura (Gun)", "", function(t)
+    _G.kt = t
+    spawn(function()
+        pcall(function()
+            while _G.kt == true do task.wait(0.25)
+                game.Players.LocalPlayer.Character.Remotes.Reload:FireServer()
+                for i,v in pairs(workspace.Ignore.Zombies:GetChildren()) do
+                    if v:IsA("Model") and v.Humanoid.Health ~= 0 then
+                        game.ReplicatedStorage.Framework.Remotes.FireBullet:FireServer(v.Head.Position, workspace:GetServerTimeNow());
+                    end
+                end
+            end
+        end)
+    end)
+end)
+
+Section2:NewToggle("Silent Knife Aura", "", function(t)
+    _G.ktt = t
+    spawn(function()
+        pcall(function()
+            while _G.ktt == true do task.wait(0.215)
+                for i,v in pairs(workspace.Ignore.Zombies:GetChildren()) do
+                    if not v:FindFirstChild("Humanoid") then continue end
+                    local args = {
+                        [1] = v.Humanoid
+                    }
+                    game:GetService("ReplicatedStorage").Framework.Remotes.KnifeHitbox:FireServer(unpack(args))
+                end
+            end
+        end)
+    end)
+end)
+
+local Settings = {
+	Fov = 200;
+}
+
+local old_namecall;
+old_namecall = hookmetamethod(game, "__namecall", newcclosure(function(...)
+	local method = getnamecallmethod() --> we can get the calling method using this (eg. ray.new)
+	local args = {...} --> arguments so we can spoof them
+    self = args[1]
+    
+    if method == "FireServer" and self.Name == "FireBullet" and _G.Silent == true then
+        args[2] = ClosestTarget.Head.Position
+    end
+        
+	return old_namecall(unpack(args)) --> basically continue the namecall but with our custom arguments
+end)) --// Let's hook __namecall to see when raycast is called so we can spoof it omg
+
+Section2:NewToggle("Silent Aim", "", function(t)
+    _G.Silent = t
+    
+    local Player = game.Players.LocalPlayer
+    local Mouse = Player:GetMouse()
+    local UserInputService = game:GetService("UserInputService")
+    
+    function ValidateArguments(Args, RayMethod)
+        local Matches = 0
+        if #Args < RayMethod.ArgCountRequired then
+            return false
+        end
+        for Pos, Argument in next, Args do
+            if typeof(Argument) == RayMethod.Args[Pos] then
+                Matches = Matches + 1
+            end
+        end
+        return Matches >= RayMethod.ArgCountRequired
+    end
+    
+    function DrawFov()
+    	task.spawn(function()
+    		local Circle = Drawing.new("Circle");
+    		Circle.Thickness = 0.2; 
+    		Circle.NumSides = 48;
+    		Circle.Radius = Settings.Fov;
+    		Circle.Color = Color3.fromRGB(0,255,0)
+    		Circle.Visible = true
+    		
+    		local Re;
+    		Re = game:GetService("RunService").RenderStepped:Connect(function()
+    		    if _G.Silent == false then
+    		        Circle:Remove()
+    		        Re:Disconnect()
+    		    end
+        		Circle.Radius = Settings.Fov
+        	    Circle.Position = Vector2.new(Mouse.X, Mouse.Y + 34);
+    		end)
+    	end)
+    end
+    
+    function GetClosestCharacter()
+        local Last = math.huge;
+        local LastCharacter = nil;
+        local Fov = Settings.Fov;
+        for i,v in pairs(workspace.Ignore.Zombies:GetChildren()) do
+            local Character = v
+            if not Character or (Character and not Character.PrimaryPart) then task.wait() continue end
+    
+            local MousePos = UserInputService:GetMouseLocation();
+            local ScreenPos, OnScreen = workspace.CurrentCamera:WorldToScreenPoint(Character.PrimaryPart.Position)
+            local PlayerPos = Vector2.new(ScreenPos.X, ScreenPos.Y)
+    
+            local Dist = (MousePos - PlayerPos).Magnitude
+            
+            if Dist <= Fov and Dist < Last then
+                LastCharacter = Character;
+                Last = Dist;
+            end
+        end
+        return LastCharacter
+    end --// Function to get closest player to mouse; very useful
+    
+    local ClosestTarget = nil;
+    
+    DrawFov();
+    
+    while _G.Silent == true do
+    	task.wait()
+    	ClosestTarget = GetClosestCharacter();
+    end
+end)
+
+
+Section2:NewSlider("Silent Aim FOV", "", 600,10, function(t)
+    Settings.Fov = t
+end)
+
+Section2:NewToggle("Flame-Thrower Aura", "", function(t)
+    _G.FTA = t
+    spawn(function()
+        while _G.FTA == true do wait()
+            for i,v in pairs(workspace.Ignore.Zombies:GetChildren()) do
+                if not v:FindFirstChild("Humanoid") then continue end
+                local args = {
+                    [1] = v.Humanoid,
+                    [2] = Vector3.new(2048,2048,2048)
+                }   
+                game:GetService("ReplicatedStorage").Framework.Remotes.FlameHitbox:FireServer(unpack(args))
+            end
+        end
+    end)
 end)
 
 Section3:NewToggle("Delete Barriers", "", function(bbb)
@@ -272,6 +477,12 @@ Section3:NewToggle("Player Box ESP", "credits to Enxquity#9999 for sexy drawing 
     end
 end)
 
+Section3:NewButton("Clean ESP", "", function(t)
+    ESP:CleanUp()
+    ESP2:CleanUp()
+    ESP3:CleanUp()
+end)
+
 Section3:NewLabel("Other")
 
 Section3:NewToggle("Auto-Grab Powerups","",function(t)
@@ -352,7 +563,7 @@ local namestable = {}
 for i,v in pairs(game:GetService("Players").LocalPlayer.BaseData:GetChildren()) do 
     table.insert(namestable,v.Name)
     appendfile("Michael's Zombies.txt",tostring(v.Value)..":")
-end
+end   -- update on execution
 
 for i,v in pairs(game:GetService("Players").LocalPlayer.BaseData:GetChildren()) do 
    v:GetPropertyChangedSignal("Value"):Connect(function()
@@ -361,11 +572,25 @@ for i,v in pairs(game:GetService("Players").LocalPlayer.BaseData:GetChildren()) 
            appendfile("Michael's Zombies.txt",v.Value..":")
         end   
     end) 
-end
+end -- update when GetPropertyChangedSignal
 
 local statstable = string.split(readfile("Michael's Zombies.txt"),":")
 
 for i,v in pairs(statstable) do
    i = namestable[i]
    print(i,v)
+end -- print your results
+
+--[[
+_G.t = true
+while _G.t == true do task.wait()
+    for i,v in pairs(workspace.Ignore.Zombies:GetChildren()) do
+    if v:IsA("Model") then
+        game.ReplicatedStorage.Framework.Remotes.FireBullet:FireServer(v.Head.Position, workspace:GetServerTimeNow());
+    end
 end
+wait(1)
+rconsoleprint(game:GetService("Workspace").Vezise.CharStats.GunInventory.Gun2.Clip.Value.."Clip ammount")
+rconsoleprint(game:GetService("Workspace").Vezise.CharStats.GunInventory.Gun2.Storage.Value.."Storage ammount")
+end
+]]
