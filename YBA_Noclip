@@ -35,3 +35,8 @@ for i,v in pairs(workspace.FolderGay:GetDescendants()) do
         v.CanCollide = false
     end
 end
+
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "Vez's No-Clip",
+	Text = "SUCCESSFULLY LOADED!"
+})
