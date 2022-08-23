@@ -56,6 +56,8 @@ for i,v in pairs(workspace.FolderGay:GetDescendants()) do
     end
 end
 
+task.wait(0.35)
+
 game:GetService("StarterGui"):SetCore("SendNotification",{
 	Title = "Vez's No-Clip",
 	Text = "SUCCESSFULLY LOADED!"
