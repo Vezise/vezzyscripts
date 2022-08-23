@@ -1,3 +1,8 @@
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "Vez's No-Clip",
+	Text = "Optimising game.."
+})
+
 pcall(function()
     for i,v in pairs(game.ReplicatedStorage.Effects:GetDescendants()) do
         if v:IsA("ParticleEmitter") then
@@ -7,6 +12,11 @@ pcall(function()
 end)
 
 wait(1)
+
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "Vez's No-Clip",
+	Text = "Starting step 1.."
+})
 
 a = Instance.new("Folder", workspace)
 a.Name = "FolderGay"
@@ -20,6 +30,11 @@ end
 
 task.wait(0.1)
 
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "Vez's No-Clip",
+	Text = "Starting step 2.."
+})
+
 for i,v in pairs(workspace.Map:GetDescendants()) do
     if v:IsA("BasePart") and not v:IsDescendantOf(workspace.FolderGay) and not v:IsDescendantOf(workspace.Map.Roads) and not v:IsDescendantOf(workspace.Map.Terrain) and not v:IsDescendantOf(workspace.Map.ParkingGarage) and not v:IsDescendantOf(workspace.Map.IMPORTANT) and not v:IsDescendantOf(workspace.Map.Prison) and not v:IsDescendantOf(workspace.Map.Prison_Bridge) and v.Name ~= "Sewer_Ladders_Part" then
         task.spawn(function()
@@ -29,6 +44,11 @@ for i,v in pairs(workspace.Map:GetDescendants()) do
 end
 
 task.wait(3)
+
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "Vez's No-Clip",
+	Text = "Starting step 3.."
+})
 
 for i,v in pairs(workspace.FolderGay:GetDescendants()) do
     if v:IsA("BasePart") and v.Name ~= "Sidewalk_1" and v.Name ~= "Sidewalk_2" and v.Material ~= "Cobblestone" and not string.find(v.Name, "Roof") and v.Name ~= "Stairs" and not string.find(v.Name, "Floor") and not string.find(v.Name, "Rails") and v.Name ~= "TrainStation_Walkway" and v.Name ~= "TrainStation_Platform" and v.Name ~= "Park_Path" and v.Name ~= "Gravel" and v.Name ~= "Grass" and v.Name ~= "Rock" and v.Name ~= "LowerStairs" and v.Name ~= "UpperStairs" then
