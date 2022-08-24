@@ -51,7 +51,7 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 })
 
 for i,v in pairs(workspace.FolderGay:GetDescendants()) do
-    if v:IsA("BasePart") and v.Name ~= "Sidewalk_1" and v.Name ~= "Sidewalk_2" and v.Material ~= "Cobblestone" and not string.find(v.Name, "Roof") and v.Name ~= "Stairs" and not string.find(v.Name, "Floor") and not string.find(v.Name, "Rails") and v.Name ~= "TrainStation_Walkway" and v.Name ~= "TrainStation_Platform" and v.Name ~= "Park_Path" and v.Name ~= "Gravel" and v.Name ~= "Grass" and v.Name ~= "Rock" and v.Name ~= "LowerStairs" and v.Name ~= "UpperStairs" and v.Name ~= "Truss" and not string.find(v.Name, "Grass") and v.Name ~= "Stairs_Step" then
+    if v:IsA("BasePart") and v.Name ~= "Sidewalk_1" and v.Name ~= "Sidewalk_2" and v.Material ~= "Cobblestone" and not string.find(v.Name, "Roof") and v.Name ~= "Stairs" and not string.find(v.Name, "Floor") and not string.find(v.Name, "Rails") and v.Name ~= "TrainStation_Walkway" and v.Name ~= "TrainStation_Platform" and v.Name ~= "Park_Path" and v.Name ~= "Gravel" and v.Name ~= "Grass" and v.Name ~= "Rock" and v.Name ~= "LowerStairs" and v.Name ~= "UpperStairs" and v.Name ~= "Truss" and not string.find(v.Name, "Grass") and v.Name ~= "Stairs_Step" and not string.find(v.Name, "Barriers") then
         v.CanCollide = false
     end
 end
