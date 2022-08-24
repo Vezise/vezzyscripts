@@ -21,7 +21,7 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 a = Instance.new("Folder", workspace)
 a.Name = "FolderGay"
 for i,v in pairs(workspace.Map:GetDescendants()) do
-    if v:IsA("BasePart") and not v:IsDescendantOf(workspace.Map.Roads) and not v:IsDescendantOf(workspace.Map.Terrain) and not v:IsDescendantOf(workspace.Map.ParkingGarage) and not v:IsDescendantOf(workspace.Map.IMPORTANT) and not v:IsDescendantOf(workspace.Map.Prison) and not v:IsDescendantOf(workspace.Map.Prison_Bridge) and v.Name ~= "Sewer_Ladders_Part" then
+    if v:IsA("BasePart") and not v:IsDescendantOf(workspace.Map.Roads) and not v:IsDescendantOf(workspace.Map.Terrain) and not v:IsDescendantOf(workspace.Map.ParkingGarage) and not v:IsDescendantOf(workspace.Map.IMPORTANT.OceanFloor) and v.Name ~= "Ocean" and not v:IsDescendantOf(workspace.Map.Prison_Bridge) and v.Name ~= "Sewer_Ladders_Part" then
         task.spawn(function()
             v:Clone().Parent = workspace.FolderGay
         end)
@@ -36,7 +36,7 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 })
 
 for i,v in pairs(workspace.Map:GetDescendants()) do
-    if v:IsA("BasePart") and not v:IsDescendantOf(workspace.FolderGay) and not v:IsDescendantOf(workspace.Map.Roads) and not v:IsDescendantOf(workspace.Map.Terrain) and not v:IsDescendantOf(workspace.Map.ParkingGarage) and not v:IsDescendantOf(workspace.Map.IMPORTANT) and not v:IsDescendantOf(workspace.Map.Prison) and not v:IsDescendantOf(workspace.Map.Prison_Bridge) and v.Name ~= "Sewer_Ladders_Part" then
+    if v:IsA("BasePart") and not v:IsDescendantOf(workspace.FolderGay) and not v:IsDescendantOf(workspace.Map.Roads) and not v:IsDescendantOf(workspace.Map.Terrain) and not v:IsDescendantOf(workspace.Map.ParkingGarage) and not v:IsDescendantOf(workspace.Map.Prison_Bridge) and v.Name ~= "Sewer_Ladders_Part" and not v:IsDescendantOf(workspace.Map.IMPORTANT.OceanFloor) and v.Name ~= "Ocean"then
         task.spawn(function()
             v.Size = Vector3.new(0,0,0)
         end)
@@ -51,8 +51,11 @@ game:GetService("StarterGui"):SetCore("SendNotification",{
 })
 
 for i,v in pairs(workspace.FolderGay:GetDescendants()) do
-    if v:IsA("BasePart") and v.Name ~= "Sidewalk_1" and v.Name ~= "Sidewalk_2" and v.Material ~= "Cobblestone" and not string.find(v.Name, "Roof") and v.Name ~= "Stairs" and not string.find(v.Name, "Floor") and not string.find(v.Name, "Rails") and v.Name ~= "TrainStation_Walkway" and v.Name ~= "TrainStation_Platform" and v.Name ~= "Park_Path" and v.Name ~= "Gravel" and v.Name ~= "Grass" and v.Name ~= "Rock" and v.Name ~= "LowerStairs" and v.Name ~= "UpperStairs" and v.Name ~= "Truss" and not string.find(v.Name, "Grass") and v.Name ~= "Stairs_Step" and not string.find(v.Name, "Barriers") then
+    if v:IsA("BasePart") and v.Name ~= "Sidewalk_1" and v.Name ~= "Sidewalk_2" and v.Material ~= "Cobblestone" and not string.find(v.Name, "Roof") and v.Name ~= "Stairs" and not string.find(v.Name, "Floor") and not string.find(v.Name, "Rails") and v.Name ~= "TrainStation_Walkway" and v.Name ~= "TrainStation_Platform" and v.Name ~= "Park_Path" and v.Name ~= "Gravel" and v.Name ~= "Grass" and v.Name ~= "Rock" and v.Name ~= "LowerStairs" and v.Name ~= "UpperStairs" and v.Name ~= "Truss" and not string.find(v.Name, "Grass") and v.Name ~= "Stairs_Step" and not v:IsDescendantOf(workspace.Map.Prison["Prison_Rails"]) and not v:IsDescendantOf(workspace.Map.Prison["Prison_Stairs"]) and not v:IsDescendantOf(workspace.Map.Prison["Prison_Flooring"]) then
         v.CanCollide = false
+        if string.find(v.Name, "Colloseum_Barriers") then
+            v.CanCollide = false
+        end
     end
 end
 
