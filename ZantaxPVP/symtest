@@ -1,0 +1,70 @@
+_G.Enabled = true
+getgenv().Targets = {}
+local pbTable = {
+	--SP:TW Finisher
+["Star Platinum Finisher"] = {"rbxassetid://4096014941", 0.2, true},
+
+--SP:TW Right Click
+["Star Platinum Heavy Punch"] = {"rbxassetid://4095625816", 0.2, true},
+
+--MIH Finisher+Right CLick
+["Made in Heaven Heavy+Finisher"] = {"rbxassetid://6216052429", 0.2, true},
+
+--SP:TW Slam
+["Star Platinum The World Slam"] = {"rbxassetid://4812642386", 0.5, true},
+
+--Kick Barrage, useless
+["Star Platinum The World Kick Barrage"] = {"rbxassetid://6048575522", 0, true},
+
+--SP:TW Beatdown
+["Star Platinum The World Beatdown"] = {"rbxassetid://7250792726", 0.4, true},
+
+--WS memory disc
+["Whitesnake Memory Disc"] = {"rbxassetid://5227558947", 0.2, true}
+
+}
+
+local function Block(seconds)
+    game.Players.LocalPlayer.Character.RemoteEvent:FireServer("StartBlocking")
+    task.wait(seconds)
+    game.Players.LocalPlayer.Character.RemoteEvent:FireServer("StopBlocking")
+end
+
+local function addPBMove(animation, move, enabled)
+	if animation.animation.AnimationId == pbTable[move][1] and enabled then
+		local ping = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValue() / 1000
+		print("base time " .. animation.Length.. " seconds\n")
+		print("ping was ".. ping.. "\n")
+		print("blocking for" .. animation.Length - ping - pbTable[move][2].. "\n")
+		print("blocked for " .. animation.Length.. " seconds\n\n\n\n")
+		task.wait(animation.Length - ping - pbTable[move][2].. "\n")
+		Block(animation.Length)
+	end
+end
+
+for i,v in pairs(workspace.Living:GetChildren()) do
+	getgenv().Targets[v.Name] = {false, true}
+end
+
+for i,v in getgenv().Targets do
+	if i ~= game.Players.LocalPlayer.Name and game.Players.LocalPlayer:DistanceFromCharacter(workspace.Living[i].HumanoidRootPart.Position) < 25 then
+			v[1] = true
+		else
+			v[1] = false
+	end
+end
+
+for i,v in pairs(getgenv().Targets) do
+	workspace.Living[i].DescendantAdded:Connect(function(child)
+	print(getgenv().Targets[i][2])
+		if child.Name == "AnimationController" then
+			child.AnimationPlayed:Connect(function(Track)
+				if getgenv().Targets[i][2] then
+					for pbMove, bool in pbTable do
+						addPBMove(Track, pbMove, getgenv().Targets[i][1])
+					end
+				end
+			end)
+		end
+	end)
+end
