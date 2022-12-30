@@ -1,7 +1,7 @@
 repeat task.wait() until game:IsLoaded()
 
 local charac = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait()
---// Hook hipheight
+
 if enabled and not workspace:FindFirstChild("Gayness2") then
     repeat task.wait() until charac
     repeat task.wait() until charac.HumanoidRootPart.Anchored == false -- so doesnt break incase of auto execute
