@@ -5,38 +5,46 @@ if game.ReplicatedStorage:FindFirstChild("Bypassed") == nil then
 end
 
 while Enabled do task.wait()
-    if not Character then return end
-    
-    if Character.SummonedStand.Value == false then
-        Character.RemoteFunction:InvokeServer("ToggleStand", "Toggle")
-    end
-    
-    if Character.LowerTorso:FindFirstChild("Root") ~= nil then
-        local OldPos = Character.PrimaryPart.CFrame
-        Character.PrimaryPart.CFrame = CFrame.new(505, -32, -153)
-        A = Character.LowerTorso.Root:Clone()
-        A.Name = "NotRoot"
-        A.Parent = workspace
-        task.wait(InvisDelay)
-        Character.LowerTorso.Root:Destroy()
-        task.wait(InvisDelay)
-        A.Parent = Character.LowerTorso
-        Character.PrimaryPart.CFrame = OldPos
-    end
-    
-    if Character.Head.Transparency == 0 then
-        for i,v in pairs(Character:GetChildren()) do
-            if v:IsA("BasePart") then
-                v.Transparency = 1
+    pcall(function()
+        if not Character then return end
+        
+        if Character.SummonedStand.Value == false then
+            Character.RemoteFunction:InvokeServer("ToggleStand", "Toggle")
+        end
+        
+        if Character.LowerTorso:FindFirstChild("Root") ~= nil then
+            local OldPos = Character.PrimaryPart.CFrame
+            Character.PrimaryPart.CFrame = CFrame.new(505, -32, -153)
+            A = Character.LowerTorso.Root:Clone()
+            A.Name = "NotRoot"
+            A.Parent = workspace
+            task.wait(InvisDelay)
+            Character.LowerTorso.Root:Destroy()
+            task.wait(InvisDelay)
+            A.Parent = Character.LowerTorso
+            Character.PrimaryPart.CFrame = OldPos
+        end
+        
+        if Character.Head.Transparency == 0 then
+            for i,v in pairs(Character:GetChildren()) do
+                if v:IsA("BasePart") then
+                    v.Transparency = 1
+                end
+            end
+            
+            for i,v in pairs(Character:GetDescendants()) do
+                if v:IsA("ParticleEmitter") and v.Name == "StandAura" then 
+                    v:Destroy()
+                end
             end
         end
-    end
+            
+        if Character.StandMorph:FindFirstChild("AnimationController") ~= nil then
+            Character.StandMorph.AnimationController:Destroy()
+        end
         
-    if Character.StandMorph:FindFirstChild("AnimationController") ~= nil then
-        Character.StandMorph.AnimationController:Destroy()
-    end
-    
-    Character.StandMorph.PrimaryPart.CFrame = Character.PrimaryPart.CFrame
+        Character.StandMorph.PrimaryPart.CFrame = Character.PrimaryPart.CFrame
+    end)
 end
 
 for i = 1,2,1 do
