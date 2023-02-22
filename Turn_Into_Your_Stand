@@ -25,12 +25,14 @@ while Enabled do task.wait()
     end
     
     if Character.Head.Transparency == 0 then
-        for i,v in pairs(Character:GetDescendants()) do
-            if v:IsA("BasePart") and not v:IsDescendantOf("StandMorph") then
+        for i,v in pairs(Character:GetChildren()) do
+            if v:IsA("BasePart") then
                 v.Transparency = 1
             end
-            
-            if v.Name == "StandAura" then 
+        end
+        
+        for i,v in pairs(Character:GetDescendants()) do
+            if v:IsA("ParticleEmitter") and v.Name == "StandAura" then 
                 v:Destroy()
             end
         end
