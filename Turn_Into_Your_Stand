@@ -1,4 +1,3 @@
-local Player = game.Players.LocalPlayer
 local Character = game.Players.LocalPlayer.Character
 
 if game.ReplicatedStorage:FindFirstChild("Bypassed") == nil then
