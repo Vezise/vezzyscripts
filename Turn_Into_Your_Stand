@@ -1,7 +1,7 @@
 local Character = game.Players.LocalPlayer.Character
 
 if game.ReplicatedStorage:FindFirstChild("Bypassed") == nil then
-    loadstring(game:HttpGet("https://pastebin.com/raw/b8iMK3wR"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/bypass"))()
 end
 
 while Enabled do task.wait()
