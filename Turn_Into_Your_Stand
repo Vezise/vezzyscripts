@@ -29,6 +29,10 @@ while Enabled do task.wait()
             if v:IsA("BasePart") then
                 v.Transparency = 1
             end
+            
+            if v.Name == "StandAura" then 
+                v:Destroy()
+            end
         end
     end
         
