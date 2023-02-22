@@ -26,7 +26,7 @@ while Enabled do task.wait()
     
     if Character.Head.Transparency == 0 then
         for i,v in pairs(Character:GetDescendants()) do
-            if v:IsA("BasePart") then
+            if v:IsA("BasePart") and not v:IsDescendantOf("StandMorph") then
                 v.Transparency = 1
             end
             
