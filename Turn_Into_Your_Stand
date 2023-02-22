@@ -25,7 +25,7 @@ while Enabled do task.wait()
     end
     
     if Character.Head.Transparency == 0 then
-        for i,v in pairs(Character:GetChildren()) do
+        for i,v in pairs(Character:GetDescendants()) do
             if v:IsA("BasePart") then
                 v.Transparency = 1
             end
