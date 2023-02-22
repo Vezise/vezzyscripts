@@ -14,9 +14,22 @@ while Enabled do task.wait()
     if Character.LowerTorso:FindFirstChild("Root") ~= nil then
         local OldPos = Character.PrimaryPart.CFrame
         Character.PrimaryPart.CFrame = CFrame.new(505, -32, -153)
+        A = Character.LowerTorso.Root:Clone()
+        A.Name = "NotRoot"
+        A.Parent = workspace
+        task.wait(InvisDelay)
         Character.LowerTorso.Root:Destroy()
         task.wait(InvisDelay)
+        A.Parent = Character.LowerTorso
         Character.PrimaryPart.CFrame = OldPos
+    end
+    
+    if Character.Head.Transparency == 0 then
+        for i,v in pairs(Character:GetChildren()) do
+            if v:IsA("BasePart") then
+                v.Transparency = 1
+            end
+        end
     end
         
     if Character.StandMorph:FindFirstChild("AnimationController") ~= nil then
