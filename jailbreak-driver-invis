@@ -1,7 +1,0 @@
-while _G.invis == true do wait(0.3)
-if game.Players.LocalPlayer.Character.Humanoid.Sit == true then
-        game.Players.LocalPlayer.Character.Humanoid.HipHeight = -100000
-    elseif game.Players.LocalPlayer.Character.Humanoid.Sit == false then
-        game.Players.LocalPlayer.Character.Humanoid.HipHeight = 2 
-    end
-end
