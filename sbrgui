@@ -152,7 +152,7 @@ local DP = 50
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V2.04 - https://discord.gg/DXrGhrxZ9v", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V2.05 - https://discord.gg/DXrGhrxZ9v", colors)
 local Tab = Window:NewTab("Main")
 local Tab5 = Window:NewTab("Auto SBR Settings")
 local Tab2 = Window:NewTab("Teleports")
@@ -347,7 +347,7 @@ local stag2 = workspace.Barriers:FindFirstChild("2").CFrame
 local stag3 = workspace.Barriers:FindFirstChild("3").CFrame
 local stag4 = workspace.Map["NYC Bridge"].Start.CFrame
 local hider = workspace.Map["NYC Bridge"].NYCBridge.Bridge.Bridge.MeshPart.CFrame
-local hider2 = workspace.Zone.CFrame - Vector3.new(0,35,0)
+local hider2 = workspace.Map["NYC Bridge"].Start.CFrame - Vector3.new(0,30,0)
 local ends = workspace.Map["NYC Bridge"]["End_Line"].CFrame
 
 
