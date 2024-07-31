@@ -391,10 +391,12 @@ Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
                 Player.Character.HumanoidRootPart.CFrame = hider2
             until workspace.Barriers:FindFirstChild("4") == nil
             task.wait(Stuff.Settings["Tp5"])
-            
-            Player.Character.HumanoidRootPart.CFrame = ends
-            
-            task.wait(2)
+            local waiter = 0
+            repeat task.wait()
+                Player.Character.HumanoidRootPart.CFrame = ends
+                waiter = waiter + 1
+            until waiter == 100
+
             Player.Character.HumanoidRootPart.CFrame = hider
         end
     end)
