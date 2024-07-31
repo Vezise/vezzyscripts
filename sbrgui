@@ -12,7 +12,7 @@ end)
 		WS2/JP2/FS2 = Horse
 ]]
 
-local Stuff = {
+getgenv().Stuff = {
             ["WalkSpeed"] = 22;
             ["JumpPower"] = 50;
             ["WalkSpeed2"] = 0;
@@ -152,7 +152,7 @@ local DP = 50
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V2.02 - https://discord.gg/DXrGhrxZ9v", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V2.04 - https://discord.gg/DXrGhrxZ9v", colors)
 local Tab = Window:NewTab("Main")
 local Tab5 = Window:NewTab("Auto SBR Settings")
 local Tab2 = Window:NewTab("Teleports")
@@ -295,35 +295,9 @@ Section:NewToggle("Player Fly", "Move = WASD", function(t)
     end
 end)
 
-Section:NewSlider("Fly Speed", "", 15,1, function(t)
+Section:NewSlider("Fly Speed", "", 35,1, function(t)
     Stuff["FlySpeed"] = t
 end)
-
---[[Section:NewButton("Invisibility", "", function()
-    workspace.Map["Part 1895"].Size = Vector3.new(618, 251, 415)
-    workspace.Map["Part 1898"].Size = Vector3.new(0,0.1,0)
-    local oldPos = Player.Character.HumanoidRootPart.Position
-    Player.Character.HumanoidRootPart.CFrame = CFrame.new(-1341, 399, 7932)
-    task.wait(0.8)
-    local A = Player.Character.LowerTorso.Root:Clone()
-    A.Parent = workspace
-    Player.Character.LowerTorso.Root:Destroy()
-    A.Parent = Player.Character
-    task.wait(0.8)
-    Player.Character.HumanoidRootPart.CFrame = CFrame.new(oldPos)
-end)
-both patched vv^^
-Section:NewToggle("Anti-Timestop", "u cant get timestopped", function(State)
-    if State then
-        game:GetService("RunService"):BindToRenderStep("Anti-TS", 0, function()
-            if Player.Character and Player.Character:FindFirstChild("InTimeStop") then
-                Player.Character:FindFirstChild("InTimeStop"):Destroy()
-            end
-        end)
-    else
-        game:GetService("RunService"):UnbindFromRenderStep("Anti-TS");
-    end
-end)]]
 
 Section:NewToggle("Anti Vamp Burn", "", function(State)
     if State == true then
@@ -368,25 +342,21 @@ SBR:NewSlider("TP Finish delay", "", 35,0, function(t)
     Stuff.Settings["Tp5"] = t
 end)
 
-local stag1 = CFrame.new(-2084.661865234375, 331.1155700683594, 2865.72607421875)
-local stag2 = CFrame.new(-1912.422119140625, 260.871337890625, 4039.574951171875)
-local stag3 = CFrame.new(-854.3408203125, 410.123046875, 6108.69775390625)
-local stag4 = CFrame.new(-1429.9888916015625, 497.5647277832031, 8139.3466796875)
-local hider = CFrame.new(-1096.5750732421875, 356.12286376953125, -242.56854248046875)
-local hider2 = CFrame.new(-2205.9365234375, 368.1224060058594, 4097.49267578125)
-local hider3 = CFrame.new(-581.563720703125, 484.1239318847656, 5878.8369140625)
-local hider4 = CFrame.new(-1360.38916015625, 390.1241760253906, 7912.0849609375)
-local ends = CFrame.new(-1814.3798828125, 571.7680053710938, 9025.5322265625)
+local stag1 = workspace.Barriers:FindFirstChild("1").CFrame
+local stag2 = workspace.Barriers:FindFirstChild("2").CFrame
+local stag3 = workspace.Barriers:FindFirstChild("3").CFrame
+local stag4 = workspace.Barriers:FindFirstChild("4").CFrame
+local hider = workspace.Map["NYC Bridge"].NYCBridge.Bridge.Bridge.MeshPart.CFrame
+local ends = workspace.Map["NYC Bridge"]["End_Line"].CFrame
+
 
 Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
-    workspace.Map["Part 1895"].Size = Vector3.new(618, 251, 415)
-    workspace.Map["Part 1898"].Size = Vector3.new(0,0.1,0)
 
     pcall(function()
         if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
             Player.Character.HumanoidRootPart.CFrame = hider
             
-            repeat task.wait() until workspace:FindFirstChild("Barrier") == nil
+            repeat task.wait() until workspace:FindFirstChild("StartBarrier") == nil
             task.wait(Stuff.Settings["Tp1"])
             Player.Character.HumanoidRootPart.CFrame = stag1
             
@@ -400,7 +370,7 @@ Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
             
             task.wait(0.2)
             
-            Player.Character.HumanoidRootPart.CFrame = hider2
+            Player.Character.HumanoidRootPart.CFrame = hider
             
             repeat task.wait() until workspace.Barriers:FindFirstChild("2") == nil
             task.wait(Stuff.Settings["Tp3"])
@@ -408,15 +378,11 @@ Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
             
             task.wait(0.2)
             
-            Player.Character.HumanoidRootPart.CFrame = hider3
+            Player.Character.HumanoidRootPart.CFrame = hider
             
             repeat task.wait() until workspace.Barriers:FindFirstChild("3") == nil
             task.wait(Stuff.Settings["Tp4"])
             Player.Character.HumanoidRootPart.CFrame = stag4
-            
-            task.wait(0.2)
-            
-            Player.Character.HumanoidRootPart.CFrame = hider4
             
             task.wait(0.2)
         
@@ -425,18 +391,15 @@ Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
             
             Player.Character.HumanoidRootPart.CFrame = ends
             
-            task.wait(0.01)
-            workspace.Map.Uzukee.RightLowerArm.Size = Vector3.new(0,0,0)
-            
-            task.wait(7)
-            Player.Character.HumanoidRootPart.CFrame = hider4
+            task.wait(2)
+            Player.Character.HumanoidRootPart.CFrame = hider
         end
     end)
 end)
 
 Section:NewButton("Auto SBR V2 (Horse)", "use if noob", function()
     pcall(function()
-        repeat wait() until workspace:FindFirstChild("Barrier") == nil
+        repeat wait() until workspace:FindFirstChild("StartBarrier") == nil
         task.wait(Stuff.Settings["Tp1"])
         HorseVar.HumanoidRootPart.CFrame = stag1
         
@@ -470,13 +433,13 @@ Section:NewButton("Auto SBR V2 (Horse)", "use if noob", function()
     end)
 end)
 
-Section5:NewButton("Delete Barriers", "", function()
+--[[Section5:NewButton("Delete Barriers", "", function()
     workspace.Barrier.Barrier:Destroy()
     workspace.Barrier.Barrier:Destroy()
     workspace.Barrier.Barrier:Destroy()
     workspace.Barrier.Barrier:Destroy()
     workspace.Barrier.Barrier:Destroy()
-end)
+end)]]
 
 Section5:NewButton("Delete Stage Barriers", "", function(t)
     workspace.Barriers["1"]:Destroy()
