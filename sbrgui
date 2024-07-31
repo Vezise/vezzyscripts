@@ -345,8 +345,9 @@ end)
 local stag1 = workspace.Barriers:FindFirstChild("1").CFrame
 local stag2 = workspace.Barriers:FindFirstChild("2").CFrame
 local stag3 = workspace.Barriers:FindFirstChild("3").CFrame
-local stag4 = workspace.Barriers:FindFirstChild("4").CFrame
+local stag4 = workspace.Map["NYC Bridge"].Start.CFrame
 local hider = workspace.Map["NYC Bridge"].NYCBridge.Bridge.Bridge.MeshPart.CFrame
+local hider2 = workspace.Zone.CFrame - Vector3.new(0,35,0)
 local ends = workspace.Map["NYC Bridge"]["End_Line"].CFrame
 
 
@@ -356,7 +357,7 @@ Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
         if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
             Player.Character.HumanoidRootPart.CFrame = hider
             
-            repeat task.wait() until workspace:FindFirstChild("StartBarrier") == nil
+            repeat task.wait() until workspace.Barrier:FindFirstChild("StartBarrier") == nil
             task.wait(Stuff.Settings["Tp1"])
             Player.Character.HumanoidRootPart.CFrame = stag1
             
@@ -385,8 +386,10 @@ Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
             Player.Character.HumanoidRootPart.CFrame = stag4
             
             task.wait(0.2)
-        
-            repeat task.wait() until workspace.Barriers:FindFirstChild("4") == nil
+
+            repeat task.wait()
+                Player.Character.HumanoidRootPart.CFrame = hider2
+            until workspace.Barriers:FindFirstChild("4") == nil
             task.wait(Stuff.Settings["Tp5"])
             
             Player.Character.HumanoidRootPart.CFrame = ends
@@ -448,46 +451,9 @@ Section5:NewButton("Delete Stage Barriers", "", function(t)
     workspace.Barriers["4"]:Destroy()
 end)
 
-Section2:NewButton("Start of SBR", "Teleports you to the start of SBR", function()
-    local Place = CFrame.new(-1622.7752685546875, 295.1148986816406, -222.1315155029297)
-    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        Player.Character.HumanoidRootPart.CFrame = Place
-    end
-end)
-            
-Section2:NewButton("Devil's Palm (First)", "Teleports you The Devil's Palm", function()
-    local Place = CFrame.new(-1431.3887939453125, 262.114501953125, 2923.100830078125)
-    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        Player.Character.HumanoidRootPart.CFrame = Place
-    end
-end)
-
-Section2:NewButton("Plains (Second)", "Teleports you to the Plains", function()
-    local Place = CFrame.new(-1128.3907470703125, 277.2216796875, 3829.08349609375)
-    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        Player.Character.HumanoidRootPart.CFrame = Place
-    end
-end)
-
-Section2:NewButton("Arctic (Third)", "Teleports you to The Arctic", function()
-    local Place = CFrame.new(-854.3408203125, 410.123046875, 6108.69775390625)
-    if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        Player.Character.HumanoidRootPart.CFrame = Place
-    end
-end)
-
-Section2:NewButton("Last Stage (Fourth)", "Teleports you to the last stage of SBR", function()
-    Player.Character.HumanoidRootPart.CFrame = CFrame.new(-1429.9888916015625, 497.5647277832031, 8139.3466796875)
-    
-end)
-
 Section2:NewButton("Last Stage (Hide)", "hides you in last stage", function()
-    workspace.Map["Part 1895"].Size = Vector3.new(618, 251, 415)
-    workspace.Map["Part 1898"].Size = Vector3.new(0,0.1,0)
-
-    local Place = CFrame.new(-1360.38916015625, 390.1241760253906, 7912.0849609375)
     if Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") then
-        Player.Character.HumanoidRootPart.CFrame = Place
+        Player.Character.HumanoidRootPart.CFrame = hider2
     end
 end)
 
@@ -615,43 +581,9 @@ Section3:NewToggle("Horse Fly", "Move = WASD", function(t)
     end
 end)
 
-Section4:NewButton("Start of SBR", "Teleports you to the start of SBR", function()
-    local Place = CFrame.new(-1622.7752685546875, 295.1148986816406, -222.1315155029297)
-    if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = Place
-    end
-end)
-            
-Section4:NewButton("Devil's Palm (First)", "Teleports you The Devil's Palm", function()
-    local Place = CFrame.new(-1431.3887939453125, 262.114501953125, 2923.100830078125)
-    if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = Place
-    end
-end)
-
-Section4:NewButton("Plains (Second)", "Teleports you to the Plains", function()
-    local Place = CFrame.new(-1128.3907470703125, 277.2216796875, 3829.08349609375)
-    if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = Place
-    end
-end)
-
-Section4:NewButton("Arctic (Third)", "Teleports you to The Arctic", function()
-    local Place = CFrame.new(-854.3408203125, 410.123046875, 6108.69775390625)
-    if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = Place
-    end
-end)
-
-Section4:NewButton("Last Stage (Fourth)", "Teleports you to the last stage of SBR", function()
-    HorseVar.HumanoidRootPart.CFrame = CFrame.new(-1429.9888916015625, 497.5647277832031, 8139.3466796875)
-    
-end)
-
 Section4:NewButton("Last Stage (Hide)", "hides you in last stage", function()
-    local Place = CFrame.new(-1360.38916015625, 390.1241760253906, 7912.0849609375)
     if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = Place
+        HorseVar.HumanoidRootPart.CFrame = hider
     end
 end)
 
@@ -659,29 +591,12 @@ Section4:NewButton("End of SBR", "TP TO END OF SBR", function()
     HorseVar.HumanoidRootPart.CFrame = ends
 end)
 
-Section4:NewButton("Hide Horse (Start)", "hide horse in start of sbr", function()
+Section4:NewButton("Hide Horse", "hide horse in start of sbr", function()
     if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = CFrame.new(-1096.5750732421875, 356.12286376953125, -242.56854248046875)
+        HorseVar.HumanoidRootPart.CFrame = hider
     end
 end)
 
-Section4:NewButton("Hide Horse (Stage 1)", "hide horse in start of sbr", function()
-    if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = CFrame.new(-2205.9365234375, 368.1224060058594, 4097.49267578125)
-    end
-end)
-
-Section4:NewButton("Hide Horse (Stage 2)", "hide horse in start of sbr", function()
-    if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = CFrame.new(-581.563720703125, 484.1239318847656, 5878.8369140625)
-    end
-end)
-
-Section4:NewButton("Hide Horse (Stage 3)", "hide horse in start of sbr", function()
-    if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
-        HorseVar.HumanoidRootPart.CFrame = CFrame.new(-1360.38916015625, 390.1241760253906, 7912.0849609375)
-    end
-end)
 
 Section4:NewButton("TP to Horse", "yes", function()
     if HorseVar and HorseVar:FindFirstChild("HumanoidRootPart") then
