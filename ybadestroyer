@@ -304,7 +304,7 @@ MainTab:Toggle("Invisibility", "makes you invis", false, function(t)
     end
 end)
 
-settings["7"] = MainTab:TextBox("Invisiility Key", function(text)
+settings["7"] = MainTab:TextBox("Invisibility Key", function(text)
     settings["inviskey"] = Enum.KeyCode[text]
 end)
 
