@@ -1,0 +1,505 @@
+--[[
+
+    MADE BY vezrr & crtrz ON DISCORD!
+    https://discord.gg/DXrGhrxZ9v
+
+]]
+
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/ry59CnUE"))()
+local Window = Library.Create("vezrr & crtrz gui", "yba killer :skull:")
+local MainTab = Window:Tab("Main")
+local StandTab = Window:Tab("Stand Tab")
+local TeleportTab = Window:Tab("Teleports Tab")
+local ServerTab = Window:Tab("Server Tab")
+
+local Player = game.Players.LocalPlayer
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local PlayerGui = Player:FindFirstChild("PlayerGui")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local TempStore = Instance.new("Folder", game.ReplicatedStorage)
+TempStore.Name = "TempStorage"
+local StayInPilot = Instance.new("BoolValue", workspace)
+StayInPilot.Value = false
+--[[
+            disables effects so crasher doesnt brick your game
+for i,v in pairs(getconnections(game.ReplicatedStorage.ClientFX.OnClientEvent)) do
+    v:Disable()
+end
+
+]]
+
+getgenv().settings = {
+    ["invisenabled"] = nil,
+    ["antits"] = nil,
+    ["inviskey"] = Enum.KeyCode.L,
+	["oldpos"] = nil,
+	["delay"] = 0.8,
+	["crasher"] = false,
+	["customval"] = 2000,
+	["standspeed"] = 1.5,
+	["pilotjumppower"] = 1.5,
+	["hidebody"] = true,
+	["tpbodytostand"] = true,
+	["bodydistance"] = 37,
+	["pilotkey"] = Enum.KeyCode.H,
+	["currentargs"] = nil,
+    ["flingtarget"] = nil,
+    ["animationlist"] = {},
+    ["1"] = nil,
+    ["2"] = nil,
+    ["3"] = nil,
+    ["4"] = nil,
+    ["5"] = nil,
+    ["6"] = nil,
+    ["7"] = nil
+}
+
+settings.teleports = {
+    ["Newbie Giorno"] = CFrame.new(1, 0, -697),
+    ["Train Station Side 1"] = CFrame.new(-214, 0, 18),
+    ["Train Station Side 2"] = CFrame.new(-265, -30, -447),
+    ["Pizza Place"] = CFrame.new(113, 6, 71),
+    ["The Arcade"] = CFrame.new(255, 5, -239),
+    ["The Cafe"] = CFrame.new(-544, -25, -174),
+    ["Diavolo"] = CFrame.new(1126, 116, -129),
+    ["Dio P3"] = CFrame.new(-44, 0, -973),
+    ["Jotaro P3"] = CFrame.new(182, -25, 578),
+    ["Jotaro P6"] = CFrame.new(784, -42, 144),
+    ["Tallest Peak"] = CFrame.new(-237, 284, 305),
+    ["Hamon Merchant"] = CFrame.new(421, 8, -287),
+    ["Boxing Merchant"] = CFrame.new(281, 0, 101),
+    ["Pluck Merchant"] = CFrame.new(125, -27, 438),
+    ["Heaven Dimension"] = CFrame.new(8553, -479, 8154),
+    ["Arrowsmith"] = CFrame.new(-667, 16, -299),
+    ["Cosmetics Merchants"] = CFrame.new(512, 2, 22),
+    ["Leaky Eye Luca"] = CFrame.new(-382, 0, -711),
+    ["Chad"] = CFrame.new(-121, -24, 524),
+    ["Brad the Bat Merchant"] = CFrame.new(-14, -0, -286),
+    ["Dracula"] = CFrame.new(-420, -34, -75),
+    ["Kars"] = CFrame.new(264, -33, 112),
+    ["Homeless Man Jill"] = CFrame.new(-142, -31, -577),
+    ["Vampire Room"] = CFrame.new(391, -31, -166),
+    ["Enrico Pucci"] = CFrame.new(917, 34, -17),
+    ["Safe Spot"] = CFrame.new(-452, -20, 206)
+}
+
+for i,v in pairs(game.ReplicatedStorage.Anims:GetDescendants()) do
+    if v:IsA("Animation") and v.Parent.Name ~= "Poses" then
+        table.insert(settings["animationlist"], v.Name)
+    end
+end
+
+if workspace:FindFirstChild("AnticheatBypass") == nil then
+    local OldNamecallTP;
+    OldNamecallTP = hookmetamethod(game, '__namecall', newcclosure(function(self, ...)
+        local Arguments = {...}
+        local Method =  getnamecallmethod()
+            
+        if Method == "InvokeServer" and Arguments[1] == "idklolbrah2de" then
+            return "  ___XP DE KEY"
+        end
+            
+        return OldNamecallTP(self, ...)
+    end))
+end
+
+if workspace:FindFirstChild("AnticheatBypass") ~= nil then
+    workspace.AnticheatBypass:Destroy()
+end
+
+local DontTouch = Instance.new("Part", workspace)
+DontTouch.Transparency = 1
+DontTouch.Anchored = true
+DontTouch.CanCollide = false
+DontTouch.Name = "AnticheatBypass"
+
+local function SearchPlayer(Name)
+    local ClosestMatch = nil
+    local ClosestLetters = 0
+    for i,v in pairs(workspace.Living:GetChildren()) do
+        local matched_letters = 0
+        for i = 1, #Name do
+            if string.sub(Name:lower(), 1, i) == string.sub(v.Name:lower(), 1, i) then
+                matched_letters = i
+            end
+        end
+        if matched_letters > ClosestLetters then
+            ClosestLetters = matched_letters
+            ClosestMatch = v
+        end
+    end
+    return ClosestMatch
+end
+
+local function UpdateIndex()
+	CurrentCharacter = Player.Character
+	Humanoid = CurrentCharacter:FindFirstChildOfClass("Humanoid")
+	SummonedStand = CurrentCharacter:FindFirstChild("SummonedStand")
+	
+	StandMorph = CurrentCharacter:FindFirstChild("StandMorph")
+	StandHumanoid = StandMorph:FindFirstChildOfClass("Humanoid")
+	
+	Camera = workspace.CurrentCamera
+end	
+
+
+local function PilotStand()
+	UpdateIndex()
+	
+	for i,v in pairs(workspace.Locations:GetChildren()) do
+		if v.Name == "Naples' Sewers" then
+			v.Parent = TempStore
+		end
+	end
+
+	local CameraValue = Instance.new("ObjectValue", StandMorph.Parent)
+	local PilotFunctions = {["FocusCam"] = CameraValue, ["CFrame"] = CurrentCharacter.PrimaryPart.CFrame}
+
+	CameraValue.Name = "FocusCam"
+	CameraValue.Value = StandHumanoid
+	
+	for _,v in pairs(CurrentCharacter:GetChildren()) do
+		if v:IsA("BasePart") then
+			v.CanCollide = false
+		end
+	end
+	
+	--//Jumping\\--
+	PilotFunctions["JumpSignal"] = Humanoid:GetPropertyChangedSignal("Jump"):Connect(function()
+		if Humanoid.Jump then
+	    	StandHumanoid.Jump = true
+	    end
+	end)
+	
+	--//WalkSpeed\\--
+	StandHumanoid.WalkSpeed = Humanoid.WalkSpeed*settings["standspeed"]
+	PilotFunctions["PilotSpeed"] = Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+	    StandHumanoid.WalkSpeed = Humanoid.WalkSpeed*settings["standspeed"]
+	end)
+	
+	
+	--//Jump Power\\--
+	StandHumanoid.JumpPower = Humanoid.JumpPower*settings["pilotjumppower"]
+	PilotFunctions["JumpPower"] = Humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
+	    StandHumanoid.JumpPower = Humanoid.JumpPower*settings["pilotjumppower"]
+	end)
+	
+	if not settings["hidebody"] then
+		CurrentCharacter.PrimaryPart.Anchored = true
+	end
+	
+	--//Walking\\--
+	PilotFunctions["LoopTP"] = RunService.Heartbeat:Connect(function()
+		local MoveDirection = Camera.CFrame:VectorToObjectSpace(Humanoid.MoveDirection)
+		StandHumanoid:Move(MoveDirection, true)
+		
+		if settings["hidebody"] then
+			CurrentCharacter.PrimaryPart.CFrame = StandMorph.PrimaryPart.CFrame+Vector3.new(0,-settings["bodydistance"],0)
+		end
+	end)
+	
+	StandMorph:FindFirstChild("AlignOrientation", true).Enabled = false
+	StandMorph:FindFirstChild("AlignPosition", true).Enabled = false
+	for i,v in pairs(StandMorph:GetDescendants()) do
+	    if v:IsA("BasePart") or v:IsA("UnionOperation") then
+	        game:GetService("PhysicsService"):SetPartCollisionGroup(v, "Players")
+	    end
+	end
+	return PilotFunctions
+end
+
+local function UnPilotStand(Returned)
+	UpdateIndex()
+	
+	for i,v in pairs(game.ReplicatedStorage.TempStorage:GetChildren()) do
+		if v.Name == "Naples' Sewers" then
+			v.Parent = workspace.Locations
+		end
+	end
+
+	for x,v in pairs(Returned) do
+		if tostring(v) == "Connection" then
+			v:Disconnect()
+		end
+	end
+	
+	Returned["FocusCam"]:Destroy()
+	
+	CurrentCharacter.PrimaryPart.Velocity = Vector3.new()
+	if settings["tpbodytostand"] then
+		CurrentCharacter.PrimaryPart.CFrame = StandMorph.PrimaryPart.CFrame
+	else
+		CurrentCharacter.PrimaryPart.CFrame = Returned["CFrame"]
+	end
+	
+	StandMorph:FindFirstChild("AlignOrientation", true).Enabled = true
+	StandMorph:FindFirstChild("AlignPosition", true).Enabled = true
+	for i,v in pairs(StandMorph:GetDescendants()) do
+	    if v:IsA("BasePart") or v:IsA("UnionOperation") then
+	        game:GetService("PhysicsService"):SetPartCollisionGroup(v, "Stands")
+	    end
+	end
+	
+	if not settings["hidebody"] then
+		CurrentCharacter.PrimaryPart.Anchored = false
+	end
+end
+
+local UndergroundAnimation, Highlight
+function PlayAnimation(HumanoidCharacter, AnimationID, AnimationSpeed, Time)
+	local CreatedAnimation = Instance.new("Animation")
+	CreatedAnimation.AnimationId = AnimationID
+    local animationTrack = HumanoidCharacter:FindFirstChildOfClass("Humanoid"):FindFirstChildOfClass("Animator"):LoadAnimation(CreatedAnimation)
+
+	animationTrack:Play()
+	animationTrack:AdjustSpeed(AnimationSpeed)
+	animationTrack.Priority= Enum.AnimationPriority.Action4
+	animationTrack.TimePosition = Time
+	return animationTrack
+end
+
+local function Invisibile()
+    local HUD = PlayerGui:FindFirstChild("HUD")
+    HUD.Parent = nil
+
+    --//As Simple As That Gang\\--
+    UndergroundAnimation = PlayAnimation(Character, "rbxassetid://7189062263", 0, 5)
+    Player.Character = nil
+
+    UndergroundAnimation:Stop()
+    Player.Character = Character
+
+    HUD.Parent = PlayerGui
+
+    Highlight = Instance.new("Highlight")
+    Highlight.Parent = Character
+    Highlight.Enabled = true
+end
+
+local function Uninvisible()
+    --//As Simple As That Gang\\--
+    PlayAnimation(Character, "rbxassetid://7189062263", 0, 5):Stop()
+    Highlight:Destroy()
+end
+
+MainTab:Toggle("Invisibility", "makes you invis", false, function(t)
+    if t then
+        local IsInvisibile
+        settings["invisenabled"] = UserInputService.InputBegan:Connect(function(Input, GameProccessed)
+            if GameProccessed then return end
+            if Input.KeyCode ~= settings["inviskey"] then return end
+        
+            if IsInvisibile then
+                Uninvisible()
+            else
+                Invisibile()
+            end
+        
+            IsInvisibile = not IsInvisibile
+        end)
+    else
+        settings["invisenabled"]:Disconnect()
+        Uninvisible()
+    end
+end)
+
+settings["7"] = MainTab:TextBox("Invisiility Key", function(text)
+    settings["inviskey"] = Enum.KeyCode[text]
+end)
+
+MainTab:Seperator()
+
+MainTab:Toggle("Player Crasher/Server Lagger", "crashes everyone", false, function(t)
+    settings["crasher"] = t
+    if settings["crasher"] then
+        while settings["crasher"] do task.wait()
+			for i = settings["customval"], 1, -1 do
+				Player.Character.RemoteEvent:FireServer("Poison", {Duration = 10000, TotalDamage = 0.0001})
+				Player.Character.RemoteEvent:FireServer("Bleed", {Duration = 10000, TotalDamage = 0.0001})
+			end
+		end
+    else
+		task.wait(1)
+		Player.Character.RemoteEvent:FireServer("StopPoison")
+		Player.Character.RemoteEvent:FireServer("StopBleed")
+    end
+end)
+
+MainTab:Slider("Player Crasher Strength", 0, 50000, 2000, function(t)
+	settings["customval"] = t
+end)
+
+MainTab:Seperator()
+
+MainTab:Toggle("Anti-Timestop", "Bypasses timestop", false, function(t)
+	if t then
+		settings["antits"] = workspace.Living.DescendantAdded:Connect(function(a)
+			if a.Name == "TimeStopping" then
+				if Player:DistanceFromCharacter(workspace.Living[tostring(a.Parent)].HumanoidRootPart.Position) < 25 then
+					oldpos = Player.Character.PrimaryPart.CFrame
+					task.wait(0.1)
+					Player.Character.PrimaryPart.CFrame += Vector3.new(800,1000,500)
+					task.wait(settings["delay"])
+					Player.Character.PrimaryPart.CFrame = oldpos
+					print("hiu")
+				else
+					return
+				end
+			end
+		end)
+	else
+		settings["antits"]:Disconnect()
+	end
+end)
+
+MainTab:Slider("Anti-Timestop Delay", 0, 2, 0.8, function(t)
+	settings["delay"] = t
+end)
+
+StandTab:Toggle("Control Stand (God/Invis/Anti-Stun)", "yes", false, function(t)
+	if t then
+		repeat task.wait() until Player.Character:FindFirstChild("StandMorph")
+		UpdateIndex()
+		settings["1"] = SummonedStand:GetPropertyChangedSignal("Value"):Connect(function()
+			if not SummonedStand.Value then
+				StayInPilot.Value = false
+			end
+		end)
+
+		settings["2"] = UserInputService.InputBegan:Connect(function(InputObject)
+			if UserInputService:GetFocusedTextBox() then
+				return
+			end
+
+			if InputObject.KeyCode == settings["pilotkey"] then
+				StayInPilot.Value = not StayInPilot.Value
+			end
+		end)
+
+		settings["3"] = StayInPilot:GetPropertyChangedSignal("Value"):Connect(function()
+			if StayInPilot.Value then
+				settings["currentargs"] = PilotStand()
+			else
+				UnPilotStand(settings["currentargs"])
+			end
+		end)
+	else
+		settings["1"]:Disconnect()
+		settings["2"]:Disconnect()
+		settings["3"]:Disconnect()
+		UnPilotStand(settings["currentargs"])
+	end
+end)
+
+StandTab:Slider("Pilot Walk Speed", 1, 25, 1.5, function(t)
+	settings["standspeed"] = t
+end)
+
+StandTab:Slider("Pilot Jump Power", 1, 50, 1.5, function(t)
+	settings["pilotjumppower"] = t
+end)
+
+StandTab:Slider("Body distance from stand", 5, 45, 37, function(t)
+	settings["bodydistance"] = t
+end)
+
+StandTab:Toggle("Hide Body", "self explanatory", true, function(t)
+    settings["hidebody"] = t
+end)
+
+StandTab:Toggle("TP Body to Stand", "self explanatory", true, function(t)
+    settings["tpbodytostand"] = t
+end)
+
+settings["4"] = StandTab:TextBox("Pilot Key", function(text)
+    settings["pilotkey"] = Enum.KeyCode[text]
+end)
+
+StandTab:Seperator()
+
+settings["5"] = StandTab:TextBox("Choose Fling Target", function(text)
+    pcall(function()
+        local PossiblePlayer = SearchPlayer(text)
+    
+        if PossiblePlayer then
+            settings["flingtarget"] = PossiblePlayer.Name
+            settings["5"]:Update(PossiblePlayer.Name)
+        end
+    end)
+end)
+
+StandTab:Button("Beachboy Fling (Requires Auto Rod Pull)", "flings a player", function(t)
+    local Enemy = settings["flingtarget"]
+    local EnemyHRP = workspace.Living[Enemy].PrimaryPart
+    local CustomBreak;
+    local Character = Player.Character
+    local OldCFrame = Character.PrimaryPart.CFrame
+    Character.PrimaryPart.CFrame = CFrame.new(10000,1000,10000)
+    local FocusCam = Instance.new("ObjectValue", Character)
+    FocusCam.Name = "FocusCam"
+    FocusCam.Value = EnemyHRP
+    
+    repeat task.wait()
+        Character.PrimaryPart.CFrame = EnemyHRP.CFrame + Vector3.new(0,5,0) - EnemyHRP.Parent.Head.CFrame.LookVector * 5
+        task.spawn(function()
+            task.wait(0.5)
+            CustomBreak = true
+        end)
+    until CustomBreak
+    CustomBreak = false
+    
+    Character.PrimaryPart.CFrame = EnemyHRP.CFrame + Vector3.new(0,5,0) - EnemyHRP.Parent.Head.CFrame.LookVector * 5
+    Player.Character.RemoteEvent:FireServer("InputBegan", {["Input"] = Enum.KeyCode.Y})
+    
+    repeat task.wait()
+        Character.PrimaryPart.CFrame = EnemyHRP.CFrame + Vector3.new(9999,-130,9999) - EnemyHRP.Parent.Head.CFrame.LookVector * 30
+        task.spawn(function()
+            task.wait(1)
+            CustomBreak = true
+        end)
+    until CustomBreak
+    
+    CustomBreak = false
+    Character.PrimaryPart.CFrame = OldCFrame
+    task.wait(2)
+    FocusCam:Destroy()
+end)
+
+StandTab:Seperator()
+
+StandTab:Dropdown("Stand & Spec Animations", settings["animationlist"], function(SelectedAnimation)
+    local AnimID = 0
+    for i,v in pairs(game.ReplicatedStorage.Anims:GetDescendants()) do
+        if v:IsA("Animation") and v.Name == SelectedAnimation then
+            AnimID = v.AnimationId
+            break
+        end
+    end
+
+    local Anim = Instance.new("Animation", workspace.AnticheatBypass); Anim.Name = "YBA_AnticheatDetection"; Anim.AnimationId = AnimID
+    local Anim2 = Player.Character.StandMorph.AnimationController:LoadAnimation(Anim)
+    Anim2:Play()
+end)
+
+settings["6"] = TeleportTab:TextBox("TP to Player", function(text)
+    pcall(function()
+        local PossiblePlayer = SearchPlayer(text)
+    
+        if PossiblePlayer then
+            settings["flingtarget"] = PossiblePlayer.Name
+            settings["6"]:Update(PossiblePlayer.Name)
+            Player.Character.PrimaryPart.CFrame = PossiblePlayer.PrimaryPart.CFrame
+        end
+    end)
+end)
+
+for place, cframe in pairs(settings.teleports) do
+    TeleportTab:Button(place, place, function()
+        Player.Character.PrimaryPart.CFrame = cframe
+    end)
+end
+
+ServerTab:Button("Rejoin Server", "yes", function()
+    game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+end)
