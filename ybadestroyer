@@ -100,38 +100,6 @@ for i,v in pairs(game.ReplicatedStorage.Anims:GetDescendants()) do
 end
 
 if workspace:FindFirstChild("AnticheatBypass") == nil then
-    local Name = Player.Name
-    local hum = Player.Character.Humanoid
-    local speed = hum.WalkSpeed
-    local jump = hum.JumpPower
-    
-    local old_method;
-    old_method = hookmetamethod(game, "__newindex", newcclosure(function(self, key, sped, ...)
-        if key == "WalkSpeed" then
-            speed = sped
-            return old_method(self, key, settings["ws"], ...)
-        end
-        if key == "JumpPower" then
-            jump = sped
-            return old_method(self, key, settings["jp"], ...)
-        end
-        return old_method(self, key, sped, ...)
-    end))
-    
-    local old_method2;
-    old_method2 = hookmetamethod(game, "__index", newcclosure(function(self, key, ...)
-        if key == "WalkSpeed" then
-            return speed
-        end
-        if key == "JumpPower" then
-            return jump
-        end
-        if key == "MoveDirection" then
-            return Vector3.new(0,0,0)
-        end
-        return old_method2(self, key, ...)
-    end))
-
     hookfunction(workspace.Raycast, function() -- noclip bypass
         return
     end)
@@ -592,30 +560,4 @@ end)
 
 OtherTab:Slider("Distance", -5, 8, 2, function(t)
     settings["distancefr"] = t
-end)
-
-OtherTab:Seperator()
-
-OtherTab:Toggle("WalkSpeed", "yes", false, function(t)
-    if t then
-        Character.Humanoid.WalkSpeed = settings["ws"]
-    else
-        settings["ws"] = 22
-    end
-end)
-
-OtherTab:Slider("Change WalkSpeed", 22, 50, 22, function(t)
-    settings["ws"] = t
-end)
-
-OtherTab:Toggle("JumpPower", "yes", false, function(t)
-    if t then
-        Character.Humanoid.JumpPower = settings["jp"]
-    else
-        settings["jp"] = 50
-    end
-end)
-
-OtherTab:Slider("Change JumpPower", 50, 150, 50, function(t)
-    settings["jp"] = t
 end)
