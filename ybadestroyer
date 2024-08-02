@@ -8,9 +8,10 @@
 local Library = loadstring(game:HttpGet("https://pastebin.com/raw/ry59CnUE"))()
 local Window = Library.Create("vezrr & crtrz gui", "yba killer :skull:")
 local MainTab = Window:Tab("Main")
-local StandTab = Window:Tab("Stand Tab")
-local TeleportTab = Window:Tab("Teleports Tab")
-local ServerTab = Window:Tab("Server Tab")
+local StandTab = Window:Tab("Stand")
+local TeleportTab = Window:Tab("Teleports")
+local ServerTab = Window:Tab("Server")
+local OtherTab = Window:Tab("Other")
 
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
@@ -30,6 +31,8 @@ end
 ]]
 
 getgenv().settings = {
+    ["cachedbodyparts"] = {},
+    ["noclip"] = false,
     ["invisenabled"] = nil,
     ["antits"] = nil,
     ["inviskey"] = Enum.KeyCode.L,
@@ -52,7 +55,13 @@ getgenv().settings = {
     ["4"] = nil,
     ["5"] = nil,
     ["6"] = nil,
-    ["7"] = nil
+    ["7"] = nil,
+    ["8"] = nil,
+    ["target"] = nil,
+    ["attach"] = false,
+    ["distancefr"] = 2,
+    ["ws"] = 22,
+    ["jp"] = 50
 }
 
 settings.teleports = {
@@ -91,6 +100,38 @@ for i,v in pairs(game.ReplicatedStorage.Anims:GetDescendants()) do
 end
 
 if workspace:FindFirstChild("AnticheatBypass") == nil then
+    local Name = Player.Name
+    local hum = Player.Character.Humanoid
+    local speed = hum.WalkSpeed
+    local jump = hum.JumpPower
+    
+    local old_method;
+    old_method = hookmetamethod(game, "__newindex", newcclosure(function(self, key, sped, ...)
+        if key == "WalkSpeed" then
+            speed = sped
+            return old_method(self, key, settings["ws"], ...)
+        end
+        if key == "JumpPower" then
+            jump = sped
+            return old_method(self, key, settings["jp"], ...)
+        end
+        return old_method(self, key, sped, ...)
+    end))
+    
+    local old_method2;
+    old_method2 = hookmetamethod(game, "__index", newcclosure(function(self, key, ...)
+        if key == "WalkSpeed" then
+            return speed
+        end
+        if key == "JumpPower" then
+            return jump
+        end
+        if key == "MoveDirection" then
+            return Vector3.new(0,0,0)
+        end
+        return old_method2(self, key, ...)
+    end))
+
     hookfunction(workspace.Raycast, function() -- noclip bypass
         return
     end)
@@ -309,25 +350,28 @@ MainTab:Toggle("Invisibility", "makes you invis", false, function(t)
 end)
 
 settings["7"] = MainTab:TextBox("Invisibility Key", function(text)
-    settings["inviskey"] = Enum.KeyCode[text]
+    settings["inviskey"] = Enum.KeyCode[text:upper()]
 end)
 
 MainTab:Seperator()
 
 MainTab:Toggle("No-Clip", "noclip", false, function(t)
-    if t then
+    settings["noclip"] = t
+    if settings["noclip"] then
+        
         if Character then
-            for i,v in pairs(Character:GetChildren()) do
-                if v:IsA("BasePart") then
-                    v.CanCollide = false 
-                end  
-            end
+            --while settings["noclip"] do task.wait()
+                for i,v in pairs(Character:GetChildren()) do
+                    if v:IsA("BasePart") and v.CanCollide then
+                        table.insert(settings["cachedbodyparts"], v.Name)
+                        v.CanCollide = false 
+                    end  
+                end
+            --end
         end
     else
-        for i,v in pairs(Character:GetChildren()) do
-            if v:IsA("BasePart") then
-                v.CanCollide = true 
-            end   
+        for i,v in pairs(settings["cachedbodyparts"]) do
+            Character[v].CanCollide = true
         end
     end
 end, "Enables noclip (or disables)")
@@ -437,7 +481,7 @@ StandTab:Toggle("TP Body to Stand", "self explanatory", true, function(t)
 end)
 
 settings["4"] = StandTab:TextBox("Pilot Key", function(text)
-    settings["pilotkey"] = Enum.KeyCode[text]
+    settings["pilotkey"] = Enum.KeyCode[text:upper()]
 end)
 
 StandTab:Seperator()
@@ -526,4 +570,52 @@ end
 
 ServerTab:Button("Rejoin Server", "yes", function()
     game:GetService("TeleportService"):Teleport(game.PlaceId, game.Players.LocalPlayer)
+end)
+
+settings["8"] = OtherTab:TextBox("Target Player", function(text)
+    pcall(function()
+        local PossiblePlayer = SearchPlayer(text)
+    
+        if PossiblePlayer then
+            settings["target"] = PossiblePlayer.Name
+            settings["8"]:Update(PossiblePlayer.Name)
+        end
+    end)
+end)
+
+OtherTab:Toggle("Attach Stand to Player", "yes", false, function(t)
+    settings["attach"] = t
+    while settings["attach"] do task.wait()
+        Character.StandMorph.PrimaryPart.CFrame = workspace.Living[settings["target"]].PrimaryPart.CFrame - workspace.Living[settings["target"]].PrimaryPart.CFrame.LookVector * settings["distancefr"]
+    end
+end)
+
+OtherTab:Slider("Distance", -5, 8, 2, function(t)
+    settings["distancefr"] = t
+end)
+
+OtherTab:Seperator()
+
+OtherTab:Toggle("WalkSpeed", "yes", false, function(t)
+    if t then
+        Character.Humanoid.WalkSpeed = settings["ws"]
+    else
+        settings["ws"] = 22
+    end
+end)
+
+OtherTab:Slider("Change WalkSpeed", 22, 50, 22, function(t)
+    settings["ws"] = t
+end)
+
+OtherTab:Toggle("JumpPower", "yes", false, function(t)
+    if t then
+        Character.Humanoid.JumpPower = settings["jp"]
+    else
+        settings["jp"] = 50
+    end
+end)
+
+OtherTab:Slider("Change JumpPower", 50, 150, 50, function(t)
+    settings["jp"] = t
 end)
