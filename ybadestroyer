@@ -526,6 +526,9 @@ settings["6"] = TeleportTab:TextBox("TP to Player", function(text)
             settings["flingtarget"] = PossiblePlayer.Name
             settings["6"]:Update(PossiblePlayer.Name)
             Player.Character.PrimaryPart.CFrame = PossiblePlayer.PrimaryPart.CFrame
+            if Player.Character:FindFirstChild("StandMorph") then
+                Character.StandMorph.PrimaryPart.CFrame = PossiblePlayer.PrimaryPart.CFrame
+            end
         end
     end)
 end)
@@ -533,6 +536,9 @@ end)
 for place, cframe in pairs(settings.teleports) do
     TeleportTab:Button(place, place, function()
         Player.Character.PrimaryPart.CFrame = cframe
+        if Player.Character:FindFirstChild("StandMorph") then
+            Character.StandMorph.PrimaryPart.CFrame = cframe
+        end
     end)
 end
 
@@ -558,6 +564,6 @@ OtherTab:Toggle("Attach Stand to Player", "yes", false, function(t)
     end
 end)
 
-OtherTab:Slider("Distance", -5, 8, 2, function(t)
+OtherTab:Slider("Distance", -10, 8, 2, function(t)
     settings["distancefr"] = t
 end)
