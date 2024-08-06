@@ -408,6 +408,16 @@ local function LetOutPlayer(CFrame)
     if settings["useinvis"] then Uninvisible() end
 end
 
+MainTab:Keybind("Toggle UI", Enum.KeyCode.RightShift, {"W", "A", "S", "D", "Up", "Down", "Left", "Right", "CapsLock", "Tab"}, function(key)
+	if key then
+		MainTab:Notification("Changed Toggle key to: ", key)
+	else
+		Window:ToggleUI()
+	end
+end)
+
+MainTab:Seperator()
+
 MainTab:Toggle("Invisibility", "makes you invis", false, function(t)
     if t then
         local IsInvisibile
@@ -700,7 +710,7 @@ end)
 for place, cframe in settings.teleports do
     TeleportTab:Button(place, place, function()
         Player.Character.PrimaryPart.CFrame = cframe
-        if Player.Character:FindFirstChild("StandMorph") then
+        if Player.Character:FindFirstChild("StandMorph") and Player.Character.StandMorph:FindFirstChild("HumanoidRootPart") then
             Character.StandMorph.PrimaryPart.CFrame = cframe
         end
     end)
