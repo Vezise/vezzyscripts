@@ -152,7 +152,7 @@ local DP = 50
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V2.05 - https://discord.gg/DXrGhrxZ9v", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V2.06 - https://discord.gg/DXrGhrxZ9v", colors)
 local Tab = Window:NewTab("Main")
 local Tab5 = Window:NewTab("Auto SBR Settings")
 local Tab2 = Window:NewTab("Teleports")
@@ -300,7 +300,7 @@ Section:NewSlider("Fly Speed", "", 35,1, function(t)
 end)
 
 Section:NewToggle("Anti Vamp Burn", "", function(State)
-    if State == true then
+    if State then
         workspace.Weather.Value = nil
         _G.VampThing = workspace.Weather:GetPropertyChangedSignal("Value"):Connect(function()
             workspace.Weather.Value = nil
@@ -391,12 +391,8 @@ Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
                 Player.Character.HumanoidRootPart.CFrame = hider2
             until workspace.Barriers:FindFirstChild("4") == nil
             task.wait(Stuff.Settings["Tp5"])
-            local waiter = 0
-            repeat task.wait()
-                Player.Character.HumanoidRootPart.CFrame = ends
-                waiter = waiter + 1
-            until waiter == 100
-
+            Player.Character.HumanoidRootPart.CFrame = ends + Vector3.new(0,100,0)
+	    task.wait(5)
             Player.Character.HumanoidRootPart.CFrame = hider
         end
     end)
