@@ -152,7 +152,7 @@ local DP = 50
 
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V2.06 - https://discord.gg/DXrGhrxZ9v", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V2.07 - https://discord.gg/DXrGhrxZ9v", colors)
 local Tab = Window:NewTab("Main")
 local Tab5 = Window:NewTab("Auto SBR Settings")
 local Tab2 = Window:NewTab("Teleports")
@@ -392,8 +392,9 @@ Section:NewButton("Auto SBR V1 (Player)", "use if noob", function()
             until workspace.Barriers:FindFirstChild("4") == nil
             task.wait(Stuff.Settings["Tp5"])
             Player.Character.HumanoidRootPart.CFrame = ends + Vector3.new(0,100,0)
-	    task.wait(5)
-            Player.Character.HumanoidRootPart.CFrame = hider
+            
+	        task.wait(5)
+            Player.Character.HumanoidRootPart.CFrame = hider - Vector3.new(0,20,0)
         end
     end)
 end)
