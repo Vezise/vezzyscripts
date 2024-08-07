@@ -607,8 +607,6 @@ HorseTeleports:NewButton("Teleport Horse to you", "Teleports Horse to you", func
     Horse.HumanoidRootPart.CFrame = Character.PrimaryPart.CFrame
 end)
 
-
-
 getgenv().AttachLoop = nil
 Stands:NewToggle("Attach Yourself To Player", "the title the title", function(State)
     pcall(function()
@@ -728,14 +726,9 @@ Players.PlayerRemoving:Connect(function(player)
 end)
 
 Other:NewButton("Delete Stage Barriers", "you can't use auto sbr with this", function(t)
-    workspace.Barriers["1"]:Destroy()
-    workspace.Barriers["2"]:Destroy()
-    workspace.Barriers["3"]:Destroy()
-    workspace.Barriers["4"]:Destroy()
-end)
-
-Other:NewButton("Chat Logs", "see everyones messages", function()
-    loadstring(game:HttpGet("https://pastebin.com/raw/zTV1VTTB"))()
+    for i = 1, 4, 1 do
+        workspace.Barriers[i]:Destroy()
+    end
 end)
 
 Other:NewToggle("Infinite Dash", "Change Dash Power/Delay", function(State)
@@ -782,9 +775,7 @@ Character.ChildAdded:Connect(function(Child)
     end
 end)
 
-local _A = Character
-local _B = "AntiHeal"
-game.CollectionService.TagAdded:Connect(function(_A, _B)
+game.CollectionService.TagAdded:Connect(function(Character, "AntiHea")
     Character.RemoteEvent:FireServer("StopPoison")
     Character.RemoteEvent:FireServer("StopBleed")
     Character.RemoteEvent:FireServer("StopFire")
