@@ -775,7 +775,7 @@ Character.ChildAdded:Connect(function(Child)
     end
 end)
 
-game.CollectionService.TagAdded:Connect(function(Character, "AntiHea")
+game.CollectionService.TagAdded:Connect(function(Character, "AntiHeal")
     Character.RemoteEvent:FireServer("StopPoison")
     Character.RemoteEvent:FireServer("StopBleed")
     Character.RemoteEvent:FireServer("StopFire")
