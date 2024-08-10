@@ -1122,82 +1122,79 @@ Util:Log("Xenon Debug - Screen Fix")
 --// Preload Hooks ------------------------------------------------------------------------------------------------------------------------------------
 local HookStart = tick()
 
---// luraph Macro
-LPH_NO_VIRTUALIZE(function()
-    local OldNewIndex;
-    OldNewIndex = hm(game, "__newindex", newc(function(self, Key, Value, ...)
-        if Key == "WalkSpeed" then
-            Util:ChangeTable("Cache", "Speed", Value)
+local OldNewIndex;
+OldNewIndex = hm(game, "__newindex", newc(function(self, Key, Value, ...)
+if Key == "WalkSpeed" then
+    Util:ChangeTable("Cache", "Speed", Value)
 
-            if Util:GetState("Speed") == true then
-                return OldNewIndex(self, Key, Util:GetInt("Speed"), ...)
-            end
-        end
-
-        if Key == "JumpPower" then
-            Util:ChangeTable("Cache", "Jump", Value)
-
-            if Util:GetState("Jump") == true then
-                return OldNewIndex(self, Key, Util:GetInt("Jump"), ...)
-            end
-        end
-
-        --[[if Key == "MoveDirection" then
-            Util:ChangeTable("Cache", "MoveDirection", Value)
-        end]]
-
-        return OldNewIndex(self, Key, Value, ...)
-    end))
-
-    local OldIndex;
-    OldIndex = hm(game, "__index", newc(function(self, Key, ...)
-        if Key == "WalkSpeed" then
-            return Util:GetTable("Cache").Speed
-        end
-        if Key == "JumpPower" then
-            return Util:GetTable("Cache").Jump
-        end
-        --[[if Key == "MoveDirection" then
-            return Vector3.new(0,0,0)
-        end]]
-        if Util:GetState("Anti Vamp Burn") == true and Key == "ClockTime" then
-            return 0
-        end
-        return OldIndex(self, Key, ...)
-    end), false)
-    Util:Log("Xenon Debug - Passed WS/Jump Hook")
-    local OldNamecallTP;
-    OldNamecallTP = hm(game, '__namecall', newc(function(self, ...)
-        local Arguments = {...}
-        local Method =  getnamecallmethod()
-            
-        if Method == "InvokeServer" and Arguments[1] == "idklolbrah2de" then
-            return "  ___XP DE KEY"
-        end
-
-        if (Method == "FireServer" or Method == "InvokeServer" or Method == "InvokeClient") and Arguments[1] == "Reset" and Arguments[3] ~= "XENON_ON_TOP" then
-            return wait(9e9) 
-        end
-            
-        return OldNamecallTP(self, ...)
-    end))
-    Util:Log("Xenon Debug - Passed TP Hook")
-    --// Load item magnitude hook
-
-    local Char = Util:GetCharacter()
-
-    if Char and Char.PrimaryPart and Util:IsSBR() == false then
-        local OldIndexItem;
-        OldIndexItem = hm(Char.PrimaryPart.Position, "__index", newc(function(self, key)
-            if not checkcaller() and key:lower() == 'magnitude' and getcallingscript().Name == "ItemSpawn" then
-                return 0;
-            end
-            return OldIndexItem(self, key)
-        end), false)
+    if Util:GetState("Speed") == true then
+	return OldNewIndex(self, Key, Util:GetInt("Speed"), ...)
     end
+end
 
-    Util:Log("Xenon Debug - Passed Item Hook")
-end)()
+if Key == "JumpPower" then
+    Util:ChangeTable("Cache", "Jump", Value)
+
+    if Util:GetState("Jump") == true then
+	return OldNewIndex(self, Key, Util:GetInt("Jump"), ...)
+    end
+end
+
+--[[if Key == "MoveDirection" then
+    Util:ChangeTable("Cache", "MoveDirection", Value)
+end]]
+
+return OldNewIndex(self, Key, Value, ...)
+end))
+
+local OldIndex;
+OldIndex = hm(game, "__index", newc(function(self, Key, ...)
+if Key == "WalkSpeed" then
+    return Util:GetTable("Cache").Speed
+end
+if Key == "JumpPower" then
+    return Util:GetTable("Cache").Jump
+end
+--[[if Key == "MoveDirection" then
+    return Vector3.new(0,0,0)
+end]]
+if Util:GetState("Anti Vamp Burn") == true and Key == "ClockTime" then
+    return 0
+end
+return OldIndex(self, Key, ...)
+end), false)
+Util:Log("Xenon Debug - Passed WS/Jump Hook")
+local OldNamecallTP;
+OldNamecallTP = hm(game, '__namecall', newc(function(self, ...)
+local Arguments = {...}
+local Method =  getnamecallmethod()
+    
+if Method == "InvokeServer" and Arguments[1] == "idklolbrah2de" then
+    return "  ___XP DE KEY"
+end
+
+if (Method == "FireServer" or Method == "InvokeServer" or Method == "InvokeClient") and Arguments[1] == "Reset" and Arguments[3] ~= "XENON_ON_TOP" then
+    return wait(9e9) 
+end
+    
+return OldNamecallTP(self, ...)
+end))
+Util:Log("Xenon Debug - Passed TP Hook")
+--// Load item magnitude hook
+
+local Char = Util:GetCharacter()
+
+if Char and Char.PrimaryPart and Util:IsSBR() == false then
+local OldIndexItem;
+OldIndexItem = hm(Char.PrimaryPart.Position, "__index", newc(function(self, key)
+    if not checkcaller() and key:lower() == 'magnitude' and getcallingscript().Name == "ItemSpawn" then
+	return 0;
+    end
+    return OldIndexItem(self, key)
+end), false)
+end
+
+Util:Log("Xenon Debug - Passed Item Hook")
 
 hookfunction(workspace.Raycast, function() -- noclip bypass
     return
@@ -1282,19 +1279,17 @@ Util:Log("Xenon Debug - Passed SBR Check")
 
 --// Queue
 if not Util:IsSBR() and game.PlaceId ~= 5290908008 then
-    LPH_NO_VIRTUALIZE(function()
-        Util:Log(("-"):rep(35) .. "ITEM QUEUE" .. ("-"):rep(105))
-        for i,v in pairs(workspace.Item_Spawns.Items:GetChildren()) do
-            Util:AddToQueue(v)
-            Util:Log("[Xenon Queue]: Added " .. v.Name .. " to the item queue")
-        end
-
-        workspace.Item_Spawns.Items.ChildAdded:Connect(function(Child)
-            Util:AddToQueue(Child)
-        end)
-        
-        Util:Log(("-"):rep(150))
-    end)()
+	Util:Log(("-"):rep(35) .. "ITEM QUEUE" .. ("-"):rep(105))
+	for i,v in pairs(workspace.Item_Spawns.Items:GetChildren()) do
+	    Util:AddToQueue(v)
+	    Util:Log("[Xenon Queue]: Added " .. v.Name .. " to the item queue")
+	end
+	
+	workspace.Item_Spawns.Items.ChildAdded:Connect(function(Child)
+	    Util:AddToQueue(Child)
+	end)
+	
+	Util:Log(("-"):rep(150))
 end
 
 Util:Log("Xenon Debug - Added Items to Queue")
@@ -2463,34 +2458,32 @@ Autofarms_QuestFarm:Dropdown("Quest", Util:GetTable("ParsedQuests"), function(Se
     CurrentQuest:UpdateAsset("Quest Selected: " .. Util:GetString("Quest"))
 end, "Choose a quest from the list")
 
---LPH_NO_VIRTUALIZE(function()
-    Autofarms_QuestFarm:Toggle("Auto Choose", false, function(State)
-        Util:SetState("Auto Choose Quest", State)
+Autofarms_QuestFarm:Toggle("Auto Choose", false, function(State)
+Util:SetState("Auto Choose Quest", State)
+	while Util:GetState("Auto Choose Quest") == true do
+	    local LastHighest = 0
+	    local LastQuest;
+	    for i,v in pairs(Util:GetTable("ParsedQuests")) do
+		if v == "Homeless Man Jill [Lvl. 15+]" then
+		    continue
+		end
+	
+		local PlayerLevel = Util:GetPlayer().PlayerStats.Level.Value
+		local ParsedName = v:gsub("%D", "") --// Replaces everything apart from digits with ""
+		ParsedName = tonumber(ParsedName)
+		
+		if ParsedName <= PlayerLevel and ParsedName >= LastHighest then
+		    LastHighest = ParsedName
+		    LastQuest = v
+		end
+	    end
+	    Util:SetString("Quest", (LastQuest ~= nil and LastQuest or "No available quest found"))
+	    CurrentQuest:UpdateAsset("Quest Selected: " .. Util:GetString("Quest"))
+	
+	    task.wait(3)
+	end
+end, "Automatically chooses the best quest for you")
 
-        while Util:GetState("Auto Choose Quest") == true do
-            local LastHighest = 0
-            local LastQuest;
-            for i,v in pairs(Util:GetTable("ParsedQuests")) do
-                if v == "Homeless Man Jill [Lvl. 15+]" then
-                    continue
-                end
-
-                local PlayerLevel = Util:GetPlayer().PlayerStats.Level.Value
-                local ParsedName = v:gsub("%D", "") --// Replaces everything apart from digits with ""
-                ParsedName = tonumber(ParsedName)
-                
-                if ParsedName <= PlayerLevel and ParsedName >= LastHighest then
-                    LastHighest = ParsedName
-                    LastQuest = v
-                end
-            end
-            Util:SetString("Quest", (LastQuest ~= nil and LastQuest or "No available quest found"))
-            CurrentQuest:UpdateAsset("Quest Selected: " .. Util:GetString("Quest"))
-
-            task.wait(3)
-        end
-    end, "Automatically chooses the best quest for you")
---end)()
 Util:Log("Xenon Debug - Passed Auto Choose Quests")
 Autofarms_QuestFarm:Toggle("Quest Farm", false, function(State)
     Util:SetState("Quest Farm", State)
