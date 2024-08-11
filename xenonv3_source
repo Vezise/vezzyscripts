@@ -1189,7 +1189,7 @@ if game.PlaceId == 5290908008 then
       return 0;
       end
       return OldIndexItem(self, key)
-  end), false)
+  end))
   end
   
   Util:Log("Xenon Debug - Passed Item Hook")
