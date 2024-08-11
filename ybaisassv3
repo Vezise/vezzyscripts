@@ -173,7 +173,7 @@ Player.PlayerGui.Chat.Frame.Position = UDim2.new(0,0,1,95)
 --// UI Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V3.00 - discord.gg/2DzNtgGP9K", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V3.01 - discord.gg/2DzNtgGP9K", colors)
 local MainTab = Window:NewTab("Main")
 local SBRTab = Window:NewTab("Auto SBR")
 local TeleportsTab = Window:NewTab("Teleports")
