@@ -1160,7 +1160,7 @@ if game.PlaceId == 5290908008 then
       return 0
   end
   return OldIndex(self, Key, ...)
-  end), false)
+  end))
   Util:Log("Xenon Debug - Passed WS/Jump Hook")
   local OldNamecallTP;
   OldNamecallTP = hookmetamethod(game, '__namecall', newcclosure(function(self, ...)
