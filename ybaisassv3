@@ -6,19 +6,6 @@ if workspace:FindFirstChild("BarrierRoofKicks") then
     workspace.BarrierRoofKicks:Destroy()
 end
 
-local TeleportBypassable = false
-local Executor = identifyexecutor()
-local ExecutorList = {
-    "Synapse Z",
-    "Wave",
-    "Fluxus"
-}
-
-if table.find(ExecutorList, Executor) then
-    TeleportBypassable = true
-    print(Executor)
-end
-
 --// Variables
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
@@ -75,7 +62,7 @@ settings.stands = {
     ["HeavyPunch"] = false,
     ["Attached"] = false,
     ["AllPlayers"] = {},
-    ["Stand"] = nil,
+    ["Stand"] = nil
 }
 
 --// Permanently force locations (this is done because the map is randomised and some objects get deleted)
@@ -90,15 +77,11 @@ pcall(function()
 end)
     
 --// Functions
-local function SummonStand()
-    if not Character:FindFirstChild("StandMorph") then
+local function SummonStand(args)
+    if not Character:FindFirstChild("SummonedStand").Value and args == true then
         repeat task.wait() until Character:FindFirstChild("RemoteFunction")
         Character.RemoteFunction:InvokeServer("ToggleStand", "Toggle")
-    end
-end
-
-local function UnsummonStand()
-    if Character:FindFirstChild("StandMorph") then
+    elseif Character:FindFirstChild("SummonedStand").Value and args == false then
         repeat task.wait() until Character:FindFirstChild("RemoteFunction")
         Character.RemoteFunction:InvokeServer("ToggleStand", "Toggle")
     end
@@ -156,23 +139,10 @@ local function Get_Stroke()
     return StrokeDir, Anim
 end
 
-local function ReplaceReset()
-    local NewEvent = Instance.new("BindableEvent")
-    
-    NewEvent.Event:Connect(function()
-        local Char = Character
-
-        if Char and Char:FindFirstChild("RemoteEvent") then
-            Char.RemoteEvent:FireServer("Reset", {Anchored = false}, "vezrr");
-        end
-    end)
-    game:GetService("StarterGui"):SetCore("ResetButtonCallback", NewEvent)
-end
-
 print(TeleportBypassable)
 _G.BypassExecuted = false
 --// Bypasses
-if TeleportBypassable and not _G.BypassExecuted then
+if not _G.BypassExecuted then
     _G.BypassExecuted = true
     print("Starting Hooks")
     local OldNamecallTP;
@@ -191,33 +161,7 @@ if TeleportBypassable and not _G.BypassExecuted then
         return OldNamecallTP(self, ...)
     end))
     
-    ReplaceReset()
-    Player.CharacterAdded:Connect(function()
-        ReplaceReset()
-    end)
-    
     print("Hooked Teleport")
-    
-    local old_method;
-    old_method = hookmetamethod(game, "__newindex", newcclosure(function(self, key, sped, ...)
-        if key == "WalkSpeed" then
-            speed = sped
-            return old_method(self, key, settings["HookedSpeed"], ...)
-        end
-        
-        return old_method(self, key, sped, ...)
-    end))
-    
-    print("Completed Humanoid Hook 1")
-    local old_method2;
-    old_method2 = hookmetamethod(game, "__index", newcclosure(function(self, key, ...)
-        if key == "WalkSpeed" then
-            return DefaultSpeed
-        end
-
-        return old_method2(self, key, ...)
-    end))
-    print("Completed Humanoid Hook 2")
     print("Hooks Bypassed")
 end
 
@@ -246,7 +190,7 @@ local Stands = StandsTab:NewSection("Stand Attach")
 local Other = OtherTab:NewSection("Other")
 local Credits = CreditsTab:NewSection("Discord Server: discord.gg/2DzNtgGP9K")
 
-Player:NewToggle("Toggle Speed", "Toggles Custom Speed", function(State)
+--[[Player:NewToggle("Toggle Speed", "Toggles Custom Speed", function(State)
     settings["ToggleWalk"] = State
     
     if settings["ToggleWalk"] then
@@ -278,7 +222,7 @@ Player:NewSlider("Jump", "Adjust Jump", 200, 50, function(Value)
         settings["HookedJump"] = Value
         settings["JumpPower"] = Value
     end
-end)
+end)]]
 
 Player:NewToggle("Player Fly", "Move = WASD", function(State)
     if State then
@@ -609,7 +553,7 @@ end)
 
 getgenv().AttachLoop = nil
 Stands:NewToggle("Attach Yourself To Player", "the title the title", function(State)
-    pcall(function()
+    local suc, fail = pcall(function()
         local CameraValue;
         local OldPos;
         task.wait(1)
@@ -626,29 +570,33 @@ Stands:NewToggle("Attach Yourself To Player", "the title the title", function(St
             AttachLoop = game:GetService("RunService").RenderStepped:Connect(function()
                 task.wait()
                 local Prediction = EnemyChar.PrimaryPart.Velocity * (settings.stands["PredictionStrength"]/10)
-            
-                if not Character:FindFirstChild("StandMorph") then
-                    Character.RemoteFunction:InvokeServer("ToggleStand", "Toggle")
-                else
+
+                task.spawn(function()
+                    SummonStand(true)
+                end)
+                
+                task.spawn(function()
                     if Prediction == Vector3.new(0, 0, 0) then
+                        Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                        Character.HumanoidRootPart.CFrame = EnemyChar.PrimaryPart.CFrame - Vector3.new(0,40,0)
                         Character.StandMorph.HumanoidRootPart.StandAttach.AlignPosition.MaxForce = 9e9
                         Character.StandMorph.HumanoidRootPart.CFrame = EnemyChar.PrimaryPart.CFrame - EnemyChar.PrimaryPart.CFrame.lookVector * settings.stands["StandAttachDistance"]
                         Character.StandMorph.HumanoidRootPart.CFrame = CFrame.lookAt(Character.StandMorph.HumanoidRootPart.Position, EnemyChar.PrimaryPart.Position)
-                        Character.HumanoidRootPart.CFrame = EnemyChar.PrimaryPart.CFrame - Vector3.new(0,40,0)
                     else
+                        Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                        Character.HumanoidRootPart.CFrame = EnemyChar.PrimaryPart.CFrame - Vector3.new(0,35,0)
                         Character.StandMorph.HumanoidRootPart.StandAttach.AlignPosition.MaxForce = 9e9
                         Character.StandMorph.HumanoidRootPart.CFrame = EnemyChar.PrimaryPart.CFrame + Prediction
                         Character.StandMorph.HumanoidRootPart.CFrame = CFrame.lookAt(Character.StandMorph.HumanoidRootPart.Position, EnemyChar.PrimaryPart.Position)
-                        Character.HumanoidRootPart.CFrame = EnemyChar.PrimaryPart.CFrame - Vector3.new(0,35,0)
                     end
-                    
-                    if EnemyChar["Blocking_Capacity"].Value == 0 then
-                        if settings.stands["Barrage"] then UseMove(Enum.KeyCode.E) end
-                        if settings.stands["Punch"] then UseMove("m1") end
-                    else
-                        if settings.stands["Finisher"] then UseMove(Enum.KeyCode.R) end
-                        if settings.stands["HeavyPunch"] then UseMove("m2") end
-                    end
+                end)
+                
+                if EnemyChar["Blocking_Capacity"].Value == 0 then
+                    if settings.stands["Barrage"] then UseMove(Enum.KeyCode.E) end
+                    if settings.stands["Punch"] then UseMove("m1") end
+                else
+                    if settings.stands["Finisher"] then UseMove(Enum.KeyCode.R) end
+                    if settings.stands["HeavyPunch"] then UseMove("m2") end
                 end
             end)
         else
@@ -659,8 +607,8 @@ Stands:NewToggle("Attach Yourself To Player", "the title the title", function(St
                     Character.FocusCam:Destroy()
                 end
                 
-                for i = 0, 3, 1 do
-                    UnsummonStand()
+                for i = 0, 2, 1 do
+                    SummonStand(false)
                     
                     if settings.teleports["Normal Hide"] then
                         Character.PrimaryPart.CFrame = settings.teleports["Normal Hide"]
@@ -673,6 +621,7 @@ Stands:NewToggle("Attach Yourself To Player", "the title the title", function(St
             end
         end
     end)
+    warn(suc,fail)
 end)
 
 Stands:NewButton("Teleport to Player", "TP to player", function()
