@@ -1,6 +1,7 @@
-if game.PlaceId ~= 4643697430 then
-    game.Players.LocalPlayer:Kick("This script is for Steel Ball Run!")
-end
+game:GetService("StarterGui"):SetCore("SendNotification",{
+	Title = "yba is ass by vezrr",
+	Text = "This script is for Steel Ball Run",
+})
 
 if workspace:FindFirstChild("BarrierRoofKicks") then 
     workspace.BarrierRoofKicks:Destroy()
@@ -25,6 +26,11 @@ local DefaultJump = Humanoid.JumpPower
 local Horse = workspace:FindFirstChild(Player.Name.."'s Horse") or nil
 local CameraValue = Instance.new("ObjectValue", Character)
 CameraValue.Name = "FocusCam"
+
+Player.CharacterAdded:Connect(function()
+    CameraValue = Instance.new("ObjectValue", Character)
+    CameraValue.Name = "FocusCam"
+end)
 
 getgenv().ScriptSettings = {
     ["HookedSpeed"] = 22,
@@ -79,6 +85,7 @@ ScriptSettings.stands = {
     ["HeavyPunch"] = false,
     ["Attached"] = false,
     ["AllPlayers"] = {},
+    ["AllNPC"] = {},
     ["Stand"] = nil
 }
     
@@ -191,6 +198,12 @@ if not _G.BypassExecuted then
     
     pcall(function()
         print("Starting Hooks")
+
+        hookfunction(workspace.Raycast, function()
+            return
+        end)
+        
+        print("Hooked Raycast")
     
         local old_method;
         old_method = hookmetamethod(game, "__newindex", newcclosure(function(self, key, sped, ...)
@@ -243,7 +256,7 @@ Player.PlayerGui.Chat.Frame.Position = UDim2.new(0, 0, 1, 95)
 --// UI Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V3.04 - discord.gg/2DzNtgGP9K", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V3.05 - discord.gg/2DzNtgGP9K", colors)
 local MainTab = Window:NewTab("Main")
 local SBRTab = Window:NewTab("Auto SBR")
 local TeleportsTab = Window:NewTab("Teleports")
@@ -761,6 +774,18 @@ UpdateList()
 local PlayerSelection = StandSettings:NewDropdown("Select Target", "Select Target", ScriptSettings.stands["AllPlayers"], function(Select)
     ScriptSettings.stands["TargetPlayer"] = Select
 end)
+
+if game.PlaceId == 2809202155 then
+    for _, NPC in workspace.Living:GetChildren() do
+        if not Players:FindFirstChild(NPC.Name) then
+            table.insert(ScriptSettings.stands["AllNPC"], NPC.Name)
+        end
+    end
+
+    StandSettings:NewDropdown("Select NPC", "Select NPC", ScriptSettings.stands["AllNPC"], function(Select)
+        ScriptSettings.stands["TargetPlayer"] = Select
+    end)
+end
 
 StandSettings:NewToggle("Auto Barrage", "Auto Barrage", function(State)
     ScriptSettings.stands["Barrage"] = State
