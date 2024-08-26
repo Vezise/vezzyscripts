@@ -256,7 +256,7 @@ Player.PlayerGui.Chat.Frame.Position = UDim2.new(0, 0, 1, 95)
 --// UI Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V3.05 - discord.gg/2DzNtgGP9K", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V3.06 - discord.gg/2DzNtgGP9K", colors)
 local MainTab = Window:NewTab("Main")
 local SBRTab = Window:NewTab("Auto SBR")
 local TeleportsTab = Window:NewTab("Teleports")
@@ -660,9 +660,11 @@ Stands:NewToggle("Attach Yourself To Player", "the title the title", function(St
             OldPos = PrimaryPart.CFrame
             
             CameraValue.Value = EnemyChar.Head
-            
-            RemoteEvent:FireServer("Poison", {Duration = math.huge, TotalDamage = math.huge})
-            
+
+	    if game.PlaceId ~= 2809202155 then
+                RemoteEvent:FireServer("Poison", {Duration = math.huge, TotalDamage = math.huge})
+            end
+
             AttachLoop = game:GetService("RunService").RenderStepped:Connect(function()
                 if workspace.Living:FindFirstChild(ScriptSettings.stands["TargetPlayer"]) == nil then
                     AttachLoop:Disconnect()
