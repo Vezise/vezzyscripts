@@ -1,6 +1,6 @@
---[[if game.PlaceId ~= 4643697430 then
+if game.PlaceId ~= 4643697430 then
     game.Players.LocalPlayer:Kick("This script is for Steel Ball Run!")
-end]]
+end
 
 if workspace:FindFirstChild("BarrierRoofKicks") then 
     workspace.BarrierRoofKicks:Destroy()
