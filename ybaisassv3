@@ -26,12 +26,6 @@ local Horse = workspace:FindFirstChild(Player.Name.."'s Horse") or nil
 local CameraValue = Instance.new("ObjectValue", Character)
 CameraValue.Name = "FocusCam"
 
--- this is just for testing purposes in maingame
-Player.CharacterAdded:Connect(function()
-    CameraValue = Instance.new("ObjectValue", Character)
-    CameraValue.Name = "FocusCam"
-end)
-
 getgenv().ScriptSettings = {
     ["HookedSpeed"] = 22,
     ["WalkSpeed"] = 22,
