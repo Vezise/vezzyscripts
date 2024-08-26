@@ -1,6 +1,6 @@
-if game.PlaceId ~= 4643697430 then
+--[[if game.PlaceId ~= 4643697430 then
     game.Players.LocalPlayer:Kick("This script is for Steel Ball Run!")
-end
+end]]
 
 if workspace:FindFirstChild("BarrierRoofKicks") then 
     workspace.BarrierRoofKicks:Destroy()
@@ -70,8 +70,8 @@ pcall(function()
 end)
 
 ScriptSettings.stands = {
-    ["StandAttachDistance"] = 0,
-    ["PredictionStrength"] = 0,
+    ["StandAttachDistance"] = 3,
+    ["PredictionStrength"] = 4,
     ["TargetPlayer"] = nil,
     ["Barrage"] = false,
     ["Finisher"] = false,
@@ -243,13 +243,14 @@ Player.PlayerGui.Chat.Frame.Position = UDim2.new(0, 0, 1, 95)
 --// UI Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V3.03 - discord.gg/2DzNtgGP9K", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V3.04 - discord.gg/2DzNtgGP9K", colors)
 local MainTab = Window:NewTab("Main")
 local SBRTab = Window:NewTab("Auto SBR")
 local TeleportsTab = Window:NewTab("Teleports")
 local HorseTabs = Window:NewTab("Horse")
 local StandsTab = Window:NewTab("Stand")
 local OtherTab = Window:NewTab("Other")
+local KeybindTab = Window:NewTab("Keybinds")
 local CreditsTab = Window:NewTab("Credits")
 
 local PlayerTab = MainTab:NewSection("Player")
@@ -258,6 +259,7 @@ local Teleports = TeleportsTab:NewSection("Teleports")
 local HorseTab = HorseTabs:NewSection("Horse")
 local Stands = StandsTab:NewSection("Stand Attach")
 local Other = OtherTab:NewSection("Other")
+local Keybinds = KeybindTab:NewSection("Keybinds")
 local Credits = CreditsTab:NewSection("Discord Server: discord.gg/2DzNtgGP9K")
 
 PlayerTab:NewToggle("Toggle Speed", "Toggles Custom Speed", function(State)
@@ -639,14 +641,38 @@ Stands:NewToggle("Attach Yourself To Player", "the title the title", function(St
     local Success, Fail = pcall(function()
         if State then
             local EnemyChar = workspace.Living:FindFirstChild(ScriptSettings.stands["TargetPlayer"])
+            
             if not EnemyChar then return end
             
             OldPos = PrimaryPart.CFrame
             
             CameraValue.Value = EnemyChar.Head
             
+            RemoteEvent:FireServer("Poison", {Duration = math.huge, TotalDamage = math.huge})
+            
             AttachLoop = game:GetService("RunService").RenderStepped:Connect(function()
+                if workspace.Living:FindFirstChild(ScriptSettings.stands["TargetPlayer"]) == nil then
+                    AttachLoop:Disconnect()
+    
+                    SummonStand(false)
+                    
+                    RemoteEvent:FireServer("StopPoison")
+                    
+                    if ScriptSettings.teleports["Normal Hide"] then
+                        PrimaryPart.CFrame = ScriptSettings.teleports["Normal Hide"]
+                        Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                    else
+                        PrimaryPart.CFrame = OldPos
+                        Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                        
+                        if CameraValue and CameraValue ~= nil then
+                            CameraValue.Value = nil
+                        end
+                    end
+                end
+                
                 task.wait()
+                
                 local Prediction = EnemyChar.PrimaryPart.Velocity * (ScriptSettings.stands["PredictionStrength"]/10)
 
                 task.spawn(function()
@@ -681,19 +707,24 @@ Stands:NewToggle("Attach Yourself To Player", "the title the title", function(St
             if AttachLoop then
                 AttachLoop:Disconnect()
 
-                if CameraValue then
-                    CameraValue.Value = nil
-                end
-
                 SummonStand(false)
+
+                RemoteEvent:FireServer("StopPoison")
                 
                 if ScriptSettings.teleports["Normal Hide"] then
                     PrimaryPart.CFrame = ScriptSettings.teleports["Normal Hide"]
+                    Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
                 else
                     PrimaryPart.CFrame = OldPos
                     Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+                    
+                    if CameraValue and CameraValue ~= nil then
+                        CameraValue.Value = nil
+                    end
                 end
             end
+            
+        
         end
     end)
     
@@ -811,6 +842,10 @@ Other:NewSlider("Dash Delay", "", 2, 0.1, function(Value)
     ScriptSettings["InfDelay"] = Value;
 end)
 
+Keybinds:NewKeybind("Toggle UI", "Toggles UI", Enum.KeyCode.RightShift, function()
+    Library:ToggleUI()
+end)
+
 Credits:NewLabel("Owner & Developer: vezrr")
 Credits:NewLabel("Fly & Bypasses: enxquity")
 Credits:NewLabel("Godmode: crtrz")
@@ -819,13 +854,5 @@ Credits:NewLabel("UI: Kavo (Kavo UI Library)")
 Character.ChildAdded:Connect(function(Child)
     if Child:IsA("BodyPosition") or Child:IsA("BodyVelocity") then
         Child:Destroy()
-    end
-end)
-
-game.CollectionService.TagAdded:Connect(function(Tag)
-    if Tag == "AntiHeal" then
-        RemoteEvent:FireServer("StopPoison")
-        RemoteEvent:FireServer("StopBleed")
-        RemoteEvent:FireServer("StopFire")
     end
 end)
