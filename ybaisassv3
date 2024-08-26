@@ -7,11 +7,16 @@ if workspace:FindFirstChild("BarrierRoofKicks") then
 end
 
 --// Variables
+local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
-local OldPos = Character:FindFirstChild("HumanoidRootPart").CFrame or Character:WaitForChild("HumanoidRootPart").CFrame
+local PrimaryPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+local Humanoid = Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid")
+local RemoteEvent = Character:FindFirstChild("RemoteEvent") or Character:WaitForChild("RemoteEvent")
+local RemoteFunction = Character:FindFirstChild("RemoteFunction") or Character:WaitForChild("RemoteFunction")
+local OldPos = PrimaryPart.CFrame
 local InfDash;
 local InfTick = tick()
 local Humanoid = Character.Humanoid
@@ -21,6 +26,12 @@ local Horse = workspace:FindFirstChild(Player.Name.."'s Horse") or nil
 local CameraValue = Instance.new("ObjectValue", Character)
 CameraValue.Name = "FocusCam"
 
+-- this is just for testing purposes in maingame
+Player.CharacterAdded:Connect(function()
+    CameraValue = Instance.new("ObjectValue", Character)
+    CameraValue.Name = "FocusCam"
+end)
+
 getgenv().ScriptSettings = {
     ["HookedSpeed"] = 22,
     ["WalkSpeed"] = 22,
@@ -29,7 +40,10 @@ getgenv().ScriptSettings = {
     ["InfDelay"] = 0.5,
     ["DP"] = 50,
     ["AntiTS"] = nil,
-    ["AntiTSDelay"] = 0.8
+    ["AntiTSDelay"] = 0.8,
+    ["Invisibility"] = nil,
+    ["InvisKey"] = Enum.KeyCode.L,
+    ["Godmode"] = nil
 }
 
 ScriptSettings.sbr = {
@@ -47,15 +61,19 @@ ScriptSettings.horse = {
     ["FlySpeed"] = 1
 }
 
-ScriptSettings.teleports = {
-    ["Stage 1 Barrier"] = nil,
-    ["Stage 2 Barrier"] = nil,
-    ["Stage 3 Barrier"] = nil,
-    ["Stage 4 Barrier"] = nil,
-    ["Normal Hide"] = nil,
-    ["Finish Hide"] = nil,
-    ["Finish Line Barrier"] = nil
-}
+ScriptSettings.teleports = {}
+
+pcall(function()
+    ScriptSettings.teleports = {
+        ["Stage 1 Barrier"] = workspace.Barriers:FindFirstChild("1").CFrame,
+        ["Stage 2 Barrier"] = workspace.Barriers:FindFirstChild("2").CFrame,
+        ["Stage 3 Barrier"] = workspace.Barriers:FindFirstChild("3").CFrame,
+        ["Stage 4 Barrier"] = workspace.Map["NYC Bridge"].Start.CFrame,
+        ["Normal Hide"] = workspace.Map["NYC Bridge"].NYCBridge.Bridge.Bridge.MeshPart.CFrame,
+        ["Finish Hide"] = workspace.Map["NYC Bridge"].Start.CFrame - Vector3.new(0,30,0),
+        ["Finish Line Barrier"] = workspace.Map["NYC Bridge"]["End_Line"].CFrame + Vector3.new(0,100,0)
+    }
+end)
 
 ScriptSettings.stands = {
     ["StandAttachDistance"] = 0,
@@ -69,17 +87,6 @@ ScriptSettings.stands = {
     ["AllPlayers"] = {},
     ["Stand"] = nil
 }
-
---// Permanently force locations (this is done because the map is randomised and some objects get deleted)
-pcall(function()
-    ScriptSettings.teleports["Stage 1 Barrier"] = workspace.Barriers:FindFirstChild("1").CFrame
-    ScriptSettings.teleports["Stage 2 Barrier"] = workspace.Barriers:FindFirstChild("2").CFrame
-    ScriptSettings.teleports["Stage 3 Barrier"] = workspace.Barriers:FindFirstChild("3").CFrame
-    ScriptSettings.teleports["Stage 4 Barrier"] = workspace.Map["NYC Bridge"].Start.CFrame
-    ScriptSettings.teleports["Normal Hide"] = workspace.Map["NYC Bridge"].NYCBridge.Bridge.Bridge.MeshPart.CFrame
-    ScriptSettings.teleports["Finish Hide"] = workspace.Map["NYC Bridge"].Start.CFrame - Vector3.new(0,30,0)
-    ScriptSettings.teleports["Finish Line Barrier"] = workspace.Map["NYC Bridge"]["End_Line"].CFrame + Vector3.new(0,100,0)
-end)
     
 --// Functions
 local function SummonStand(args)
@@ -106,16 +113,14 @@ local function UseMove(Move)
     Move = Move
 
     if Move == string.lower("m1") or Move == string.lower("m2") then
-        local Char = Character
-        if Char and Char:FindFirstChild("RemoteFunction") then
-            Char:FindFirstChild("RemoteFunction"):InvokeServer("Attack", Move)
+        if RemoteFunction then
+            RemoteFunction:InvokeServer("Attack", Move)
         end
     end
     
     if typeof(Move) == "Enum" then
-        local Char = Character
-        if Char and Char:FindFirstChild("RemoteEvent") then
-            Char:FindFirstChild("RemoteEvent"):FireServer("InputBegan", {
+        if RemoteEvent then
+            RemoteEvent:FireServer("InputBegan", {
                 ["Input"] = Move
             })
         end
@@ -144,77 +149,107 @@ local function Get_Stroke()
     return StrokeDir, Anim
 end
 
-local function ReplaceReset()
-    local NewEvent = Instance.new("BindableEvent")
-    NewEvent.Event:Connect(function()
-        local Char = Character
+local function MakeInvisible(character)
+    for _, Part in character:GetDescendants() do
+        if Part:IsA("BasePart") or Part:IsA("Decal") then
+            Part.Transparency = 1
+            
+            if Part:IsA("BasePart") then
+                Part.CanCollide = false
+            end
+            
+        elseif Part:IsA("ParticleEmitter") or Part:IsA("Trail") then
+            Part.Enabled = false
 
-        if Char and Char:FindFirstChild("RemoteEvent") then
-            Char.RemoteEvent:FireServer("Reset", {Anchored = false}, "XENON_ON_TOP");
+        elseif Part:IsA("BillboardGui") or Part:IsA("SurfaceGui") then
+            Part.Enabled = false
         end
+    end
+end
+
+local function ControlHumanoid(NPC, WalkSpeed)
+    local ControlHumanoid = NPC:FindFirstChild("Humanoid")
+    local ControlHumanoidRootPart = NPC:FindFirstChild("HumanoidRootPart")
+	ControlHumanoid.WalkSpeed = WalkSpeed
+	
+	Humanoid:GetPropertyChangedSignal("Jump"):Connect(function()
+		if not Humanoid.Jump then return end
+	    ControlHumanoid.Jump = true
+	end)
+	
+	ControlHumanoid.WalkSpeed = Humanoid.WalkSpeed
+	Humanoid:GetPropertyChangedSignal("WalkSpeed"):Connect(function()
+	    if Humanoid.WalkSpeed == 0 then return end
+	    ControlHumanoid.WalkSpeed = Humanoid.WalkSpeed
+	end)
+    
+    ScriptSettings["Godmode"] = RunService.Heartbeat:Connect(function()
+    	local MoveDirection = CurrentCamera.CFrame:VectorToObjectSpace(Humanoid.MoveDirection)
+    	ControlHumanoid:Move(MoveDirection, true)
+    	
+    	HumanoidRootPart.CFrame = ControlHumanoidRootPart.CFrame
     end)
-    game:GetService("StarterGui"):SetCore("ResetButtonCallback", NewEvent)
 end
 
 --// Bypasses
 if not _G.BypassExecuted then
     _G.BypassExecuted = true
-    print("Starting Hooks")
-
-    local old_method;
-    old_method = hookmetamethod(game, "__newindex", newcclosure(function(self, key, sped, ...)
-        if key == "WalkSpeed" then
-            ScriptSettings["WalkSpeed"] = sped
-            
-            if ScriptSettings["ToggleWalk"] then
-                return old_method(self, key, ScriptSettings["HookedSpeed"], ...)
-            else
-                return old_method(self, key, 22, ...)
-            end
-        end
-        
-        return old_method(self, key, sped, ...)
-    end))
     
-    print("Completed Humanoid Hook 1")
-    local old_method2;
-    old_method2 = hookmetamethod(game, "__index", newcclosure(function(self, key, ...)
-        if key == "WalkSpeed" then
-            return ScriptSettings["WalkSpeed"]
-        end
-
-        return old_method2(self, key, ...)
-    end))
-    print("Completed Humanoid Hook 2")
-
-    local OldNamecallTP;
-    OldNamecallTP = hookmetamethod(game, '__namecall', newcclosure(function(self, ...)
-        local Arguments = {...}
-        local Method =  getnamecallmethod()
+    pcall(function()
+        print("Starting Hooks")
+    
+        local old_method;
+        old_method = hookmetamethod(game, "__newindex", newcclosure(function(self, key, sped, ...)
+            if key == "WalkSpeed" then
+                ScriptSettings["WalkSpeed"] = sped
+                
+                if ScriptSettings["ToggleWalk"] then
+                    return old_method(self, key, ScriptSettings["HookedSpeed"], ...)
+                else
+                    return old_method(self, key, 22, ...)
+                end
+            end
+            
+            return old_method(self, key, sped, ...)
+        end))
         
-        if Method == "InvokeServer" and Arguments[1] == "idklolbrah2de" then
-            return "  ___XP DE KEY"
-        end
-
-        --[[if (Method == "FireServer" or Method == "InvokeServer" or Method == "InvokeClient") and Arguments[1] == "Reset" and Arguments[3] ~= "XENON_ON_TOP" then
-            return wait(9e9) 
-        end]]
-
-        return OldNamecallTP(self, ...)
-    end))
-    print("Hooked Teleport")
-    print("Hooks Bypassed")
+        print("Completed Walkspeed Hook 1")
+        local old_method2;
+        old_method2 = hookmetamethod(game, "__index", newcclosure(function(self, key, ...)
+            if key == "WalkSpeed" then
+                return ScriptSettings["WalkSpeed"]
+            end
+    
+            return old_method2(self, key, ...)
+        end))
+        print("Completed Walkspeed Hook 2")
+    
+        local OldNamecallTP;
+        OldNamecallTP = hookmetamethod(game, '__namecall', newcclosure(function(self, ...)
+            local Arguments = {...}
+            local Method =  getnamecallmethod()
+            
+            if Method == "InvokeServer" and Arguments[1] == "idklolbrah2de" then
+                return "  ___XP DE KEY"
+            end
+    
+            return OldNamecallTP(self, ...)
+        end))
+        
+        print("Hooked Teleport")
+        print("Hooks Bypassed")
+    end)
 end
 
 --// Fix SBR Chat 
 Player.PlayerGui.Chat.Frame.ChatChannelParentFrame.Visible = true
-Player.PlayerGui.Chat.Frame.ChatChannelParentFrame.Position = UDim2.new(0,0,0,-156)
-Player.PlayerGui.Chat.Frame.Position = UDim2.new(0,0,1,95)
+Player.PlayerGui.Chat.Frame.ChatChannelParentFrame.Position = UDim2.new(0, 0, 0, -156)
+Player.PlayerGui.Chat.Frame.Position = UDim2.new(0, 0, 1, 95)
 
 --// UI Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V3.02 - discord.gg/2DzNtgGP9K", colors)
+local Window = Library.CreateLib("yba is ass by vezrr - V3.03 - discord.gg/2DzNtgGP9K", colors)
 local MainTab = Window:NewTab("Main")
 local SBRTab = Window:NewTab("Auto SBR")
 local TeleportsTab = Window:NewTab("Teleports")
@@ -312,23 +347,25 @@ PlayerTab:NewToggle("Player Fly", "Move = WASD", function(State)
         
         _G.FlyLoop = RunService.RenderStepped:Connect(function()
         	if not Character then return end
-        	Character.Humanoid.WalkSpeed = 0; Character.Humanoid.JumpPower = 0;
+        	Humanoid.WalkSpeed = 0; Humanoid.JumpPower = 0;
         	
-        	Character.PrimaryPart.CFrame = CFrame.new(Character.PrimaryPart.Position, Character.PrimaryPart.Position + workspace.CurrentCamera.CFrame.LookVector)
+        	PrimaryPart.CFrame = CFrame.new(PrimaryPart.Position, PrimaryPart.Position + workspace.CurrentCamera.CFrame.LookVector)
         	local CharacterMass = GetMass(Character)
         	--// Calculate new velocity
         	
             local Velocity = Vector3.new(0, CharacterMass/workspace.Gravity, 0) --// Lets try not to decend
             for i,v in pairs(Keys_Pressed) do
                 if v == 0 then else
-                Velocity = Math(Key_Info[i].Operator, Velocity, Character.PrimaryPart.CFrame[Key_Info[i].Direction] * ScriptSettings["FlySpeed"] * CharacterMass) end
+                Velocity = Math(Key_Info[i].Operator, Velocity, PrimaryPart.CFrame[Key_Info[i].Direction] * ScriptSettings["FlySpeed"] * CharacterMass) end
             end
         	
-        	Character.PrimaryPart.Velocity = Velocity
+        	PrimaryPart.Velocity = Velocity
         end)
     else
-        _G.FlyLoop:Disconnect()
-        Player.Character.Humanoid.WalkSpeed = 22
+        if _G.FlyLoop then 
+            _G.FlyLoop:Disconnect()
+            Player.Character.Humanoid.WalkSpeed = 22
+        end
     end
 end)
 
@@ -355,11 +392,11 @@ PlayerTab:NewToggle("Anti-Timestop", "Bypasses timestop", function(State)
 		ScriptSettings["AntiTS"] = workspace.Living.DescendantAdded:Connect(function(a)
 			if a.Name == "TimeStopping" then
 				if Player:DistanceFromCharacter(workspace.Living[tostring(a.Parent)].HumanoidRootPart.Position) < 25 then
-					OldPos = Player.Character.PrimaryPart.CFrame
+					OldPos = PrimaryPart.CFrame
 					task.wait(0.1)
-					Player.Character.PrimaryPart.CFrame += Vector3.new(1500,1500,1500)
+					PrimaryPart.CFrame += Vector3.new(1500,1500,1500)
 					task.wait(ScriptSettings["AntiTSDelay"])
-					Player.Character.PrimaryPart.CFrame = OldPos
+					PrimaryPart.CFrame = OldPos
 					print("hiu")
 				else
 					return
@@ -373,6 +410,17 @@ end)
 
 PlayerTab:NewSlider("Anti-Timestop Delay", "When to teleport back (value/10)", 20, 8, function(Value)
 	ScriptSettings["AntiTSDelay"] = (Value/10)
+end)
+
+PlayerTab:NewButton("Godmode", "Makes you god", function()
+    Character.Archivable = true
+    local ControlCharacter = Character:Clone()
+    ControlCharacter.Parent = workspace
+    ControlCharacter.PrimaryPart.CFrame = ControlCharacter.PrimaryPart.CFrame
+    
+    MakeInvisible(ControlCharacter)
+    ControlHumanoid(ControlCharacter, WalkSpeed)
+    RemoteEvent:FireServer("Poison", {Duration = math.huge, TotalDamage = math.huge})
 end)
 
 SBR:NewSlider("TP Stage 1 Delay", "", 35,0, function(Value)
@@ -473,7 +521,8 @@ end)
 
 for Name, CFrame in ScriptSettings.teleports do
     Teleports:NewButton(Name, "Teleport to this place", function()
-        Character.PrimaryPart.CFrame = CFrame
+        PrimaryPart.CFrame = CFrame
+        Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
     end)
 end
 
@@ -584,24 +633,23 @@ for Name, CFrame in ScriptSettings.teleports do
 end
 
 HorseTeleports:NewButton("Teleport to Horse", "Teleports you to Horse", function()
-    Character.PrimaryPart.CFrame = Horse.HumanoidRootPart.CFrame
+    PrimaryPart.CFrame = Horse.HumanoidRootPart.CFrame
 end)
 
 HorseTeleports:NewButton("Teleport Horse to you", "Teleports Horse to you", function()
-    Horse.HumanoidRootPart.CFrame = Character.PrimaryPart.CFrame
+    Horse.HumanoidRootPart.CFrame = PrimaryPart.CFrame
 end)
 
 getgenv().AttachLoop = nil
 Stands:NewToggle("Attach Yourself To Player", "the title the title", function(State)
-    local suc, fail = pcall(function()
-        
+    local Success, Fail = pcall(function()
         if State then
             local EnemyChar = workspace.Living:FindFirstChild(ScriptSettings.stands["TargetPlayer"])
             if not EnemyChar then return end
             
-            OldPos = Character.PrimaryPart.CFrame
+            OldPos = PrimaryPart.CFrame
             
-            CameraValue.Value = EnemyChar.Humanoid
+            CameraValue.Value = EnemyChar.Head
             
             AttachLoop = game:GetService("RunService").RenderStepped:Connect(function()
                 task.wait()
@@ -639,27 +687,46 @@ Stands:NewToggle("Attach Yourself To Player", "the title the title", function(St
             if AttachLoop then
                 AttachLoop:Disconnect()
 
-                if Character:FindFirstChild("FocusCam") then
-                    Character.FocusCam.Value = Humanoid
+                if CameraValue then
+                    CameraValue.Value = nil
                 end
 
                 SummonStand(false)
                 
                 if ScriptSettings.teleports["Normal Hide"] then
-                    Character.PrimaryPart.CFrame = ScriptSettings.teleports["Normal Hide"]
+                    PrimaryPart.CFrame = ScriptSettings.teleports["Normal Hide"]
                 else
-                    Character.PrimaryPart.CFrame = OldPos
+                    PrimaryPart.CFrame = OldPos
+                    Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
                 end
             end
         end
     end)
-    warn(suc,fail)
+    
+    warn(`SBR Script Error: {Fail}`)
 end)
 
-Stands:NewButton("Teleport to Player", "TP to player", function()
-    pcall(function()
-        Character.PrimaryPart.CFrame = workspace.Living:FindFirstChild(ScriptSettings.stands["TargetPlayer"]).PrimaryPart.CFrame
-    end)
+local OtherStuff = StandsTab:NewSection("Teleport & Spectate")
+
+OtherStuff:NewButton("Teleport to Player", "TP to player", function()
+    local Target = workspace.Living:FindFirstChild(ScriptSettings.stands["TargetPlayer"])
+    
+    if Target and Target.PrimaryPart then
+        PrimaryPart.CFrame = Target.PrimaryPart.CFrame
+        Character.HumanoidRootPart.Velocity = Vector3.new(0, 0, 0)
+    end
+end)
+
+OtherStuff:NewToggle("Spectate Player", "Spectates player", function(State)
+    local Target = workspace.Living:FindFirstChild(ScriptSettings.stands["TargetPlayer"])
+    
+    if State then
+        if Target and Target.Head then
+            CameraValue.Value = Target.Head
+        end
+    else
+        CameraValue.Value = nil
+    end
 end)
 
 local StandSettings = StandsTab:NewSection("Settings")
@@ -695,13 +762,17 @@ StandSettings:NewSlider("Prediction Strength", "Predicts the player movement", 6
 end)
 
 Players.PlayerAdded:Connect(function(player)
-    repeat task.wait() until workspace.Living:FindFirstChild(player.Name) and UpdateList()
+    repeat task.wait() until workspace.Living:FindFirstChild(player.Name)
+    
+    UpdateList()
+    task.wait(1)
 
     PlayerSelection:Refresh(ScriptSettings.stands["AllPlayers"])
 end)
 
 Players.PlayerRemoving:Connect(function(player)
-    repeat task.wait() until UpdateList()
+    UpdateList()
+    task.wait(1)
     
     PlayerSelection:Refresh(ScriptSettings.stands["AllPlayers"])
 end)
@@ -748,6 +819,7 @@ end)
 
 Credits:NewLabel("Owner & Developer: vezrr")
 Credits:NewLabel("Fly & Bypasses: enxquity")
+Credits:NewLabel("Godmode: crtrz")
 Credits:NewLabel("UI: Kavo (Kavo UI Library)")
 
 Character.ChildAdded:Connect(function(Child)
@@ -756,11 +828,10 @@ Character.ChildAdded:Connect(function(Child)
     end
 end)
 
-
 game.CollectionService.TagAdded:Connect(function(Tag)
     if Tag == "AntiHeal" then
-        Character.RemoteEvent:FireServer("StopPoison")
-        Character.RemoteEvent:FireServer("StopBleed")
-        Character.RemoteEvent:FireServer("StopFire")
+        RemoteEvent:FireServer("StopPoison")
+        RemoteEvent:FireServer("StopBleed")
+        RemoteEvent:FireServer("StopFire")
     end
 end)
