@@ -16,10 +16,11 @@ local OtherTab = Window:Tab("Other")
 --// Player Shit
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
-local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-local RemoteEvent = Character:WaitForChild("RemoteEvent")
-local RemoteFunction = Character:FindFirstChild("RemoteFunction")
+local Humanoid = Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid")
+local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
+local StandMorph = Character:FindFirstChild("StandMorph")
+local RemoteEvent = Character:FindFirstChild("RemoteEvent") or Character:WaitForChild("RemoteEvent")
+local RemoteFunction = Character:FindFirstChild("RemoteFunction") or Character:WaitForChild("RemoteFunction")
 local CurrentCamera = workspace.CurrentCamera
 local PlayerGui = Player:FindFirstChild("PlayerGui")
 
@@ -165,11 +166,11 @@ end
 
 local function UpdateIndex()
 	CurrentCharacter = Player.Character
-	Humanoid = CurrentCharacter:FindFirstChildOfClass("Humanoid")
-	SummonedStand = CurrentCharacter:FindFirstChild("SummonedStand")
+	Humanoid = CurrentCharacter:FindFirstChild("Humanoid") or CurrentCharacter:WaitForChild("Humanoid")
+	SummonedStand = CurrentCharacter:FindFirstChild("SummonedStand") or CurrentCharacter:WaitForChild("SummonedStand")
 	
 	StandMorph = CurrentCharacter:FindFirstChild("StandMorph")
-	StandHumanoid = StandMorph:FindFirstChildOfClass("Humanoid")
+	StandHumanoid = StandMorph:FindFirstChild("AnimationController") or StandMorph:WaitForChild("AnimationController")
 	
 	Camera = workspace.CurrentCamera
 end	
@@ -279,9 +280,18 @@ end
 
 local UndergroundAnimation, Highlight
 function PlayAnimation(HumanoidCharacter, AnimationID, AnimationSpeed, Time)
+    HumanoidCharacter = Character
 	local CreatedAnimation = Instance.new("Animation")
 	CreatedAnimation.AnimationId = AnimationID
-    local animationTrack = HumanoidCharacter:FindFirstChildOfClass("Humanoid"):FindFirstChildOfClass("Animator"):LoadAnimation(CreatedAnimation)
+	local HumanoidEx = HumanoidCharacter:FindFirstChild("Humanoid")
+	
+	if not HumanoidEx then
+	    repeat task.wait() until HumanoidCharacter:FindFirstChild("Humanoid")
+	    HumanoidEx = HumanoidCharacter:FindFirstChild("Humanoid")
+	end
+	
+	local AnimatorEx = HumanoidEx:FindFirstChild("Animator") or HumanoidEx:WaitForChild("Animator", 3)
+    local animationTrack = AnimatorEx:LoadAnimation(CreatedAnimation)
 
 	animationTrack:Play()
 	animationTrack:AdjustSpeed(AnimationSpeed)
@@ -292,7 +302,16 @@ end
 
 local function Invisibile()
     local HUD = PlayerGui:FindFirstChild("HUD")
-    HUD.Parent = nil
+    if HUD then
+        HUD.Parent = game:GetService("StarterGui")
+    else
+        local S1, F1 = pcall(function()
+            game:GetService("StarterGui"):FindFirstChild("HUD").Parent = PlayerGui
+            HUD = PlayerGui:FindFirstChild("HUD")
+        end)
+        
+        print(S1, F1)
+    end
 
     --//As Simple As That Gang\\--
     UndergroundAnimation = PlayAnimation(Character, "rbxassetid://7189062263", 0, 5)
@@ -300,9 +319,13 @@ local function Invisibile()
 
     UndergroundAnimation:Stop()
     Player.Character = Character
-
-    HUD.Parent = PlayerGui
-
+    
+    local Survived, Died = pcall(function()
+        HUD.Parent = PlayerGui
+    end)
+    
+    print(Survived, Died)
+    
     Highlight = Instance.new("Highlight")
     Highlight.Parent = Character
     Highlight.Enabled = true
@@ -365,6 +388,7 @@ local function AttemptKidnap()
     --//Pulling Out Stand\\--
     if not Character:FindFirstChild("SummonedStand") then
         repeat task.wait() ToggleStand() until Character:FindFirstChild("SummonedStand").Value
+        StandMorph = Character:FindFirstChild("StandMorph")
     end
 
     if settings["useinvis"] then Invisibile() end
@@ -450,7 +474,12 @@ MainTab:Toggle("Godmode", "makes you god", false, function(t)
         Character.Archivable = true
         local ControlCharacter = Character:Clone()
         ControlCharacter.Parent = workspace
-        ControlCharacter.PrimaryPart.CFrame = ControlCharacter.PrimaryPart.CFrame
+
+        if not ControlCharacter:FindFirstChild("HumanoidRootPart") then
+            repeat task.wait() until ControlCharacter:FindFirstChild("HumanoidRootPart")
+        end
+        
+        ControlCharacter:FindFirstChild("HumanoidRootPart").CFrame = ControlCharacter:FindFirstChild("HumanoidRootPart").CFrame
         
         MakeInvisible(ControlCharacter)
         ControlHumanoid(ControlCharacter, WalkSpeed)
@@ -494,14 +523,14 @@ MainTab:Toggle("Player Crasher/Server Lagger", "crashes everyone", false, functi
     if settings["crasher"] then
         while settings["crasher"] do task.wait()
 			for i = settings["customval"], 1, -1 do
-				Player.Character.RemoteEvent:FireServer("Poison", {Duration = 10000, TotalDamage = 0.0001})
-				Player.Character.RemoteEvent:FireServer("Bleed", {Duration = 10000, TotalDamage = 0.0001})
+				Character.RemoteEvent:FireServer("Poison", {Duration = 10000, TotalDamage = 0.0001})
+				Character.RemoteEvent:FireServer("Bleed", {Duration = 10000, TotalDamage = 0.0001})
 			end
 		end
     else
 		task.wait(1)
-		Player.Character.RemoteEvent:FireServer("StopPoison")
-		Player.Character.RemoteEvent:FireServer("StopBleed")
+		Character.RemoteEvent:FireServer("StopPoison")
+		Character.RemoteEvent:FireServer("StopBleed")
     end
 end)
 
@@ -516,11 +545,11 @@ MainTab:Toggle("Anti-Timestop", "Bypasses timestop", false, function(t)
 		settings["antits"] = workspace.Living.DescendantAdded:Connect(function(a)
 			if a.Name == "TimeStopping" then
 				if Player:DistanceFromCharacter(workspace.Living[tostring(a.Parent)].HumanoidRootPart.Position) < 25 then
-					oldpos = Player.Character.PrimaryPart.CFrame
+					oldpos = Character.PrimaryPart.CFrame
 					task.wait(0.1)
-					Player.Character.PrimaryPart.CFrame += Vector3.new(800,1000,500)
+					Character.PrimaryPart.CFrame += Vector3.new(800,1000,500)
 					task.wait(settings["delay"])
-					Player.Character.PrimaryPart.CFrame = oldpos
+					Character.PrimaryPart.CFrame = oldpos
 					print("hiu")
 				else
 					return
@@ -538,7 +567,7 @@ end)
 
 StandTab:Toggle("Control Stand (God/Invis/Anti-Stun)", "yes", false, function(t)
 	if t then
-		repeat task.wait() until Player.Character:FindFirstChild("StandMorph")
+		repeat task.wait() until Character:FindFirstChild("StandMorph")
 		UpdateIndex()
 		settings["1"] = SummonedStand:GetPropertyChangedSignal("Value"):Connect(function()
 			if not SummonedStand.Value then
@@ -612,7 +641,6 @@ StandTab:Button("Beachboy Fling (Requires Auto Rod Pull)", "flings a player", fu
     local Enemy = settings["flingtarget"]
     local EnemyHRP = workspace.Living[Enemy].PrimaryPart
     local CustomBreak;
-    local Character = Player.Character
     local OldCFrame = Character.PrimaryPart.CFrame
     Character.PrimaryPart.CFrame = CFrame.new(10000,1000,10000)
     local FocusCam = Instance.new("ObjectValue", Character)
@@ -629,7 +657,7 @@ StandTab:Button("Beachboy Fling (Requires Auto Rod Pull)", "flings a player", fu
     CustomBreak = false
     
     Character.PrimaryPart.CFrame = EnemyHRP.CFrame + Vector3.new(0,5,0) - EnemyHRP.Parent.Head.CFrame.LookVector * 5
-    Player.Character.RemoteEvent:FireServer("InputBegan", {["Input"] = Enum.KeyCode.Y})
+    Character.RemoteEvent:FireServer("InputBegan", {["Input"] = Enum.KeyCode.Y})
     
     repeat task.wait()
         Character.PrimaryPart.CFrame = EnemyHRP.CFrame + Vector3.new(9999,-130,9999) - EnemyHRP.Parent.Head.CFrame.LookVector * 30
@@ -680,6 +708,7 @@ end)
 StandTab:Seperator()
 
 StandTab:Dropdown("Stand & Spec Animations", settings["animationlist"], function(SelectedAnimation)
+    local StandMorph = StandMorph
     local AnimID = 0
     for i,v in game.ReplicatedStorage.Anims:GetDescendants() do
         if v:IsA("Animation") and v.Name == SelectedAnimation then
@@ -689,7 +718,7 @@ StandTab:Dropdown("Stand & Spec Animations", settings["animationlist"], function
     end
 
     local Anim = Instance.new("Animation", workspace.AnticheatBypass); Anim.Name = "YBA_AnticheatDetection"; Anim.AnimationId = AnimID
-    local Anim2 = Player.Character.StandMorph.AnimationController:LoadAnimation(Anim)
+    local Anim2 = StandMorph.AnimationController:LoadAnimation(Anim)
     Anim2:Play()
 end)
 
@@ -699,9 +728,9 @@ settings["6"] = TeleportTab:TextBox("TP to Player", function(text)
     
         if PossiblePlayer then
             settings["6"]:Update(PossiblePlayer.Name)
-            Player.Character.PrimaryPart.CFrame = PossiblePlayer.PrimaryPart.CFrame
-            if Player.Character:FindFirstChild("StandMorph") then
-                Character.StandMorph.PrimaryPart.CFrame = PossiblePlayer.PrimaryPart.CFrame
+            Character.PrimaryPart.CFrame = PossiblePlayer.PrimaryPart.CFrame
+            if StandMorph then
+                StandMorph.PrimaryPart.CFrame = PossiblePlayer.PrimaryPart.CFrame
             end
         end
     end)
@@ -709,9 +738,9 @@ end)
 
 for place, cframe in settings.teleports do
     TeleportTab:Button(place, place, function()
-        Player.Character.PrimaryPart.CFrame = cframe
-        if Player.Character:FindFirstChild("StandMorph") and Player.Character.StandMorph:FindFirstChild("HumanoidRootPart") then
-            Character.StandMorph.PrimaryPart.CFrame = cframe
+        Character.PrimaryPart.CFrame = cframe
+        if Character:FindFirstChild("StandMorph") and StandMorph:FindFirstChild("HumanoidRootPart") then
+            StandMorph.PrimaryPart.CFrame = cframe
         end
     end)
 end
@@ -734,7 +763,8 @@ end)
 OtherTab:Toggle("Attach Stand to Player", "yes", false, function(t)
     settings["attach"] = t
     while settings["attach"] do task.wait()
-        Character.StandMorph.PrimaryPart.CFrame = workspace.Living[settings["target"]].PrimaryPart.CFrame - workspace.Living[settings["target"]].PrimaryPart.CFrame.LookVector * settings["distancefr"]
+        if not Character or not StandMorph then return end
+        StandMorph.PrimaryPart.CFrame = workspace.Living[settings["target"]].PrimaryPart.CFrame - workspace.Living[settings["target"]].PrimaryPart.CFrame.LookVector * settings["distancefr"]
     end
 end)
 
