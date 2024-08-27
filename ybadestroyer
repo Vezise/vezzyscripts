@@ -16,6 +16,10 @@ local OtherTab = Window:Tab("Other")
 --// Player Shit
 local Player = game.Players.LocalPlayer
 local Character = Player.Character or Player.CharacterAdded:Wait()
+Player.CharacterAdded:Connect(function()
+    task.wait(1)
+    Character = Player.Character
+end)
 local Humanoid = Character:FindFirstChild("Humanoid") or Character:WaitForChild("Humanoid")
 local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart") or Character:WaitForChild("HumanoidRootPart")
 local StandMorph = Character:FindFirstChild("StandMorph")
