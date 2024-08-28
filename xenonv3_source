@@ -1969,6 +1969,38 @@ Player_Combat:Toggle("Anti Bleed/Fire/Poison", false, function(State)
     end
 end, "Turns on anti Bleed/Fire/Poison")
 
+Player_Combat:Toggle("Player ESP", false, function(State)
+    if State == true then
+        local Folder = Instance.new("Folder", Util:GetService("CoreGui"))
+        Folder.Name = "GayESP"
+
+        for i,v in pairs(Util:GetService("Players"):GetPlayers()) do
+                if v ~= Util:GetPlayer() then
+                    Util:AddTask("Chr", v.CharacterAdded:Connect(function(Chars)
+                        Util:Outline(Chars)
+                        Util:LabelChar(Chars)
+                    end))
+                
+                    if v.Character then
+                        Util:Outline(v.Character)
+                        Util:LabelChar(v.Character)
+                    end
+                end
+        end
+
+        Util:AddTask("Chr2", Util:GetService("Players").PlayerAdded:Connect(function(Player)
+                Player.CharacterAdded:Connect(function(Chars)
+                    Util:Outline(Chars)
+                    Util:LabelChar(Chars)
+                end)
+        end))
+    else
+        Util:GetService("CoreGui").GayESP:Destroy()
+        Util:DisconnectTask("Chr")
+        Util:DisconnectTask("Chr2")
+    end
+end, "turns on name esp for players")
+
 Util:Log("Xenon Debug - Passed Player Tab Load")
 
 --// Autofarm (1006 for ctrl + f)
