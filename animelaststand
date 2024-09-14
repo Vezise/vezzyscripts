@@ -1,0 +1,336 @@
+repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui")
+
+--// Variables
+local Player = game:GetService("Players").LocalPlayer
+local PlayerGui = Player.PlayerGui
+local Character = Player.Character or Player.CharacterAdded:Wait()
+local RepStorage = game:GetService("ReplicatedStorage")
+local HttpService = game:GetService("HttpService")
+
+--// Tables
+local MapTeleports = {
+    "Desert Village",
+    "Water Park",
+    "Hollow Dimension",
+    "Planet Nemak",
+    "Star Mansion",
+    "Super Hero City",
+    "Hero Association",
+    "Snowy Domain",
+    "Infested City",
+    "Lost Castle",
+    "Ruined City"
+}
+
+--// File System
+local Settings = {}
+local Stats = {}
+local RewardsStats = {}
+
+local SettingsFile = pcall(function()
+	Settings = HttpService:JSONDecode(readfile("Config-AnimeLastStand.json"))
+end)
+
+local StatsFile = pcall(function()
+	Stats = HttpService:JSONDecode(readfile("Stats-AnimeLastStand.json"))
+end)
+
+local RewardsFile = pcall(function()
+	RewardsStats = HttpService:JSONDecode(readfile("Rewards-AnimeLastStand.json"))
+end)
+
+if not SettingsFile then
+    Settings = {
+        ["Selected Map"] = "",
+        ["Selected Act"] = "",
+        ["Selected Difficulty"] = "",
+        ["Friends Only"] = false,
+        ["Auto Join Story"] = false,
+        ["Solo Queue"] = false,
+        ["Auto Join Castle"] = false,
+        ["UnitToPlace"] = Player.Slots.Slot1.Value,
+        ["Webhook"] = ""
+    }
+    
+    writefile("Config-AnimeLastStand.json", HttpService:JSONEncode(Settings))
+end
+
+if not RewardsFile then
+    RewardsStats = {
+        ["Rerolls"] = Player.Rerolls.Value
+    }
+    writefile("Rewards-AnimeLastStand.json", HttpService:JSONEncode(RewardsStats))
+end
+
+local SaveSettings = function()
+	writefile("Config-AnimeLastStand.json", HttpService:JSONEncode(Settings))
+end
+
+local SaveStats = function()
+	writefile("Stats-AnimeLastStand.json", HttpService:JSONEncode(Stats))
+end
+
+local SaveRewardsStats = function()
+	writefile("Rewards-AnimeLastStand.json", HttpService:JSONEncode(RewardsStats))
+end
+
+--// ALS Functions
+local IsMainGame = function()
+    if game.PlaceId == 12886143095 then
+        return true
+    else
+        return false
+    end
+end
+
+local IsCastle = function()
+    if game.PlaceId == 12900046592 then
+        return true
+    else
+        return false
+    end
+end
+
+local SendWebhook = function(embed, msg)
+    if Settings["Webhook"] == "" then
+        return
+    end
+
+    local data = nil
+    if not embed then
+        data = {
+            ["content"] = `{msg} \n-# Account: **{Player.Name}**`,
+        }
+    else
+        data = {
+            ["embeds"] = {
+                {
+                    ["title"] = "Anime Last Stand",
+                    ["description"] = msg,
+                    ["type"] = "rich",
+                    ["color"] = tonumber(0x7269ff),
+                }
+            }
+        }
+    end
+
+    repeat task.wait() until data
+    local newdata = HttpService:JSONEncode(data)
+
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+    
+    local request = http_request or request or HttpPost or http.request
+    local abcdef = {Url = Settings["Webhook"], Body = newdata, Method = "POST", Headers = headers}
+    request(abcdef)
+end
+
+local JoinStory = function(TP)
+    Character:PivotTo(
+        TP.Door.CFrame
+    )
+
+    repeat task.wait() until PlayerGui.Story.Enabled
+    
+    RepStorage.Remotes.Story.Select:InvokeServer(
+        Settings["Selected Map"],
+        Settings["Selected Act"],
+        Settings["Selected Difficulty"],
+        Settings["Friends Only"] 
+    )
+    
+    task.wait(1)
+    
+    RepStorage.Remotes.Teleporter.Interact:FireServer("Skip")
+    
+    SendWebhook(false, `Joined Story, \n-# Map: **{Settings["Selected Map"]}** \n-# Act: **{Settings["Selected Act"]}** \n-# Difficulty: **{Settings["Selected Difficulty"]}** \n-# Friends Only: **{Settings["Friends Only"]}**\n`)
+end
+
+local AutoStory = function()
+    if Settings["Auto Join Story"] == false then
+        return
+    end
+    
+    for _, Teleporter in workspace.TeleporterFolder.Story:GetChildren() do
+        if Teleporter:FindFirstChild("Door") then
+            if Settings["Solo Queue"] then
+                if Teleporter.Door.UI.PlayerCount.Text == "0/4 Players" then
+                    JoinStory(Teleporter)
+                    break
+                end
+            else
+                if Teleporter.Door.UI.PlayerCount.Text ~= "0/4 Players" and Teleporter.Door.UI.PlayerCount.Text ~= "4/4 Players" then
+                    JoinStory(Teleporter)
+                    break
+                end
+            end
+        end
+    end
+end
+
+local AutoInfinityCastle = function()
+    if Settings["Auto Join Castle"] == false then
+        return
+    end
+    
+    Character:PivotTo(
+        workspace.Lobby.Npcs.Asta.HumanoidRootPart.CFrame * CFrame.new(1, 0, 0)
+    )
+    
+    task.wait(1)
+    
+    SendWebhook(false, "Joined **Infinite Castle**")
+    
+    repeat
+        RepStorage.Remotes.InfiniteCastleManager:FireServer(
+            "Play",
+            0
+        )
+        
+        task.wait(1)
+    until IsMainGame() == false
+end
+
+local AutoPlaceUnit = function()
+    if IsCastle() == false then
+        return
+    end
+    
+    task.wait(3)
+    
+    RepStorage.Remotes.PlaceTower:FireServer(
+        Settings["UnitToPlace"],
+        CFrame.new(-141.85321044921875, 203.20147705078125, 5.77075719833374, -1, 0, -8.742277657347586e-08, 0, 1, 0, 8.742277657347586e-08, 0, -1)
+    )
+    
+    SendWebhook(false, `Placed Unit: "**{Settings["UnitToPlace"]}**"`)
+end
+
+local AutoUpgradeUnit = function()
+    if IsMainGame() == true then
+        return
+    end
+    
+    RepStorage.Remotes.Upgrade:InvokeServer(
+        workspace.Towers:WaitForChild(Settings["UnitToPlace"])
+    )
+end
+
+--// UI Library
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Anime Last Stand", "DarkTheme")
+
+local Tab1 = Window:NewTab("Story")
+local Tab2 = Window:NewTab("Infinity Castle")
+local Tab3 = Window:NewTab("Miscellaneous")
+local Storys = Tab1:NewSection("Story Settings")
+local Castle = Tab2:NewSection("Infinity Castle Settings")
+local Misc = Tab3:NewSection("Miscellaneous Features")
+
+Storys:NewDropdown("Select Map", "yes", MapTeleports, function(Selected)
+    Settings["Selected Map"] = Selected
+    SaveSettings()
+end)
+
+Storys:NewDropdown("Select Act", "yes", {1, 2, 3, 4, 5, 6, "Infinite"}, function(Selected)
+    Settings["Selected Act"] = Selected
+    SaveSettings()
+end)
+
+Storys:NewDropdown("Select Difficulty", "yes", {"Normal", "Nightmare"}, function(Selected)
+    Settings["Selected Difficulty"] = Selected
+    SaveSettings()
+end)
+
+Storys:NewToggle("Friends Only", "friends only?", function(State)
+    Settings["Friends Only"] = State
+    SaveSettings()
+end)
+
+Storys:NewToggle("Solo Queue", "queue by yourself", function(State)
+    Settings["Solo Queue"] = State
+    SaveSettings()
+end)
+
+Storys:NewToggle("Auto Join", "auto joins map", function(State)
+    Settings["Auto Join Story"] = State
+    SaveSettings()
+    AutoStory()
+end)
+
+Castle:NewToggle("Auto Join", "auto joins inf castle", function(State)
+    Settings["Auto Join Castle"] = State
+    SaveSettings()
+    AutoInfinityCastle()
+end)
+
+--[[// Scrapped //
+Castle:NewTextBox("Select Unit", "which unit to auto place", function(Selected)
+    Settings["UnitToPlace"] = Selected
+    SaveSettings()
+end)]]
+
+Misc:NewKeybind("Toggle UI", "toggles ui", Enum.KeyCode.F, function()
+	Library:ToggleUI()
+end)
+
+Misc:NewTextBox("Webhook", "set your webhook for logs", function(Selected)
+    Settings["Webhook"] = Selected
+    SaveSettings()
+end)
+
+Player.PlayerGui.ChildAdded:Connect(function(Child)
+    if Child.Name ~= "EndGameUI" then
+        return
+    end
+
+    task.wait(1)
+
+    if not StatsFile then
+        Stats = {
+            ["Unit"] = Player.Slots.Slot1.Value,
+            ["Damage"] = math.round(Player.leaderstats.Damage.Value),
+            ["Kills"] = Player.leaderstats.Kills.Value,
+            ["ElapsedTime"] = Player.PlayerGui.EndGameUI.BG.Container.Stats.ElapsedTime.Text,
+            ["Wave"] = Player.PlayerGui.EndGameUI.BG.Container.Stats.EndWave.Text,
+            ["Result"] = Player.PlayerGui.EndGameUI.BG.Container.Stats.Result.Text
+        }
+    
+        writefile("Stats-AnimeLastStand.json", HttpService:JSONEncode(Stats))
+        SaveStats()
+    end
+
+    task.wait(1)
+
+    game:GetService("TeleportService"):Teleport(12886143095, Player)
+end)
+
+--// Run Functions
+if IsMainGame() == true then
+    if StatsFile then 
+        RewardsStats = {
+            ["Rerolls"] = Player.Rerolls.Value - RewardsStats["Rerolls"]
+        }
+
+        local GameEndStats = `**User Info**\nUser: ||{Player.Name}||\nLevel: {Player.Level.Value} ({Player.EXP.Value}/{Player.MaxEXP.Value})\n\n**Player Stats**\nEmeralds: {Player.Emeralds.Value}\nGold: {Player.Gold.Value}\nJewels: {Player.Jewels.Value}\nShells: {Player.Shells.Value}\nSlime Coins: {Player.SlimeCoins.Value}\nRaid Tokens: {Player.RaidTokens.Value}\nShinobi Tokens: {Player.ShinobiTokens.Value}\nDragon Scales: {Player.DragonScales.Value}\nRerolls: {Player.Rerolls.Value}\n\n**Units**\nUnit: **{Stats["Unit"]}** Damage: **{Stats["Damage"]}**, Kills: **{Stats["Kills"]}**\n\n**Match Results**\n{Stats["ElapsedTime"]}\n{Stats["Wave"]}\nGame Over: {Stats["Result"]}\n\n**Rewards**\nRerolls: +{RewardsStats["Rerolls"]}`
+
+        SendWebhook(true, GameEndStats)
+
+        delfile("Stats-AnimeLastStand.json")
+    end
+
+    RewardsStats = {
+        ["Rerolls"] = Player.Rerolls.Value
+    }
+    writefile("Rewards-AnimeLastStand.json", HttpService:JSONEncode(RewardsStats))
+
+    AutoStory()
+    AutoInfinityCastle()
+end
+
+AutoPlaceUnit()
+
+while task.wait(5) do 
+    AutoUpgradeUnit()
+end
