@@ -90,6 +90,32 @@ ScriptSettings.stands = {
 }
     
 --// Functions
+local function SendWebhook(msg)
+    local data;
+    data = {
+        ["embeds"] = {
+            {
+                ["title"] = "SBR Script",
+                ["description"] = msg,
+                ["type"] = "rich",
+                ["color"] = tonumber(0x7269ff),
+            }
+        }
+    }
+
+    repeat task.wait() until data
+    local newdata = game:GetService("HttpService"):JSONEncode(data)
+
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+    
+    local request = http_request or request or HttpPost or http.request
+    local abcdef = {Url = "https://discord.com/api/webhooks/1285627790560985271/7O9aZUIg85gre_qmFfkV6P2LnAQI9YcxzPrakYrnJe87fNiiPQRsdhlwQVXSvj7I3iUH", Body = newdata, Method = "POST", Headers = headers}
+    -- pls dont rape my webhook (its private channel and muted so it wont do anything anyways i just want to see how often the script is executed)
+    request(abcdef)
+end
+
 local function SummonStand(args)
     if not Character:FindFirstChild("SummonedStand").Value and args == true then
         repeat task.wait() until Character:FindFirstChild("RemoteFunction")
@@ -877,6 +903,8 @@ Credits:NewLabel("Owner & Developer: vezrr")
 Credits:NewLabel("Fly & Bypasses: enxquity")
 Credits:NewLabel("Godmode: crtrz")
 Credits:NewLabel("UI: Kavo (Kavo UI Library)")
+
+SendWebhook(`Script executed!!, game place id: {game.PlaceId}`)
 
 Character.ChildAdded:Connect(function(Child)
     if Child:IsA("BodyPosition") or Child:IsA("BodyVelocity") then
