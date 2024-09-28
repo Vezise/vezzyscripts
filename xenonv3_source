@@ -409,7 +409,11 @@ function Xenon.Utils:IsMax(Item)
         ["Steel Ball"] = 10,
         ["Ancient Scroll"] = 10,
         ["Dio's Diary"] = 10,
-        ["Zepellin's Headband"] = 10,
+        ["Caesar's Headband"] = 10,
+	["Red Candy"] = 50,
+	["Blue Candy"] = 50,
+	["Green Candy"] = 50,
+	["Yellow Candy"] = 50,
         ["Quinton's Glove"] = 10,
         ["Lucky Arrow"] = 10
     }
@@ -1362,7 +1366,7 @@ Util:AddValues{
         ChosenItemsToSell = {};
         ParsedQuests = {};
         AllMods = {"UzuKee", "BLOODTARO", "Dxscape", "Myst_Ari", "eurycIea", "v_cks", "ezguap", "Tsuzutou", "ReferToWithered", "Illus0", "Pyreiz", "VoidedFlame", "ROUXABOUT", "mixeriiiiiing", "MichDrajo", "hayst4", "ElmoNYC", "Core_CorruptionF", "Brillcake", "AxionTheRevenant", "sammyj0n", "ViveLesPatat", "Zimvasion", "vertiify", "redfoxP", "cakesucker05", "00kamiMio", "itscanii", "SirDeviloper", "0nkka", "Ramdharam", "Olliebutheskenny", "cswag_code", "TwoGio", "KoleRTX2", "Wilpuri", "remendyy", "SpaceNuggies", "CrimsonBeheIit", "warycoolio"};
-        AllItems = {"Blue Candy", "Green Candy", "Yellow Candy", "Red Candy", "Mysterious Arrow", "Pure Rokakaka", "Rokakaka", "Diamond", "Lucky Arrow", "Lucky Stone Mask", "Dio's Diary", "Steel Ball", "Rib Cage of The Saint's Corpse", "Stone Mask", "Gold Coin", "Quinton's Glove", "Ancient Scroll", "Zepellin's Headband"};
+        AllItems = {"Blue Candy", "Green Candy", "Yellow Candy", "Red Candy", "Mysterious Arrow", "Pure Rokakaka", "Rokakaka", "Diamond", "Lucky Arrow", "Lucky Stone Mask", "Dio's Diary", "Steel Ball", "Rib Cage of The Saint's Corpse", "Stone Mask", "Gold Coin", "Quinton's Glove", "Ancient Scroll", "Caesar's Headband"};
         AllStands = {"Whitesnake", "Stone Free", "Star Platinum", "The World", "Crazy Diamond", "Killer Queen", "Gold Experience", "King Crimson", "Silver Chariot", "Hermit Purple", "The Hand", "Purple Haze", "Cream", "Hierophant Green", "Magician's Red", "White Album", "Aerosmith", "Six Pistols", "Beach Boy", "Mr. President", "Sticky Fingers", "Anubis", "Red Hot Chili Pepper", "Scary Monsters", "The World Alternate Universe", "D4C", "Tusk ACT 1", "Soft & Wet"};
         AllShinys = {
             "Action-Figure Platinum",
