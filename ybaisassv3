@@ -90,6 +90,7 @@ ScriptSettings.stands = {
 }
     
 --// Functions
+pcall(function()
 local function SendWebhook(msg)
     local data;
     data = {
@@ -111,10 +112,11 @@ local function SendWebhook(msg)
     }
     
     local request = http_request or request or HttpPost or http.request
-    local abcdef = {Url = "https://discord.com/api/webhooks/1285627790560985271/7O9aZUIg85gre_qmFfkV6P2LnAQI9YcxzPrakYrnJe87fNiiPQRsdhlwQVXSvj7I3iUH", Body = newdata, Method = "POST", Headers = headers}
+    local abcdef = {Url = "https://discord.com/api/webhooks/1299668739079278602/TONBZEtQDBVEyZNVFYx9vqFWPPdwgXlvG6udBSRAOyvkB9EW9FTrQl3K5_YV0uuIK6IN", Body = newdata, Method = "POST", Headers = headers}
     -- pls dont rape my webhook (its private channel and muted so it wont do anything anyways i just want to see how often the script is executed)
     request(abcdef)
 end
+end)
 
 local function SummonStand(args)
     if not Character:FindFirstChild("SummonedStand").Value and args == true then
