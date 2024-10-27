@@ -1641,7 +1641,7 @@ repeat task.wait() until game.Players.LocalPlayer
         end)
         
         
-		local UI = library.Create("Xenon V1 PAID", "Your Bizarre Adventure")
+		local UI = library.Create("Xenon V1 (Open Sourced!)", "Your Bizarre Adventure")
 		local Credits = UI:Tab("Credits & Info", 6026568227)
 		local PlayerTab = UI:Tab("Player", 6023426915)
 		local StandsTab = UI:Tab("Stands", 6034744057)
