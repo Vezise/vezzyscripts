@@ -75,12 +75,12 @@ function Xenon.Utils:GetLogPath()
 end
 
 function Xenon.Utils:MakeFolder()
-    --if isfolder("XenonV3") == false then 
+	if isfolder("XenonV3") == false then 
         makefolder("XenonV3")
-    --end
-    --if isfolder("/XenonV3/Logs") == false then 
+    end
+    if isfolder("/XenonV3/Logs") == false then 
         makefolder("/XenonV3/Logs")
-    --end
+    end
 end
 
 function Xenon.Utils:ConvertConfig(Config)
@@ -88,9 +88,9 @@ function Xenon.Utils:ConvertConfig(Config)
     for i,v in pairs(RepTable) do
         for ValName, ValueTable in pairs(v) do
             if ValueTable["Value"] ~= nil then
-                    local Val = ValueTable.Value
-                    ValueTable["Value"] = nil
-                    ValueTable[1] = Val
+                local Val = ValueTable.Value
+                ValueTable["Value"] = nil
+                ValueTable[1] = Val
             end
         end
     end
@@ -98,12 +98,12 @@ function Xenon.Utils:ConvertConfig(Config)
 end
 
 function Xenon.Utils:ReadData()
-    self:MakeFolder()
+	self:MakeFolder()
     local Data;
     local Success, Error = pcall(function()
         Data = self.Services.HttpService:JSONDecode(readfile(self.Settings.ConfigName))
     end);
-    Data = Data or loadstring(game:HttpGet("https://pastebin.com/raw/2EMnWCUW"))()
+    Data = Data or loadstring(game:HttpGet("https://pastebin.com/raw/XXkRbtKN"))()
     return {
         Data = Data;
         Success = Success;
@@ -116,7 +116,7 @@ function Xenon.Utils:ReadData()
 end
 
 function Xenon.Utils:WriteData(Data)
-    self:MakeFolder()
+	self:MakeFolder()
     local StringData = self.Services.HttpService:JSONEncode(Data)
     local Success, Error = pcall(function()
         writefile(self.Settings.ConfigName, StringData)
@@ -134,22 +134,22 @@ function Xenon.Utils:AddValues(Values)
     for key, value in pairs(Values) do
         if key:lower() == "int" then
             for i,v in pairs(Values[key]) do
-                    self.Ints[i] = (type(v) == "number" and {["Value"] = v, ["SaveValue"] = false} or type(v) == "table" and {["Value"] = v[1], ["SaveValue"] = v["SaveValue"]})
+                self.Ints[i] = (type(v) == "number" and {["Value"] = v, ["SaveValue"] = false} or type(v) == "table" and {["Value"] = v[1], ["SaveValue"] = v["SaveValue"]})
             end
         end
         if key:lower() == "state" then
             for i,v in pairs(Values[key]) do
-                    self.States[i] = (type(v) == "boolean" and {["Value"] = v, ["SaveValue"] = false} or type(v) == "table" and {["Value"] = v[1], ["SaveValue"] = v["SaveValue"]})
+                self.States[i] = (type(v) == "boolean" and {["Value"] = v, ["SaveValue"] = false} or type(v) == "table" and {["Value"] = v[1], ["SaveValue"] = v["SaveValue"]})
             end
         end
         if key:lower() == "string" then
             for i,v in pairs(Values[key]) do
-                    self.Strings[i] = (type(v) == "string" and {["Value"] = v, ["SaveValue"] = false} or type(v) == "table" and {["Value"] = v[1], ["SaveValue"] = v["SaveValue"]})
+                self.Strings[i] = (type(v) == "string" and {["Value"] = v, ["SaveValue"] = false} or type(v) == "table" and {["Value"] = v[1], ["SaveValue"] = v["SaveValue"]})
             end
         end
         if key:lower() == "table" then
             for i,v in pairs(Values[key]) do
-                    self.Tables[i] = ((v["SaveValue"] and v["SaveValue"] == true) and {["Value"] = v[1], ["SaveValue"] = v["SaveValue"]} or {["Value"] = v, ["SaveValue"] = false})
+                self.Tables[i] = ((v["SaveValue"] and v["SaveValue"] == true) and {["Value"] = v[1], ["SaveValue"] = v["SaveValue"]} or {["Value"] = v, ["SaveValue"] = false})
             end
         end
     end
@@ -3541,4 +3541,3 @@ Util:Log("Xenon Debug - Attempted to fix chat")
 game:GetService("CoreGui").XenonV3Lib.TabHolder.Status.Label.Text = "Status: Loaded!"
 
 --- xenon on top
-
