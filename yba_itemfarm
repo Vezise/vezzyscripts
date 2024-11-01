@@ -1,0 +1,178 @@
+-- For trash executors without hookmetamethod and other stuff
+
+--//Config\\--
+getgenv().AutoFarm = true
+getgenv().PickupDelay = 0.45
+getgenv().MaxTeleportDistance = 45
+getgenv().TeleportSpeed = 9
+getgenv().Items = {"Rokakaka", "Lucky Arrow", "Mysterious Arrow", "Red Candy", "Blue Candy", "Green Candy", "Yellow Candy"}
+
+--//Script\\--
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = game.Players.LocalPlayer
+local Character = LocalPlayer.Character
+local HumanoidRootPart = Character:FindFirstChild("HumanoidRootPart")
+local OriginalLocation = nil
+local BodyVelocity = nil
+
+local function TeleportToPlace(targetCFrame)
+    local startPosition = HumanoidRootPart.Position
+    local direction = (targetCFrame.Position - startPosition).unit
+    local distance = (targetCFrame.Position - startPosition).Magnitude
+
+    local GoalCFrame
+    local Loop = RunService.Heartbeat:Connect(function()
+        if not GoalCFrame then return end
+
+        for _, BasePart in Character:GetDescendants() do
+            if BasePart:IsA("BasePart") and BasePart.CanCollide then
+                BasePart.CanCollide = false
+            end
+        end
+
+        HumanoidRootPart.CFrame = GoalCFrame
+    end)
+
+    BodyVelocity = Instance.new("BodyVelocity")
+    BodyVelocity.Velocity = Vector3.new(0, 0, 0)
+    BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge) -- Only counteract gravity on the Y axis
+    BodyVelocity.Parent = HumanoidRootPart
+
+    while distance > getgenv().MaxTeleportDistance do
+        startPosition = startPosition + direction * getgenv().MaxTeleportDistance
+        GoalCFrame = CFrame.new(startPosition)
+        distance = (targetCFrame.Position - startPosition).Magnitude
+        task.wait(10 / (getgenv().TeleportSpeed*10) )
+    end
+
+    GoalCFrame = targetCFrame
+    task.wait()
+
+    Loop:Disconnect()
+    task.wait()
+end
+
+local function WaitTillBackpackLoaded()
+    local Backpack = LocalPlayer.Backpack
+    local BackpackCount = #Backpack:GetChildren()
+    local StartCheck = tick()
+
+    while true do 
+        task.wait()
+
+        if tick() - StartCheck >= 0.1 and BackpackCount == #Backpack:GetChildren() then
+            break
+        elseif BackpackCount ~= #Backpack:GetChildren() then
+            BackpackCount = #Backpack:GetChildren();
+            StartCheck = tick()
+        end
+    end
+
+    return
+end
+
+local function CountItem(Item)
+    WaitTillBackpackLoaded()
+
+    local Backpack = LocalPlayer.Backpack
+    local Count = 0
+    for _, CheckedItem in Backpack:GetChildren() do
+        if CheckedItem.Name == Item then
+            Count = Count + 1
+        end
+    end
+
+    if Character and Character:FindFirstChildWhichIsA("Tool") and Character:FindFirstChildWhichIsA("Tool").Name == Item then
+        Count += 1
+    end
+
+    return Count
+end
+
+local function Has2X()
+    if game:GetService("MarketplaceService"):UserOwnsGamePassAsync(LocalPlayer.UserId, 14597778) then
+        return true
+    end
+    return false
+end
+
+local function IsMax(Item) 
+    local Max = {
+        ["Diamond"] = 30,
+        ["Gold Coin"] = 45,
+        ["Mysterious Arrow"] = 25,
+        ["Pure Rokakaka"] = 10,
+        ["Rokakaka"] = 25,
+        ["Stone Mask"] = 10,
+        ["Rib Cage of The Saint's Corpse"] = 10,
+        ["Steel Ball"] = 10,
+        ["Ancient Scroll"] = 10,
+        ["Dio's Diary"] = 10,
+        ["Caesar's Headband"] = 10,
+        ["Red Candy"] = 50,
+        ["Blue Candy"] = 50,
+        ["Green Candy"] = 50,
+        ["Yellow Candy"] = 50,
+        ["Quinton's Glove"] = 10,
+        ["Lucky Arrow"] = 10
+    }
+
+    if Has2X() then
+        for i,v in pairs(Max) do
+            Max[i] = v * 2
+        end
+    end
+
+    return CountItem(Item) >= Max[Item]
+end
+
+local function LocateItem()
+    for _, Item in pairs(workspace.Item_Spawns.Items:GetChildren()) do
+        local ItemMeshPart = Item:FindFirstChild("MeshPart")
+        local ProximityPrompt = Item:FindFirstChild("ProximityPrompt")
+
+        if not ItemMeshPart or not ProximityPrompt then continue end
+        if ProximityPrompt.MaxActivationDistance ~= 8 then continue end 
+        if not table.find(getgenv().Items, ProximityPrompt.ObjectText) then continue end
+        print(ProximityPrompt.ObjectText)
+        return {
+            ["ItemName"] = ProximityPrompt.ObjectText,
+            ["ProximityPrompt"] = ProximityPrompt,
+            ["CFrame"] = ItemMeshPart.CFrame,
+            ["Instance"] = Item
+        }
+    end
+end
+
+if getgenv().AutoFarm then
+    OriginalLocation = HumanoidRootPart.CFrame
+
+    while getgenv().AutoFarm do
+        task.wait()
+
+        local TargetItem = LocateItem()
+        local ItemName = nil
+
+        if not TargetItem then continue end
+
+        ItemName = TargetItem["ItemName"]
+
+        if IsMax(ItemName) then continue end
+        
+        --if not TargetItem then TeleportToPlace(CFrame.new(math.random(-1000, 1000), 0, math.random(-1000, 1000))); continue end
+
+        --//Pickup Item\\--
+        TeleportToPlace(TargetItem.CFrame + Vector3.new(0, -5, 0))
+
+        if (HumanoidRootPart.Position - TargetItem.CFrame.Position).Magnitude <= 8 then
+            task.wait(getgenv().PickupDelay)
+            fireproximityprompt(TargetItem.ProximityPrompt)
+            task.wait(getgenv().PickupDelay)
+            TargetItem.Instance:Destroy()
+            BodyVelocity:Destroy()
+        end
+    end
+else
+    TeleportToPlace(OriginalLocation)
+end
