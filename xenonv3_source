@@ -1470,7 +1470,8 @@ Util:AddValues{
             "Crimson Mist",
             "Dead Experience",
             "Undead Hand",
-            "Undead Flare"
+            "Undead Flare",
+            "Bloodthirster Anubis"
         };
         AllTeleports = {
             ["Newbie Giorno"] = CFrame.new(1, 0, -697);
