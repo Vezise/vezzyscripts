@@ -3119,9 +3119,17 @@ Misc_Other:Button("Reset Field Of View", function()
     workspace.Camera.FieldOfView = 70
 end, "resets camera fov")
 
-Misc_Other:Button("Buy Mysterious Bow", function()
+Misc_Other:Button("Buy Mysterious Bow ($500)", function()
     Util:GetCharacter().RemoteEvent:FireServer("EndDialogue", {["NPC"] = "Mysterious Bow Seller", ["Dialogue"] = "Dialogue4", ["Option"] = "Option1"})
 end, "buys mysterious bow")
+
+Misc_Other:Button("Buy Pizza ($50)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("EndDialogue", {["NPC"] = "Pizza", ["Option"] = "Option1", ["Dialogue"] = "Dialogue2"}, 1, 2)
+end, "buys pizza")
+
+Misc_Other:Button("Buy Tea ($50)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("EndDialogue", {["NPC"] = "Cafe", ["Option"] = "Option1", ["Dialogue"] = "Dialogue2"}, 1, 2)
+end, "buys tea")
 
 Misc_Other:Button("Jesus Dialogue", function()
     Util:GetCharacter().RemoteEvent:FireServer("PromptTriggered", game.ReplicatedStorage.NewDialogue.Jesus)
