@@ -1464,7 +1464,13 @@ Util:AddValues{
             "Crazy Overseer",
             "Tyrant Crimson",
             "Jester Crimson",
-            "Vexus Crimson"
+            "Vexus Crimson",
+            "Pumpkin Patch",
+            "Cornsnake",
+            "Crimson Mist",
+            "Dead Experience",
+            "Undead Hand",
+            "Undead Flare"
         };
         AllTeleports = {
             ["Newbie Giorno"] = CFrame.new(1, 0, -697);
