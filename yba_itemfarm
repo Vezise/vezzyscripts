@@ -1,12 +1,3 @@
--- For trash executors without hookmetamethod and other stuff
-
---//Config\\--
-getgenv().AutoFarm = true
-getgenv().PickupDelay = 0.45
-getgenv().MaxTeleportDistance = 45
-getgenv().TeleportSpeed = 9
-getgenv().Items = {"Rokakaka", "Lucky Arrow", "Mysterious Arrow", "Red Candy", "Blue Candy", "Green Candy", "Yellow Candy"}
-
 --//Script\\--
 local RunService = game:GetService("RunService")
 
