@@ -1458,7 +1458,13 @@ Util:AddValues{
             "Vanilla Ice Cream",
             "Venom",
             "Vinegar Crimson",
-            "Virus Vessel"
+            "Virus Vessel",
+            "Jack-O-Platinum",
+            "Ghost World",
+            "Crazy Overseer",
+            "Tyrant Crimson",
+            "Jester Crimson",
+            "Vexus Crimson"
         };
         AllTeleports = {
             ["Newbie Giorno"] = CFrame.new(1, 0, -697);
