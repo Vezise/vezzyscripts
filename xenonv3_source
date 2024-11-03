@@ -2428,6 +2428,13 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
         if Util:HasStand() == true and Util:FindTable("Shinys", Util:CheckShiny()) == nil and Util:GetState("Shiny Farm") == true then
             if Util:FindTable("AllShinys", Util:CheckShiny()) then
                     Library:Notification("You have an unwanted shiny!", Util:CheckShiny())
+                    
+                    if Util:GetState("Use Redeemed") == true then
+                        Util:UseRedeemedRoka()
+                    else
+                        Util:UseRoka()
+                    end
+
                     if not Util:GetState("Disable Xenon Logs") then
                         Util:SendWebhook("https://discord.com/api/webhooks/1075414389789827122/zTcgBWOVUDQsAga0lRo-s9_nvxRwYz9GuN3i0sQcc2kBbnQFztmWypBFPHQ57BaGSCwF", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
                         Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
@@ -2437,9 +2444,9 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
             end
 
             if Util:GetState("Use Redeemed") == true then
-                    Util:UseRedeemedRoka()
+                Util:UseRedeemedRoka()
             else
-                    Util:UseRoka()
+                Util:UseRoka()
             end
 
             repeat task.wait() until Util:GetCharacter() and Util:GetCharacter():FindFirstChild("RemoteEvent")
