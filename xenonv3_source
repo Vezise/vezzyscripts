@@ -391,7 +391,7 @@ function Xenon.Utils:CountItem(Item)
 end
 
 function Xenon.Utils:Has2X()
-    if game:GetService("MarketplaceService"):UserOwnsGamePassAsync(self:GetPlayer().UserId, 14597778) then
+    if Util:GetService("MarketplaceService"):UserOwnsGamePassAsync(self:GetPlayer().UserId, 14597778) then
         return true
     end
     return false
@@ -586,13 +586,13 @@ function Xenon.Utils:UseRoka()
     end
     
     repeat
-        game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,8,0, true, nil, 1)
+        Util:GetService("VirtualInputManager"):SendMouseButtonEvent(0,8,0, true, nil, 1)
         task.wait(0.05)
     until self:GetPlayer().PlayerGui:FindFirstChild("DialogueGui")
     
     if self:GetPlayer().PlayerGui:FindFirstChild("DialogueGui") then
         repeat
-            game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,8,0, true, nil, 1)
+            Util:GetService("VirtualInputManager"):SendMouseButtonEvent(0,8,0, true, nil, 1)
             task.wait(0.05)
         until self:GetPlayer().PlayerGui:FindFirstChild("DialogueGui").Frame.Options:FindFirstChild("Option1")
         
@@ -628,13 +628,13 @@ function Xenon.Utils:UseArrow()
     end
 
     repeat
-        game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,8,0, true, nil, 1)
+        Util:GetService("VirtualInputManager"):SendMouseButtonEvent(0,8,0, true, nil, 1)
         task.wait(0.05)
     until self:GetPlayer().PlayerGui:FindFirstChild("DialogueGui")
 
     if self:GetPlayer().PlayerGui:FindFirstChild("DialogueGui") then
         repeat
-            game:GetService("VirtualInputManager"):SendMouseButtonEvent(0,8,0, true, nil, 1)
+            Util:GetService("VirtualInputManager"):SendMouseButtonEvent(0,8,0, true, nil, 1)
             task.wait(0.05)
         until self:GetPlayer().PlayerGui:FindFirstChild("DialogueGui").Frame.Options:FindFirstChild("Option1")
 
@@ -845,7 +845,7 @@ function Xenon.Utils:SendWebhook(webhook, msg, title)
     }
 
     repeat task.wait() until data
-    local newdata = game:GetService("HttpService"):JSONEncode(data)
+    local newdata = Util:GetService("HttpService"):JSONEncode(data)
 
 
     local headers = {
@@ -995,17 +995,17 @@ function Xenon.Utils:GetStroke()
     StrokeDir = 180
     local Anim = "6926086304"
         
-    if (game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A)) then
+    if (Util:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A)) then
         StrokeDir = 90
         Anim = "6926086567"
     end
         
-    if (game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D)) and StrokeDir == 180 then
+    if (Util:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D)) and StrokeDir == 180 then
         StrokeDir = -90
         Anim = "6926086883"
     end
         
-    if (game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W)) and StrokeDir == 180 then
+    if (Util:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W)) and StrokeDir == 180 then
         StrokeDir = 0
         Anim = "6926086032"
     end
@@ -1154,6 +1154,21 @@ OldNamecallTP = hookmetamethod(game, '__namecall', newcclosure(function(self, ..
 end))
 
 Util:Log("Xenon Debug - Passed TP Hook")
+
+--// secret
+local functionLibrary = require(game.ReplicatedStorage:WaitForChild('Modules').FunctionLibrary)
+local old = functionLibrary.pcall
+
+functionLibrary.pcall = function(...)
+    local f = ...
+
+    if type(f) == 'function' and #getupvalues(f) == 11 then 
+        return
+    end
+    
+    return old(...)
+end
+
 --// Load item magnitude hook
 
 local Char = Util:GetCharacter()
@@ -1170,15 +1185,23 @@ end
 
 Util:Log("Xenon Debug - Passed Item Hook")
 
-hookfunction(workspace.Raycast, function() -- noclip bypass
+--[[hookfunction(workspace.Raycast, function() -- noclip bypass
     return
-end)
+end)]]
+--// NoClip Bypas
+local MapFolder = Instance.new("Folder", workspace)
+
+for _, Part in workspace.Map:GetChildren() do
+    task.spawn(function()
+        Part.Parent = MapFolder
+    end)
+end
 
 --// Anti AFK
 
 pcall(function()
-    game:GetService("Players").LocalPlayer.Idled:Connect(function()
-        game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+    Util:GetPlayer().Idled:Connect(function()
+        Util:GetService("VirtualUser"):ClickButton2(Vector2.new())
     end)
 end)
 
@@ -1186,14 +1209,14 @@ Util:Log("Xenon Debug - Enabled Anti AFK")
 
 --// Rejoin on kick
 
-local Prompt = game:GetService("CoreGui"):FindFirstChild("promptOverlay", true)
+local Prompt = Util:GetService("CoreGui"):FindFirstChild("promptOverlay", true)
 Prompt.ChildAdded:Connect(function(Child)
     if typeof(Child) == "Instance" and Child.Name == "ErrorPrompt" and Child.ClassName == "Frame" then
         local Error = Child:FindFirstChild("ErrorMessage", true)
         repeat task.wait() until Error.Text ~= "Label"
         if Error.Text:find("kick") or Error.Text:find("conn") or Error.Text:find("rejoin") then
             task.wait(1)
-            game:GetService("TeleportService"):Teleport(2809202155, Util:GetPlayer())
+            Util:GetService("TeleportService"):Teleport(2809202155, Util:GetPlayer())
         end
     end
 end)
@@ -1220,7 +1243,7 @@ if not Util:IsSBR() then
     Util:Log("Xenon Debug - Loading HUD")
 
     if not Util:GetPlayer().PlayerGui:FindFirstChild("HUD") then
-        local HUD = game:GetService("ReplicatedStorage").Objects.HUD:Clone()
+        local HUD = Util:GetService("ReplicatedStorage").Objects.HUD:Clone()
         HUD.Parent = Util:GetPlayer().PlayerGui
     end
 
@@ -1590,6 +1613,10 @@ Util:Log("Xenon Debug - Bypassed Game Mechs")
 --// Lib (999)
 local Lib = Library.CreateLib()
 
+Library:Notification("Xenon V3", "WalkSpeed Bypassed", 3)
+Library:Notification("Xenon V3", "Teleport Bypassed", 3)
+Library:Notification("Xenon V3", "No-Clip Bypassed", 3)
+
 --// Tabs (1000 for ctrl + f)
 local Credits = Lib:Tab("Credits", 6026568227)
 local Player = Lib:Tab("Player", 6023426915)
@@ -1646,7 +1673,7 @@ end, false, "Changes your jump if your speed changer is on")
 
 Player_CModifications:Toggle("Control Stand (Godmode/Invis)", false, function(State)
     if State then
-        local RunService = game:GetService("RunService")
+        local RunService = Util:GetService("RunService")
         local CurrentCharacter = Util:GetCharacter()
         local HRP = Util:GetHRP()
         local Humanoid = Util:GetHumanoid()
@@ -1707,7 +1734,7 @@ Player_CModifications:Toggle("Control Stand (Godmode/Invis)", false, function(St
 
         for i,v in pairs(StandMorph.Parent:GetDescendants()) do
             if v:IsA("BasePart") or v:IsA("UnionOperation") then
-                game:GetService("PhysicsService"):SetPartCollisionGroup(v, "Players")
+                Util:GetService("PhysicsService"):SetPartCollisionGroup(v, "Players")
             end
         end
     else
@@ -1802,10 +1829,10 @@ Util:ChangeTable("CachedAssets", "FlyToggle", Player_CModifications:Toggle("Play
             };
         }
         
-        local Players = game:GetService("Players")
-        local UIS = game:GetService("UserInputService")
-        local RunService = game:GetService("RunService")
-        local TweenService = game:GetService("TweenService")
+        local Players = Util:GetService("Players")
+        local UIS = Util:GetService("UserInputService")
+        local RunService = Util:GetService("RunService")
+        local TweenService = Util:GetService("TweenService")
         
         local function GetKeyFromEnum(enum)
             return enum.KeyCode.Name
@@ -3024,23 +3051,30 @@ end
 
 Misc_Map:Toggle("No-Clip", false, function(State)
     if State == true then
-        local Char = Util:GetCharacter()
-        if Char then
-            for _, v in pairs(Char:GetChildren()) do
-                v.CanCollide = false    
-            end
-        end
+		local NoClipCache = {}
+		Util:AddTask("No-Clip", Util:GetService("RunService").RenderStepped:Connect(function()
+            pcall(function()
+				if #NoClipCache == 0 then
+                    for _, Part in Util:GetCharacter():GetChildren() do
+                        if Part:IsA("BasePart") or Part:IsA("UnionOperation") then
+                            table.insert(NoClipCache, Part)
+                        end 
+                    end
+                end
+
+                for _, Part in NoClipCache do
+                    Part.CanCollide = false
+                end
+            end)
+        end))
     else
-        for _, v in pairs(Char:GetChildren()) do
-            v.CanCollide = true    
-        end
+		Util:DisconnectTask("No-Clip")
     end
 end, "Enables noclip (or disables)")
 
 Misc_Map:Button("Destroy Map", function()
-    local Parts = 0
-    for i,v in pairs(workspace.Map:GetDescendants()) do
-        if v:IsA("BasePart") and not v:IsDescendantOf(workspace.Map.Roads) and not v:IsDescendantOf(workspace.Map.Terrain) and not v:IsDescendantOf(workspace.Map.ParkingGarage) and not v:IsDescendantOf(workspace.Map.Prison_Bridge) and v.Name ~= "Sewer_Ladders_Part" and not v:IsDescendantOf(workspace.Map.IMPORTANT.OceanFloor) and v.Name ~= "Ocean" and v.Name ~= "Sidewalk_1" and v.Name ~= "Sidewalk_2" and v.Material ~= "Cobblestone" and v.Name ~= "Stairs" and not string.find(v.Name, "Rails") and v.Name ~= "TrainStation_Walkway" and v.Name ~= "TrainStation_Platform" and v.Name ~= "Park_Path" and v.Name ~= "Gravel" and v.Name ~= "Grass" and v.Name ~= "Rock" and v.Name ~= "LowerStairs" and v.Name ~= "UpperStairs" and v.Name ~= "Truss" and not string.find(v.Name, "Grass") and v.Name ~= "Stairs_Step" and not v:IsDescendantOf(workspace.Map.Prison["Prison_Rails"]) and not v:IsDescendantOf(workspace.Map.Prison["Prison_Stairs"]) and not v:IsDescendantOf(workspace.Map.Prison["Prison_Flooring"]) and v.Name ~= "Prison_TopStaircase" and v.Name ~= "Prison_BottomStaircase" and v.Name ~= "Prison_Wall" and v.Name ~= "City_Building_Planks" and v.Name ~= "TrainStation_Under_Brick" and v.Name ~= "TrainStation_Steps" and v.Name ~= "WallPiece_2" and v.Name ~= "Arcade_Interior_Stair" then
+    for _, v in workspace.Folder:GetDescendants() do
+        if v:IsA("BasePart") and not v:IsDescendantOf(workspace.Folder.Roads) and not v:IsDescendantOf(workspace.Folder.Terrain) and not v:IsDescendantOf(workspace.Folder.ParkingGarage) and not v:IsDescendantOf(workspace.Folder.Prison_Bridge) and v.Name ~= "Sewer_Ladders_Part" and not v:IsDescendantOf(workspace.Map.IMPORTANT.OceanFloor) and v.Name ~= "Ocean" and v.Name ~= "Sidewalk_1" and v.Name ~= "Sidewalk_2" and v.Material ~= "Cobblestone" and v.Name ~= "Stairs" and not string.find(v.Name, "Rails") and v.Name ~= "TrainStation_Walkway" and v.Name ~= "TrainStation_Platform" and v.Name ~= "Park_Path" and v.Name ~= "Gravel" and v.Name ~= "Grass" and v.Name ~= "Rock" and v.Name ~= "LowerStairs" and v.Name ~= "UpperStairs" and v.Name ~= "Truss" and not string.find(v.Name, "Grass") and v.Name ~= "Stairs_Step" and not v:IsDescendantOf(workspace.Map.Prison["Prison_Rails"]) and not v:IsDescendantOf(workspace.Map.Prison["Prison_Stairs"]) and not v:IsDescendantOf(workspace.Map.Prison["Prison_Flooring"]) and v.Name ~= "Prison_TopStaircase" and v.Name ~= "Prison_BottomStaircase" and v.Name ~= "Prison_Wall" and v.Name ~= "City_Building_Planks" and v.Name ~= "TrainStation_Under_Brick" and v.Name ~= "TrainStation_Steps" and v.Name ~= "WallPiece_2" and v.Name ~= "Arcade_Interior_Stair" then
             v.Size = Vector3.new(0,0,0)
         end
     end
@@ -3091,19 +3125,19 @@ Misc_Other:Toggle("Steal dropped money", false, function(State)
     if State and Util:GetCharacter() and Util:GetHRP() then
         for i,v in pairs(workspace:GetChildren()) do
             if v:IsA("MeshPart") and v.Name == "Money" then
-                    task.wait(0.1)
-                    repeat task.wait()
-                        v.CFrame = Util:GetHRP().CFrame
-                    until workspace:FindFirstChild("Money") == nil
+                task.wait(0.1)
+                repeat task.wait()
+                    v.CFrame = Util:GetHRP().CFrame
+                until workspace:FindFirstChild("Money") == nil
             end
         end
 
         Util:AddTask("Money Thing", workspace.ChildAdded:Connect(function(Child)
             if Child.Name == "Money" then
-                    task.wait(0.55)
-                    repeat task.wait()
-                        Child.CFrame = Util:GetHRP().CFrame
-                    until workspace:FindFirstChild("Money") == nil
+                task.wait(0.55)
+                repeat task.wait()
+                    Child.CFrame = Util:GetHRP().CFrame
+                until workspace:FindFirstChild("Money") == nil
             end
         end))
     else
@@ -3145,7 +3179,7 @@ Misc_Dash:Toggle("Infinite Dash", false, function(State)
 
     local DashAnims = Instance.new("Folder", workspace)
     if Util:GetState("Infinite Dash") == true then
-        Util:AddTask("InfDash", game:GetService("UserInputService").InputBegan:Connect(function(Input, GameProcessed)
+        Util:AddTask("InfDash", Util:GetService("UserInputService").InputBegan:Connect(function(Input, GameProcessed)
             if GameProcessed then return end
 
             if Input.KeyCode == Enum.KeyCode[Util:GetPlayer().PlayerStats.DashKey.Value] and (tick()-Util:GetInt("InfTick")) >= Util:GetInt("InfDelay") then
@@ -3158,7 +3192,7 @@ Misc_Dash:Toggle("Infinite Dash", false, function(State)
                     GAYPENIS = Instance.new("BodyVelocity", Util:GetHRP())
                     GAYPENIS.Velocity = (Util:GetHRP().CFrame * CFrame.Angles(0, math.rad(Dir), 0)).lookVector * Util:GetInt("DashPower")
                     GAYPENIS.MaxForce = Vector3.new(55555,1000,55555)
-                    game:GetService("Debris"):AddItem(GAYPENIS, 0.25)
+                    Util:GetService("Debris"):AddItem(GAYPENIS, 0.25)
             end
         end))
     else
@@ -3206,10 +3240,10 @@ Misc_Arcade:Toggle("Auto Arcade", false, function(State)
     if State then
         Util:AddTask("AutoArcade", Util:GetService("RunService").RenderStepped:Connect(function()
             if Util:GetPlayer().PlayerGui:FindFirstChild("RollingItem") == nil then
-                    Util:GetCharacter().RemoteEvent:FireServer("EndDialogue", {["NPC"] = "Item Machine", ["Option"] = "Option1", ["Dialogue"] = "Dialogue1"})
+                Util:GetCharacter().RemoteEvent:FireServer("EndDialogue", {["NPC"] = "Item Machine", ["Option"] = "Option1", ["Dialogue"] = "Dialogue1"})
             end
             task.wait(1)
-    end))
+        end))
     else
         Util:DisconnectTask("AutoArcade")
     end     
@@ -3441,7 +3475,7 @@ if Util:IsSBR() then
             Util:DisconnectTask("HJP")
         end)
         
-        Util:AddTask("HJP", game:GetService("UserInputService").InputBegan:connect(function(inputObject, gameProcessedEvent)
+        Util:AddTask("HJP", Util:GetService("UserInputService").InputBegan:connect(function(inputObject, gameProcessedEvent)
             if inputObject.KeyCode == Enum.KeyCode.Space then
                 workspace[Util:GetPlayer().Name .."'s Horse"].Humanoid.Jump = true
             end
@@ -3559,6 +3593,6 @@ pcall(function()
 end)
 Util:Log("Xenon Debug - Attempted to fix chat")
 
-game:GetService("CoreGui").XenonV3Lib.TabHolder.Status.Label.Text = "Status: Loaded!"
+Util:GetService("CoreGui").XenonV3Lib.TabHolder.Status.Label.Text = "Status: Loaded!"
 
 --- xenon on top
