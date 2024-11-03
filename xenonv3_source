@@ -418,10 +418,10 @@ function Xenon.Utils:IsMax(Item)
         ["Ancient Scroll"] = 10,
         ["Dio's Diary"] = 10,
         ["Caesar's Headband"] = 10,
-	["Red Candy"] = 50,
-	["Blue Candy"] = 50,
-	["Green Candy"] = 50,
-	["Yellow Candy"] = 50,
+        ["Red Candy"] = 50,
+        ["Blue Candy"] = 50,
+        ["Green Candy"] = 50,
+        ["Yellow Candy"] = 50,
         ["Quinton's Glove"] = 10,
         ["Lucky Arrow"] = 10
     }
@@ -2397,6 +2397,19 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
             StandRedeemedFarm:UpdateAsset(false)
         end
 
+        if Util:FindTable("Shinys", Util:CheckShiny()) then
+            for _, Instance in Util:GetPlayer().PlayerGui.HUD.Main.Frames.Stands.ScrollingFrame:GetChildren() do
+                if Instance:FindFirstChild("TextLabel") then
+                    if string.find(Instance.TextLabel.Text, "None") then
+                        Util:GetCharacter().RemoteEvent:FireServer("SwapStand", tostring(Instance.Name))
+                    end
+                end
+            end
+
+            Util:GetPlayer().CharacterAdded:Wait()
+            continue 
+        end
+        
         print("Waiting state:", Util:GetState("Waiting"))
         print("Has Stand:", Util:HasStand())
         --print("Pity:", Util:GetPlayer().PlayerStats.Pity.Value == 0)
@@ -2412,6 +2425,17 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
                         Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
                     end
                     Util:SetState("Waiting", true) --// They now have been notified
+
+                    for _, Instance in Util:GetPlayer().PlayerGui.HUD.Main.Frames.Stands.ScrollingFrame:GetChildren() do
+                        if Instance:FindFirstChild("TextLabel") then
+                            if string.find(Instance.TextLabel.Text, "None") then
+								Util:GetCharacter().RemoteEvent:FireServer("SwapStand", tostring(Instance.Name))
+							end
+                        end
+                    end
+
+                    Util:GetPlayer().CharacterAdded:Wait()
+
                     continue
             else
                     continue
