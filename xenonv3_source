@@ -418,10 +418,10 @@ function Xenon.Utils:IsMax(Item)
         ["Ancient Scroll"] = 10,
         ["Dio's Diary"] = 10,
         ["Caesar's Headband"] = 10,
-        ["Red Candy"] = 50,
-        ["Blue Candy"] = 50,
-        ["Green Candy"] = 50,
-        ["Yellow Candy"] = 50,
+        ["Red Candy"] = 45,
+        ["Blue Candy"] = 45,
+        ["Green Candy"] = 45,
+        ["Yellow Candy"] = 45,
         ["Quinton's Glove"] = 10,
         ["Lucky Arrow"] = 10
     }
