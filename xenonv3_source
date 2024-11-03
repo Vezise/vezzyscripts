@@ -2402,14 +2402,14 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
                 if Instance:FindFirstChild("TextLabel") then
                     if string.find(Instance.TextLabel.Text, "None") then
                         Util:GetCharacter().RemoteEvent:FireServer("SwapStand", tostring(Instance.Name))
+                        Util:GetPlayer().CharacterAdded:Wait()
                     end
                 end
             end
 
-            Util:GetPlayer().CharacterAdded:Wait()
             continue 
         end
-        
+
         print("Waiting state:", Util:GetState("Waiting"))
         print("Has Stand:", Util:HasStand())
         --print("Pity:", Util:GetPlayer().PlayerStats.Pity.Value == 0)
@@ -2430,11 +2430,10 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
                         if Instance:FindFirstChild("TextLabel") then
                             if string.find(Instance.TextLabel.Text, "None") then
 								Util:GetCharacter().RemoteEvent:FireServer("SwapStand", tostring(Instance.Name))
+                                Util:GetPlayer().CharacterAdded:Wait()
 							end
                         end
                     end
-
-                    Util:GetPlayer().CharacterAdded:Wait()
 
                     continue
             else
