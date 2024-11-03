@@ -1761,7 +1761,7 @@ Player_CModifications:Slider("Control Stand Walkspeed", 0, 50, 16, function(Num)
     Util:GetCharacter():WaitForChild("StandMorph", 3).AnimationController.WalkSpeed = Num
 end, false, "changes your stand walkspeed")
 
-Player_CModifications:Toggle("Godmode", false, function(State)
+--[[Player_CModifications:Toggle("Godmode", false, function(State)
     Util:SetState("God Mode", State)
 
     if Util:GetState("God Mode") == true then
@@ -1794,7 +1794,7 @@ Player_CModifications:Toggle("Godmode", false, function(State)
         Util:DisconnectTask("RemoveHealthText")
         Util:GetHumanoid().Health = 0
     end
-end, "toggles infinite hp")
+end, "toggles infinite hp")]]
 
 Util:ChangeTable("CachedAssets", "FlyToggle", Player_CModifications:Toggle("Player Fly", false, function(State)
     if State == true then
