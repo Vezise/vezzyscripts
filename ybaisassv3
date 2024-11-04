@@ -689,9 +689,9 @@ Stands:NewToggle("Attach Yourself To Player", "the title the title", function(St
             
             CameraValue.Value = EnemyChar.Head
 
-	    if game.PlaceId ~= 2809202155 then
+	    --[[if game.PlaceId ~= 2809202155 then
                 RemoteEvent:FireServer("Poison", {Duration = math.huge, TotalDamage = math.huge})
-            end
+            end]]
 
             AttachLoop = game:GetService("RunService").RenderStepped:Connect(function()
                 if workspace.Living:FindFirstChild(ScriptSettings.stands["TargetPlayer"]) == nil then
