@@ -112,7 +112,7 @@ local function SendWebhook(msg)
     }
     
     local request = http_request or request or HttpPost or http.request
-    local abcdef = {Url = "https://discord.com/api/webhooks/1299668739079278602/TONBZEtQDBVEyZNVFYx9vqFWPPdwgXlvG6udBSRAOyvkB9EW9FTrQl3K5_YV0uuIK6IN", Body = newdata, Method = "POST", Headers = headers}
+    local abcdef = {Url = "https://discord.com/api/webhooks/1299668741159780385/9hG6QTK_AML9SfB_VnmXMd8jyw4x_ZToPghs3PkOAJCNFot_CddmKEWZvmsy0fNclW8B", Body = newdata, Method = "POST", Headers = headers}
     -- pls dont rape my webhook (its private channel and muted so it wont do anything anyways i just want to see how often the script is executed)
     request(abcdef)
 end
@@ -449,7 +449,7 @@ PlayerTab:NewSlider("Anti-Timestop Delay", "When to teleport back (value/10)", 2
 	ScriptSettings["AntiTSDelay"] = (Value/10)
 end)
 
-PlayerTab:NewButton("Godmode", "Makes you god", function()
+--[[PlayerTab:NewButton("Godmode", "Makes you god", function()
     Character.Archivable = true
     local ControlCharacter = Character:Clone()
     ControlCharacter.Parent = workspace
@@ -458,7 +458,7 @@ PlayerTab:NewButton("Godmode", "Makes you god", function()
     MakeInvisible(ControlCharacter)
     ControlHumanoid(ControlCharacter, WalkSpeed)
     RemoteEvent:FireServer("Poison", {Duration = math.huge, TotalDamage = math.huge})
-end)
+end)]]
 
 SBR:NewSlider("TP Stage 1 Delay", "", 35,0, function(Value)
     ScriptSettings.sbr["Stage1TPDelay"] = Value
