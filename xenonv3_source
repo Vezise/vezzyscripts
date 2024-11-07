@@ -1634,7 +1634,7 @@ Credits_Developers:Label("Co-Developer: vezrr")
 Credits_Developers:Label("UI Designer: enxquity")
 Credits_Developers:Label("Extra Features: _scep. & crtrz")
 
-Credits_Info:Label("Version: v3.2.1a")
+Credits_Info:Label("Version: v3.2.6a")
 Credits_Info:Label("Exploit: " .. (identifyexecutor and identifyexecutor() or "Unsupported exploit"))
 Credits_Info:Button("Copy Discord", function()
     Library:Notification("Copied", "The discord link was set to your clipboard. Paste it in your browser, discord joins, or any message to be able to join.", 3)
