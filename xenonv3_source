@@ -186,6 +186,7 @@ end
 
 function Xenon.Utils:GetTable(Value)
     if self.Tables[Value] then
+		
         return self.Tables[Value].Value
     end
     return {}
@@ -723,9 +724,25 @@ function Xenon.Utils:HasShiny()
 end
 
 function Xenon.Utils:CheckShiny()
-    local Character = self:GetCharacter()
+    --[[local Character = self:GetCharacter()
     if Character and Character:FindFirstChild("RemoteFunction") then
+		print(Character.RemoteFunction:InvokeServer("ReturnStandSkin", "Stand"))
         return Character.RemoteFunction:InvokeServer("ReturnStandSkin", "Stand")
+    end]]
+    local StandThingLabel = self:GetPlayer().PlayerGui.HUD.Main.Frames.Stands.ScrollingFrame.Equipped:FindFirstChild("TextLabel")
+
+    if StandThingLabel then
+        --[[local StandThing = StandThingLabel.Text
+        local NewStandThing = string.gsub(StandThing, "EQUIPPED: ", "")
+        local NewerStandThing = string.split(NewStandThing, "(")[1]
+        if string.sub(NewerStandThing, #NewerStandThing, #NewerStandThing) == " " then
+            NewerStandThing = string.sub(NewStandThing, 0, #NewerStandThing-1)
+        end
+        self:SetString("Stand", NewerStandThing)
+        return NewerStandThing]]
+        return string.match(StandThingLabel.Text, "EQUIPPED: ([%w%s]+)%s%(")
+    else 
+        return
     end
 end
 
@@ -1389,13 +1406,13 @@ Util:AddValues{
         ChosenItemsToSell = {};
         ParsedQuests = {};
         AllMods = {"UzuKee", "BLOODTARO", "Dxscape", "Myst_Ari", "eurycIea", "v_cks", "ezguap", "Tsuzutou", "ReferToWithered", "Illus0", "Pyreiz", "VoidedFlame", "ROUXABOUT", "mixeriiiiiing", "MichDrajo", "hayst4", "ElmoNYC", "Core_CorruptionF", "Brillcake", "AxionTheRevenant", "sammyj0n", "ViveLesPatat", "Zimvasion", "vertiify", "redfoxP", "cakesucker05", "00kamiMio", "itscanii", "SirDeviloper", "0nkka", "Ramdharam", "Olliebutheskenny", "cswag_code", "TwoGio", "KoleRTX2", "Wilpuri", "remendyy", "SpaceNuggies", "CrimsonBeheIit", "warycoolio"};
-        AllItems = {"Blue Candy", "Green Candy", "Yellow Candy", "Red Candy", "Mysterious Arrow", "Pure Rokakaka", "Rokakaka", "Diamond", "Lucky Arrow", "Lucky Stone Mask", "Dio's Diary", "Steel Ball", "Rib Cage of The Saint's Corpse", "Stone Mask", "Gold Coin", "Quinton's Glove", "Ancient Scroll", "Caesar's Headband"};
+        AllItems = {"Blue Candy", "Green Candy", "Yellow Candy", "Red Candy", "Mysterious Arrow", "Pure Rokakaka", "Rokakaka", "Diamond", "Lucky Arrow", "Lucky Stone Mask", "Dio's Diary", "Steel Ball", "Rib Cage of The Saint's Corpse", "Stone Mask", "Gold Coin", "Quinton's Glove", "Ancient Scroll", "Caesar's Headband", "Clackers"};
         AllStands = {"Whitesnake", "Stone Free", "Star Platinum", "The World", "Crazy Diamond", "Killer Queen", "Gold Experience", "King Crimson", "Silver Chariot", "Hermit Purple", "The Hand", "Purple Haze", "Cream", "Hierophant Green", "Magician's Red", "White Album", "Aerosmith", "Six Pistols", "Beach Boy", "Mr. President", "Sticky Fingers", "Anubis", "Red Hot Chili Pepper", "Scary Monsters", "The World Alternate Universe", "D4C", "Tusk ACT 1", "Soft & Wet"};
         AllShinys = {
             "Action-Figure Platinum",
             "Actually Red Hot Chili Pepper",
             "Aerosmith Over Heaven",
-            "All-Star Whitesnake",
+            "All-Starsnake",
             "Anti-Umbral",
             "Asuna",
             "Biblically Accurate Experience",
@@ -1426,9 +1443,9 @@ Util:AddValues{
             "Gold & Wet",
             "Headhunter",
             "Heaven Spirit",
-            "Heirophant Black",
-            "Hierophant Purple",
-            "Hierophant Yellow",
+            "Tentacle Black",
+            "Tentacle Purple",
+            "Tentacle Yellow",
             "Holly's Sickness",
             "Jade Peace",
             "Jaguar Platinum",
@@ -1757,7 +1774,7 @@ Player_CModifications:Toggle("Control Stand (Godmode/Invis)", false, function(St
     end
 end, "Allows you to pilot any stand and gives you godmode and invis")
 
-Player_CModifications:Slider("Control Stand Walkspeed", 0, 50, 16, function(Num)
+Player_CModifications:Slider("Control Stand Walkspeed", 0, 125, 2, function(Num)
     Util:GetCharacter():WaitForChild("StandMorph", 3).AnimationController.WalkSpeed = Num
 end, false, "changes your stand walkspeed")
 
@@ -2377,8 +2394,8 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
 
         if not Util:IsTaskRunning("SafeFarm") then
             Util:AddTask("SafeFarm", Util:GetPlayer().CharacterAdded:Connect(function(Char)
-                    task.wait(0.325)
-                    Char.PrimaryPart.CFrame = CFrame.new(-324, -32, 47)
+                task.wait(0.325)
+                Char.PrimaryPart.CFrame = CFrame.new(-324, -32, 47)
             end))
         end
     else
@@ -2386,6 +2403,12 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
     end
 
     while Util:GetState("Shiny Farm") == true do task.wait(0.1)
+        warn("Waiting state:", Util:GetState("Waiting"))
+        warn("Has Stand:", Util:HasStand())
+        --print("Pity:", Util:GetPlayer().PlayerStats.Pity.Value == 0)
+        warn("Has Shiny:", Util:HasShiny(), Util:CheckShiny().."hi")
+        warn("ENabrled Shiny:", Util:FindTable("ShinyToggles", Util:CheckShiny()))
+
         if Util:CountItem("Mysterious Arrow") == 0 or Util:CountItem("Rokakaka") == 0 then
             Util:FarmItems{
                     "Rokakaka";
@@ -2397,7 +2420,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
             StandRedeemedFarm:UpdateAsset(false)
         end
 
-        if Util:FindTable("Shinys", Util:CheckShiny()) then
+        if Util:FindTable("ShinyToggles", Util:CheckShiny()) then
             for _, Instance in Util:GetPlayer().PlayerGui.HUD.Main.Frames.Stands.ScrollingFrame:GetChildren() do
                 if Instance:FindFirstChild("TextLabel") then
                     if string.find(Instance.TextLabel.Text, "None") then
@@ -2406,75 +2429,75 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
                     end
                 end
             end
-
             continue 
         end
 
-        print("Waiting state:", Util:GetState("Waiting"))
-        print("Has Stand:", Util:HasStand())
-        --print("Pity:", Util:GetPlayer().PlayerStats.Pity.Value == 0)
-        print("Has Shiny:", Util:HasShiny())
-        print("Enabled shiny:", Util:FindTable("Shinys", Util:CheckShiny()))
-        if Util:HasStand() == true and Util:HasShiny() == true and Util:FindTable("Shinys", Util:CheckShiny()) then --// They got a stand they wanted?
+        if Util:HasStand() == true and Util:HasShiny() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) then --// They got a stand they wanted?
             if Util:GetState("Waiting") == false then --// They haven't been notified before?
-                    Library:Notification("You have the shiny you wanted!", Util:CheckShiny())
-                    if not Util:GetState("Disable Xenon Logs") then
-                        Util:SendWebhook("https://discord.com/api/webhooks/1074691311774478356/-772fIlHuUanYoJsLD2AnQFvmHRKJEbZl8zaDpVEJeRGVFuOZGT-pQf9O4yhQ8MchZq2", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
-                        Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
-                    else
-                        Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
-                    end
-                    Util:SetState("Waiting", true) --// They now have been notified
+                Library:Notification("You have the shiny you wanted!", Util:CheckShiny(), 3)
+                if not Util:GetState("Disable Xenon Logs") then
+                    Util:SendWebhook("https://discord.com/api/webhooks/1074691311774478356/-772fIlHuUanYoJsLD2AnQFvmHRKJEbZl8zaDpVEJeRGVFuOZGT-pQf9O4yhQ8MchZq2", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
+                    Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
+                else
+                    Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
+                end
+                Util:SetState("Waiting", true) --// They now have been notified
 
-                    for _, Instance in Util:GetPlayer().PlayerGui.HUD.Main.Frames.Stands.ScrollingFrame:GetChildren() do
-                        if Instance:FindFirstChild("TextLabel") then
-                            if string.find(Instance.TextLabel.Text, "None") then
-								Util:GetCharacter().RemoteEvent:FireServer("SwapStand", tostring(Instance.Name))
-                                Util:GetPlayer().CharacterAdded:Wait()
-							end
+                for _, Instance in Util:GetPlayer().PlayerGui.HUD.Main.Frames.Stands.ScrollingFrame:GetChildren() do
+                    if Instance:FindFirstChild("TextLabel") then
+                        if string.find(Instance.TextLabel.Text, "None") then
+                            Util:GetCharacter().RemoteEvent:FireServer("SwapStand", tostring(Instance.Name))
+                            Util:GetPlayer().CharacterAdded:Wait()
                         end
                     end
+                end
 
-                    continue
+                continue
             else
-                    continue
+                continue
             end
         end
+
         if Util:GetState("Shiny Farm") == true then
             Util:SetState("Waiting", false)
         end
 
-        if Util:HasStand() == true and Util:FindTable("Shinys", Util:CheckShiny()) == nil and Util:GetState("Shiny Farm") == true then
-            if Util:FindTable("AllShinys", Util:CheckShiny()) then
-                    Library:Notification("You have an unwanted shiny!", Util:CheckShiny())
+        print("Gay", Util:FindTable("ShinyToggles", Util:CheckShiny()) == nil)
+        if Util:HasStand() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) == nil and Util:GetState("Shiny Farm") == true then
+
+            task.spawn(function()
+				local gay, sex = pcall(function()
+                    Library:Notification("You have an unwanted shiny!", Util:CheckShiny(), 3)
                     if not Util:GetState("Disable Xenon Logs") then
                         Util:SendWebhook("https://discord.com/api/webhooks/1075414389789827122/zTcgBWOVUDQsAga0lRo-s9_nvxRwYz9GuN3i0sQcc2kBbnQFztmWypBFPHQ57BaGSCwF", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
                         Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
                     else
                         Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
                     end
-            end
+                end)
+                print(gay,sex)
+            end)
 
             if Util:GetState("Use Redeemed") == true then
-                    Util:UseRedeemedRoka()
+                Util:UseRedeemedRoka()
             else
-                    Util:UseRoka()
+                Util:UseRoka()
             end
 
             repeat task.wait() until Util:GetCharacter() and Util:GetCharacter():FindFirstChild("RemoteEvent")
-            continue
+            --continue
         end
 
         if Util:HasStand() == false and Util:GetState("Shiny Farm") == true and Util:CountItem("Mysterious Arrow") >= 1 then
             Util:Stats()
             if Util:GetState("Use Redeemed") == true then
-                    Util:UseRedeemedArrow()
+                Util:UseRedeemedArrow()
             else
-                    Util:UseArrow()
+                Util:UseArrow()
             end
 
             repeat task.wait() until Util:HasStand() == true 
-            continue
+            --continue
         end
     end
 end, "Farms wanted shinys for you")
@@ -2502,9 +2525,10 @@ Autofarms_ShinyFarm:Toggle("Rib Shiny Farm", Util:GetState("Shiny Farm"), functi
             }
         end
         
-        if Util:HasStand() == true and Util:FindTable("Shinys", Util:CheckShiny()) then
+
+        if Util:HasStand() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) then
             if Util:GetState("Waiting") == false then --// They haven't been notified before?
-                    Library:Notification("You have the shiny you wanted!", Util:CheckShiny())
+                    Library:Notification("You have the shiny you wanted!", Util:CheckShiny(), 3)
                     if not Util:GetState("Disable Xenon Logs") then
                         Util:SendWebhook("https://discord.com/api/webhooks/1074691311774478356/-772fIlHuUanYoJsLD2AnQFvmHRKJEbZl8zaDpVEJeRGVFuOZGT-pQf9O4yhQ8MchZq2", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
                         Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
@@ -2530,16 +2554,16 @@ Autofarms_ShinyFarm:Toggle("Rib Shiny Farm", Util:GetState("Shiny Farm"), functi
 end, "Toggles rib shiny farm")
 
 Autofarms_Shinys:Button("Enable all shinys", function()
-    local ShinyToggles = Util:GetTable("ShinyToggles")
-    for i,v in pairs(ShinyToggles) do
+    local Shinys = Util:GetTable("ShinyToggles")
+    for i,v in pairs(Shinys) do
         task.wait()
         v:UpdateAsset(true)
     end
 end, "Toggles all shinys on")
 
 Autofarms_Shinys:Button("Disable all shinys", function()
-    local ShinyToggles = Util:GetTable("ShinyToggles")
-    for i,v in pairs(ShinyToggles) do
+    local Shinys = Util:GetTable("ShinyToggles")
+    for i,v in pairs(Shinys) do
         task.wait()
         v:UpdateAsset(false)
     end
@@ -2548,15 +2572,21 @@ end, "Toggles all shinys off")
 Util:Log("Xenon Debug - Loaded Shiny Table")
 
 for i,v in pairs(Util:GetTable("AllShinys")) do
-    Util:InsertTable("ShinyToggles", Autofarms_Shinys:Toggle(v, (table.find(Util:GetTable("Shinys"), v) ~= nil and true or false) , function(State)
+    Util:InsertTable("ShinyToggles", Autofarms_Shinys:Toggle(v, (table.find(Util:GetTable("ShinyToggles"), v) ~= nil and true or false) , function(State)
         if State == true then
-            if not table.find(Util:GetTable("Shinys"), v) then
-                    Util:InsertTable("Shinys", v)
-            end
+            task.spawn(function()
+                task.wait()
+                if not table.find(Util:GetTable("ShinyToggles"), v) then
+                    Util:InsertTable("ShinyToggles", v)
+                end
+            end)
         else
-            if table.find(Util:GetTable("Shinys"), v) then
-                    Util:RemoveTable("Shinys", v)
-            end
+			task.spawn(function()
+				task.wait()
+                if table.find(Util:GetTable("ShinyToggles"), v) then
+                    Util:RemoveTable("ShinyToggles", v)
+                end
+            end)
         end
         Util:SaveConfig();
     end, ("Adds " .. v .. " to the shiny farming list.")))
@@ -2737,15 +2767,15 @@ if not Util:IsSBR() then
     task.spawn(function()
         while task.wait(1) do
             local S,F = pcall(function()
-                    local Pity = ( "Pity: " .. Util:GetPlayer().PlayerStats.PityCount.Value .. " (" .. (Util:GetPlayer().PlayerStats.PityCount.Value*0.04) + 1 .. "%)" )
-                    local Stand = ( "Stand: " .. Util:GetPlayer().PlayerStats.Stand.Value )
-                    local Shiny = ( "Shiny: " .. (Util:CheckShiny() == nil and "No Stand" or Util:CheckShiny()) )
-                    PityLabel:UpdateAsset(Pity)
-                    StandLabel:UpdateAsset(Stand)
-                    ShinyLabel:UpdateAsset(Shiny)
+                local Pity = ( "Pity: " .. Util:GetPlayer().PlayerStats.PityCount.Value .. " (" .. (Util:GetPlayer().PlayerStats.PityCount.Value*0.04) + 1 .. "%)" )
+                local Stand = ( "Stand: " .. Util:GetPlayer().PlayerStats.Stand.Value )
+                local Shiny = ( "Shiny: " .. (Util:CheckShiny() == nil and "No Stand" or Util:CheckShiny()) )
+                PityLabel:UpdateAsset(Pity)
+                StandLabel:UpdateAsset(Stand)
+                ShinyLabel:UpdateAsset(Shiny)
             end)
             if not S then
-                    warn("[Xenon] Stand info had an error, but it was handled -", F)
+                warn("[Xenon] Stand info had an error, but it was handled -", F)
             end
         end
     end)
@@ -3184,6 +3214,43 @@ Misc_Other:Button("Buy Tea ($50)", function()
     Util:GetCharacter().RemoteEvent:FireServer("EndDialogue", {["NPC"] = "Cafe", ["Option"] = "Option1", ["Dialogue"] = "Dialogue2"}, 1, 2)
 end, "buys tea")
 
+Misc_Other:Button("Buy Rokakaka ($1,750)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x Rokakaka"}, 1, 2)
+
+end, "buys tea")
+
+Misc_Other:Button("Buy Mysterious Arrow ($500)", function()
+     Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x Mysterious Arrow"}, 1, 2)
+end, "buys tea")
+
+Misc_Other:Button("Buy Lucky Arrow ($50,000)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x Lucky Arrow"}, 1, 2)
+end, "buys tea")
+
+Misc_Other:Button("Buy DIO's Diary ($5,000)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x DIO's Diary"}, 1, 2)
+end, "buys tea")
+
+Misc_Other:Button("Buy Rib Cage ($2,250)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x Rib Cage of The Saint's Corpse"}, 1, 2)
+end, "buys tea")
+
+Misc_Other:Button("Buy Left Arm ($10,000)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x Left Arm of The Saint's Corpse"}, 1, 2)
+end, "buys tea")
+
+Misc_Other:Button("Buy Pelvis ($30,000)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x Pelvis of The Saint's Corpse"}, 1, 2)
+end, "buys tea")
+
+Misc_Other:Button("Buy Heart ($30,000)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x Heart of The Saint's Corpse"}, 1, 2)
+end, "buys tea")
+
+Misc_Other:Button("Buy Pure Rokakaka ($2500)", function()
+    Util:GetCharacter().RemoteEvent:FireServer("PurchaseShopItem", {["ItemName"] = "1x Pure Rokakaka"}, 1, 2)
+end, "buys tea")
+
 Misc_Other:Button("Jesus Dialogue", function()
     Util:GetCharacter().RemoteEvent:FireServer("PromptTriggered", game.ReplicatedStorage.NewDialogue.Jesus)
 end, "Opens Jesus dialogue.")
@@ -3320,7 +3387,7 @@ Misc_Sell:Button("Select all items", function()
         task.wait()
         v:UpdateAsset(true)
     end
-end, "Toggles all shinys on")
+end, "Toggles all items on")
 
 Misc_Sell:Button("Unselect all items", function()
     print("Clicked")
@@ -3329,7 +3396,7 @@ Misc_Sell:Button("Unselect all items", function()
         task.wait()
         v:UpdateAsset(false)
     end
-end, "Toggles all shinys off")
+end, "Toggles all items off")
 
 for i,v in pairs(Util:GetTable("AllItems")) do
     Util:InsertTable("ItemSellToggles", Misc_Sell:Toggle(v, (table.find(Util:GetTable("ChosenItemsToSell"), v) ~= nil and true or false) , function(State)
