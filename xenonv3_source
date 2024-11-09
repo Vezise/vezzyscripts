@@ -36,7 +36,7 @@ function Xenon.Utils.MakeUtilController(Settings)
         Ints = {};
         Strings = {};
         Tables = {};
-        Settings = Settings or {ConfigName = "/XenonV3/XenonConfigNew.json"};
+        Settings = Settings or {ConfigName = "/XenonV3/XenonConfigNEW.json"};
         LogFile = nil;
     }
     Utils.Services = setmetatable({}, {__index = function(self, service)
@@ -111,7 +111,7 @@ function Xenon.Utils:ReadData()
     local Success, Error = pcall(function()
         Data = self.Services.HttpService:JSONDecode(readfile(self.Settings.ConfigName))
     end);
-    Data = Data or loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/main/xv3_cfg"))()
+    Data = Data or loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/refs/heads/main/xv3_cfg"))()
     return {
         Data = Data;
         Success = Success;
@@ -1071,7 +1071,7 @@ function Xenon.Utils:LabelChar(Chars)
 end
 
 local Util = Xenon.Utils.MakeUtilController()
-local XenonConfigNew = Util:ReadData():LoadData()
+local XenonConfig = Util:ReadData():LoadData()
 
 Util:Log("Xenon Debug - Passed Functions")
 --// Preload Api ----
@@ -2572,6 +2572,7 @@ for i,v in pairs(Util:GetTable("AllShinys")) do
                 task.wait()
                 if not table.find(Util:GetTable("ShinyToggles"), v) then
                     Util:InsertTable("ShinyToggles", v)
+                    Util:SaveConfig()
                 end
             end)
         else
@@ -2579,10 +2580,10 @@ for i,v in pairs(Util:GetTable("AllShinys")) do
 				task.wait()
                 if table.find(Util:GetTable("ShinyToggles"), v) then
                     Util:RemoveTable("ShinyToggles", v)
+                    Util:SaveConfig()
                 end
             end)
         end
-        Util:SaveConfig();
     end, ("Adds " .. v .. " to the shiny farming list.")))
 end
 
