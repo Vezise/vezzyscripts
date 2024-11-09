@@ -36,7 +36,7 @@ function Xenon.Utils.MakeUtilController(Settings)
         Ints = {};
         Strings = {};
         Tables = {};
-        Settings = Settings or {ConfigName = "/XenonV3/XenonConfig.json"};
+        Settings = Settings or {ConfigName = "/XenonV3/XenonConfigNew.json"};
         LogFile = nil;
     }
     Utils.Services = setmetatable({}, {__index = function(self, service)
@@ -1071,7 +1071,7 @@ function Xenon.Utils:LabelChar(Chars)
 end
 
 local Util = Xenon.Utils.MakeUtilController()
-local XenonConfig = Util:ReadData():LoadData()
+local XenonConfigNew = Util:ReadData():LoadData()
 
 Util:Log("Xenon Debug - Passed Functions")
 --// Preload Api ----
