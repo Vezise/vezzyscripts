@@ -1,48 +1,17 @@
 return {
-    "State": {
-        "Item Farming": {
-            "Value": false,
-            "SaveValue": true
-        },
-        "Shiny Farming": {
-            "Value": false,
-            "SaveValue": true
-        },
-        "Disable Xenon Logs": {
-            "Value": false,
-            "SaveValue": true
-        },
-        "Stand Farming": {
-            "Value": false,
-            "SaveValue": true
-        }
-    },
-    "String": {
-        "Webhook": {
-            "Value": "",
-            "SaveValue": true
-        }
-    },
-    "Int": [],
-    "Table": {
-        "Items": {
-            "Value": [
-                "Mysterious Arrow",
-                "Rokakaka",
-                "Lucky Arrow"
-            ],
-            "SaveValue": true
-        },
-        "ShinyToggles": {
-            "Value": [],
-            "SaveValue": true
-        },
-        "Stands": {
-            "Value": [
-                "The World",
-                "Star Platinum"
-            ],
-            "SaveValue": true
-        }
-    }
+    ["State"] = {
+        ["Item Farming"] = {false, SaveValue = true};
+        ["Stand Farming"] = {false, SaveValue = true};
+        ["Shiny Farming"] = {false, SaveValue = true};
+		["Disable Xenon Logs"] = {false, SaveValue = true};
+    };
+    ["Int"]: [],
+    ["Table"] = {
+        ["Items"] = {{"Mysterious Arrow", "Rokakaka", "Lucky Arrow"}, SaveValue = true};
+        ["Stands"] = {{}, SaveValue = true};
+        ["ShinyToggles"] = {{}, SaveValue = true};
+    };
+	["String"] = {
+		["Webhook"] = {"", SaveValue = true};
+	}
 }
