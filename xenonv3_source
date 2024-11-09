@@ -111,7 +111,7 @@ function Xenon.Utils:ReadData()
     local Success, Error = pcall(function()
         Data = self.Services.HttpService:JSONDecode(readfile(self.Settings.ConfigName))
     end);
-    Data = Data or loadstring(game:HttpGet("https://pastebin.com/raw/XXkRbtKN"))()
+    Data = Data or loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/refs/heads/main/xv3_cfg"))()
     return {
         Data = Data;
         Success = Success;
