@@ -5,7 +5,7 @@ return {
         ["Shiny Farming"] = {false, SaveValue = true};
 	["Disable Xenon Logs"] = {false, SaveValue = true};
     };
-    ["Int"] = []; 
+    ["Int"] = {}; 
     ["Table"] = {
         ["Items"] = {{"Mysterious Arrow", "Rokakaka", "Lucky Arrow"}, SaveValue = true};
         ["Stands"] = {{}, SaveValue = true};
