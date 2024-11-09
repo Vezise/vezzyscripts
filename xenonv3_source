@@ -724,23 +724,11 @@ function Xenon.Utils:HasShiny()
 end
 
 function Xenon.Utils:CheckShiny()
-    --[[local Character = self:GetCharacter()
+    local Character = self:GetCharacter()
+    if not Character:FindFirstChild("RemoteFunction") then Character:WaitForChild("RemoteFunction") end
     if Character and Character:FindFirstChild("RemoteFunction") then
-		print(Character.RemoteFunction:InvokeServer("ReturnStandSkin", "Stand"))
+	--print(Character.RemoteFunction:InvokeServer("ReturnStandSkin", "Stand"))
         return Character.RemoteFunction:InvokeServer("ReturnStandSkin", "Stand")
-    end]]
-    local StandThingLabel = self:GetPlayer().PlayerGui.HUD.Main.Frames.Stands.ScrollingFrame.Equipped:FindFirstChild("TextLabel")
-
-    if StandThingLabel then
-        --[[local StandThing = StandThingLabel.Text
-        local NewStandThing = string.gsub(StandThing, "EQUIPPED: ", "")
-        local NewerStandThing = string.split(NewStandThing, "(")[1]
-        if string.sub(NewerStandThing, #NewerStandThing, #NewerStandThing) == " " then
-            NewerStandThing = string.sub(NewStandThing, 0, #NewerStandThing-1)
-        end
-        self:SetString("Stand", NewerStandThing)
-        return NewerStandThing]]
-        return string.match(StandThingLabel.Text, "EQUIPPED: ([%w%s]+)%s%(")
     else 
         return
     end
@@ -2406,13 +2394,16 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
         warn("Waiting state:", Util:GetState("Waiting"))
         warn("Has Stand:", Util:HasStand())
         --print("Pity:", Util:GetPlayer().PlayerStats.Pity.Value == 0)
-        warn("Has Shiny:", Util:HasShiny(), Util:CheckShiny().."hi")
-        warn("ENabrled Shiny:", Util:FindTable("ShinyToggles", Util:CheckShiny()))
-
+        local nig, ger = pcall(function()
+            warn("Has Shiny:", Util:HasShiny(), Util:CheckShiny())
+            warn("ENabrled Shiny:", Util:FindTable("ShinyToggles", Util:CheckShiny()))
+        end)
+        print("shinyfrm debug", nig, ger)
         if Util:CountItem("Mysterious Arrow") == 0 or Util:CountItem("Rokakaka") == 0 then
             Util:FarmItems{
-                    "Rokakaka";
-                    "Mysterious Arrow";
+                "Rokakaka";
+                "Mysterious Arrow";
+                "Lucky Arrow"
             }
         end
 
@@ -2436,7 +2427,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
             if Util:GetState("Waiting") == false then --// They haven't been notified before?
                 Library:Notification("You have the shiny you wanted!", Util:CheckShiny(), 3)
                 if not Util:GetState("Disable Xenon Logs") then
-                    Util:SendWebhook("https://discord.com/api/webhooks/1074691311774478356/-772fIlHuUanYoJsLD2AnQFvmHRKJEbZl8zaDpVEJeRGVFuOZGT-pQf9O4yhQ8MchZq2", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
+                    Util:SendWebhook("https://discord.com/api/webhooks/1304617375441621052/ksMyL_2STFjriIDOwOzuT2lAI2xZh0RaLpFWZBYm1vgxiP6QddOToEQXIDsu2hOD_oLn", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
                     Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
                 else
                     Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained a Shiny!")
@@ -2462,17 +2453,18 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
             Util:SetState("Waiting", false)
         end
 
-        print("Gay", Util:FindTable("ShinyToggles", Util:CheckShiny()) == nil)
         if Util:HasStand() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) == nil and Util:GetState("Shiny Farm") == true then
 
             task.spawn(function()
 				local gay, sex = pcall(function()
-                    Library:Notification("You have an unwanted shiny!", Util:CheckShiny(), 3)
-                    if not Util:GetState("Disable Xenon Logs") then
-                        Util:SendWebhook("https://discord.com/api/webhooks/1075414389789827122/zTcgBWOVUDQsAga0lRo-s9_nvxRwYz9GuN3i0sQcc2kBbnQFztmWypBFPHQ57BaGSCwF", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
-                        Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
-                    else
-                        Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
+					if Util:CheckShiny() ~= "None" and Util:CheckShiny() ~= "nil" then
+                        Library:Notification("You have an unwanted shiny!", Util:CheckShiny(), 3)
+                        if not Util:GetState("Disable Xenon Logs") then
+                            Util:SendWebhook("https://discord.com/api/webhooks/1304617265018437712/UhvnuNToj9vC-Vm4asrbEA3cGvL-_tHRP4gJjxw3-0Z2rGxJuknuPUUS9gLdEwmg7xA5", "Username: `" .. Util:Censor(Util:GetPlayer().Name) .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
+                            Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
+                        else
+                            Util:SendWebhook(Util:GetString("Webhook"), "Username: `" .. Util:GetPlayer().Name .. "`\nShiny: `" .. Util:CheckShiny() .. "`\nPity: `" .. Util:GetString("Pity") .. "`", "Xenon V3 (Private) - Obtained an unwanted Shiny!")
+                        end
                     end
                 end)
                 print(gay,sex)
@@ -2494,9 +2486,11 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
                 Util:UseRedeemedArrow()
             else
                 Util:UseArrow()
+                print("YEURRRR")
             end
-
+            print("HIYA BABEY")
             repeat task.wait() until Util:HasStand() == true 
+            print("NOOOROR")
             --continue
         end
     end
