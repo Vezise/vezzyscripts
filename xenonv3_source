@@ -24,7 +24,7 @@ local cf = CFrame.new
 local hf = 1
 
 --// V3 UI Library
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/9YwM8kt6"))()
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/2EMnWCUW"))()
 
 --// Xenon V3 Library ;o
 function Xenon.Utils.MakeUtilController(Settings)
@@ -36,7 +36,7 @@ function Xenon.Utils.MakeUtilController(Settings)
         Ints = {};
         Strings = {};
         Tables = {};
-        Settings = Settings or {ConfigName = "/XenonV3/XenonConfig.json"};
+        Settings = Settings or {ConfigName = "/XenonV3/XenonConfigNew.json"};
         LogFile = nil;
     }
     Utils.Services = setmetatable({}, {__index = function(self, service)
@@ -1071,7 +1071,7 @@ function Xenon.Utils:LabelChar(Chars)
 end
 
 local Util = Xenon.Utils.MakeUtilController()
-local XenonConfig = Util:ReadData():LoadData()
+local XenonConfigNew = Util:ReadData():LoadData()
 
 Util:Log("Xenon Debug - Passed Functions")
 --// Preload Api ----
@@ -2214,10 +2214,10 @@ Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), functio
     if Util:GetState("Arrow Pity Farm") == false then
         while Util:GetState("Stand Farm") == true do task.wait()
             if Util:CountItem("Mysterious Arrow") == 0 or Util:CountItem("Rokakaka") == 0 then
-                    Util:FarmItems{
-                        "Rokakaka";
-                        "Mysterious Arrow";
-                    }
+                Util:FarmItems{
+                    "Rokakaka";
+                    "Mysterious Arrow";
+                }
             end
 
             if Util:GetState("Use Redeemed") == true and (Util:CountItem("Redeemed Mysterious Arrow") == 0 or Util:CountItem("Redeemed Rokakaka") == 0) then
@@ -2225,45 +2225,45 @@ Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), functio
             end
 
             if (Util:HasStand() == true and Util:FindTable("Stands", Util:CheckStand()) and Util:GetState("Stand Farm") == true) or (Util:HasStand() and Util:GetState("Keep any shiny") == true and Util:HasShiny()) then --// They got a stand they wanted?
-                    if Util:GetState("Waiting") == false then --// They haven't been notified before?
-                        Library:Notification("You have the stand you wanted!", Util:CheckStand(), 6)
-                        Util:SetState("Waiting", true) --// They now have been notified
-                        continue
-                    else
-                        continue
-                    end
+                if Util:GetState("Waiting") == false then --// They haven't been notified before?
+                    Library:Notification("You have the stand you wanted!", Util:CheckStand(), 6)
+                    Util:SetState("Waiting", true) --// They now have been notified
+                    continue
+                else
+                    continue
+                end
             end
 
             Util:SetState("Waiting", false)
 
             if Util:HasStand() == true and Util:FindTable("Stands", Util:CheckStand()) == nil and Util:GetState("Stand Farm") == true then
-                    if Util:GetState("Use Redeemed") == true then
-                        Util:UseRedeemedRoka()
-                    else
-                        Util:UseRoka()
-                    end
+                if Util:GetState("Use Redeemed") == true then
+                    Util:UseRedeemedRoka()
+                else
+                    Util:UseRoka()
+                end
 
-                    repeat task.wait() until Util:GetCharacter() and Util:GetCharacter():FindFirstChild("RemoteEvent")
+                repeat task.wait() until Util:GetCharacter() and Util:GetCharacter():FindFirstChild("RemoteEvent")
             end
 
             if Util:HasStand() == false and Util:GetState("Stand Farm") == true then
-                    Util:Stats()
-                    if Util:GetState("Use Redeemed") == true then
-                        Util:UseRedeemedArrow()
-                    else
-                        Util:UseArrow()
-                    end
+                Util:Stats()
+                if Util:GetState("Use Redeemed") == true then
+                    Util:UseRedeemedArrow()
+                else
+                    Util:UseArrow()
+                end
 
-                    repeat task.wait() until Util:HasStand() == true
+                repeat task.wait() until Util:HasStand() == true
             end
         end
     else
         while (Util:GetState("Stand Farm") == true and Util:GetState("Arrow Pity Farm")) == true do task.wait()
             if Util:CountItem("Mysterious Arrow") == 0 or Util:CountItem("Rokakaka") == 0 then
-                    Util:FarmItems{
-                        "Rokakaka";
-                        "Mysterious Arrow";
-                    }
+                Util:FarmItems{
+                    "Rokakaka";
+                    "Mysterious Arrow";
+                }
             end
 
             if Util:HasStand() == true and Util:GetPlayer().PlayerStats.Pity.Value ~= Util:GetInt("Pity Amount") and Util:GetState("Arrow Pity Farm") == true then
@@ -2358,11 +2358,11 @@ for i,v in pairs(Util:GetTable("AllStands")) do
     Autofarms_Stands:Toggle(v, (table.find(Util:GetTable("Stands"), v) ~= nil and true or false) , function(State)
         if State == true then
             if not table.find(Util:GetTable("Stands"), v) then
-                    Util:InsertTable("Stands", v)
+                Util:InsertTable("Stands", v)
             end
         else
             if table.find(Util:GetTable("Stands"), v) then
-                    Util:RemoveTable("Stands", v)
+                Util:RemoveTable("Stands", v)
             end
         end
         Util:SaveConfig();
@@ -2376,7 +2376,8 @@ local Autofarms_Shinys = Autofarms:Section("Shinys")
 
 Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(State)
     Util:SetState("Shiny Farm", State)
-
+    Util:SaveConfig();
+    
     if Util:GetState("Shiny Farm") == true then
         Util:GetHRP().CFrame = CFrame.new(-324, -32, 47)
 
@@ -2519,7 +2520,6 @@ Autofarms_ShinyFarm:Toggle("Rib Shiny Farm", Util:GetState("Shiny Farm"), functi
             }
         end
         
-
         if Util:HasStand() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) then
             if Util:GetState("Waiting") == false then --// They haven't been notified before?
                     Library:Notification("You have the shiny you wanted!", Util:CheckShiny(), 3)
@@ -3396,11 +3396,11 @@ for i,v in pairs(Util:GetTable("AllItems")) do
     Util:InsertTable("ItemSellToggles", Misc_Sell:Toggle(v, (table.find(Util:GetTable("ChosenItemsToSell"), v) ~= nil and true or false) , function(State)
         if State == true then
             if not table.find(Util:GetTable("ChosenItemsToSell"), v) then
-                    Util:InsertTable("ChosenItemsToSell", v)
+                Util:InsertTable("ChosenItemsToSell", v)
             end
         else
             if table.find(Util:GetTable("ChosenItemsToSell"), v) then
-                    Util:RemoveTable("ChosenItemsToSell", v)
+                Util:RemoveTable("ChosenItemsToSell", v)
             end
         end
         Util:SaveConfig();
