@@ -24,7 +24,7 @@ local cf = CFrame.new
 local hf = 1
 
 --// V3 UI Library
-local Library = loadstring(game:HttpGet("https://pastebin.com/raw/2EMnWCUW"))()
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/9YwM8kt6"))()
 
 --// Xenon V3 Library ;o
 function Xenon.Utils.MakeUtilController(Settings)
@@ -36,7 +36,7 @@ function Xenon.Utils.MakeUtilController(Settings)
         Ints = {};
         Strings = {};
         Tables = {};
-        Settings = Settings or {ConfigName = "/XenonV3/XenonConfigNew.json"};
+        Settings = Settings or {ConfigName = "/XenonV3/XenonConfig.json"};
         LogFile = nil;
     }
     Utils.Services = setmetatable({}, {__index = function(self, service)
@@ -1071,7 +1071,7 @@ function Xenon.Utils:LabelChar(Chars)
 end
 
 local Util = Xenon.Utils.MakeUtilController()
-local XenonConfigNew = Util:ReadData():LoadData()
+local XenonConfig = Util:ReadData():LoadData()
 
 Util:Log("Xenon Debug - Passed Functions")
 --// Preload Api ----
@@ -2066,7 +2066,7 @@ Autofarms_ItemFarm:Slider("Collection Delay", 0.2, 3, 0.5, function(Value)
     Util:SetInt("Item Collection Delay", Value)
 end, true, "Changes the delay before picking up an item.")
 
-Autofarms_ItemFarm:Toggle("Item Farm", false, function(State)
+Autofarms_ItemFarm:Toggle("Item Farm", Util:GetState("Item Farming"), function(State)
     Util:SetState("Item Farming", State)
     Util:SaveConfig();
 
@@ -2193,7 +2193,7 @@ Autofarms_StandFarm:Toggle("Keep any shiny", false, function(State)
 end, "keep any shiny while stand farming")
 
 Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), function(State)
-    Util:SetState("Stand Farm", State)
+    Util:SetState("Stand Farming", State)
 
     if Util:GetState("Stand Farm") == true then
         local HRP = Util:GetHRP()
@@ -2374,11 +2374,11 @@ Util:Log("Xenon Debug - Passed Stand Farm Section")
 local Autofarms_ShinyFarm = Autofarms:Section("Shiny Farm Settings")
 local Autofarms_Shinys = Autofarms:Section("Shinys")
 
-Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(State)
-    Util:SetState("Shiny Farm", State)
+Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farming"), function(State)
+    Util:SetState("Shiny Farming", State)
     Util:SaveConfig();
-    
-    if Util:GetState("Shiny Farm") == true then
+
+    if Util:GetState("Shiny Farming") == true then
         Util:GetHRP().CFrame = CFrame.new(-324, -32, 47)
 
         if not Util:IsTaskRunning("SafeFarm") then
@@ -2391,7 +2391,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
         Util:DisconnectTask("SafeFarm")
     end
 
-    while Util:GetState("Shiny Farm") == true do task.wait(0.1)
+    while Util:GetState("Shiny Farming") == true do task.wait(0.1)
         warn("Waiting state:", Util:GetState("Waiting"))
         warn("Has Stand:", Util:HasStand())
         --print("Pity:", Util:GetPlayer().PlayerStats.Pity.Value == 0)
@@ -2450,11 +2450,11 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
             end
         end
 
-        if Util:GetState("Shiny Farm") == true then
+        if Util:GetState("Shiny Farming") == true then
             Util:SetState("Waiting", false)
         end
 
-        if Util:HasStand() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) == nil and Util:GetState("Shiny Farm") == true then
+        if Util:HasStand() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) == nil and Util:GetState("Shiny Farming") == true then
 
             task.spawn(function()
 				local gay, sex = pcall(function()
@@ -2481,7 +2481,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
             --continue
         end
 
-        if Util:HasStand() == false and Util:GetState("Shiny Farm") == true and Util:CountItem("Mysterious Arrow") >= 1 then
+        if Util:HasStand() == false and Util:GetState("Shiny Farming") == true and Util:CountItem("Mysterious Arrow") >= 1 then
             Util:Stats()
             if Util:GetState("Use Redeemed") == true then
                 Util:UseRedeemedArrow()
@@ -2497,7 +2497,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farm"), function(S
     end
 end, "Farms wanted shinys for you")
 
-Autofarms_ShinyFarm:Toggle("Rib Shiny Farm", Util:GetState("Shiny Farm"), function(State)
+Autofarms_ShinyFarm:Toggle("Rib Shiny Farm", false, function(State)
     Util:SetState("Rib Shiny Farm", State)
 
     if Util:GetState("Rib Shiny Farm") == true then
