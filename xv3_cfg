@@ -5,13 +5,13 @@ return {
         ["Shiny Farming"] = {false, SaveValue = true};
 		["Disable Xenon Logs"] = {false, SaveValue = true};
     };
-    ["Int"]: [],
+    ["Int"]: [];
     ["Table"] = {
         ["Items"] = {{"Mysterious Arrow", "Rokakaka", "Lucky Arrow"}, SaveValue = true};
         ["Stands"] = {{}, SaveValue = true};
         ["ShinyToggles"] = {{}, SaveValue = true};
     };
-	["String"] = {
-		["Webhook"] = {"", SaveValue = true};
-	}
+    ["String"] = {
+	["Webhook"] = {"", SaveValue = true};
+    }
 }
