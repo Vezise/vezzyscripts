@@ -36,7 +36,7 @@ function Xenon.Utils.MakeUtilController(Settings)
         Ints = {};
         Strings = {};
         Tables = {};
-        Settings = Settings or {ConfigName = "/XenonV3/XenonConfigNEW.json"};
+        Settings = Settings or {ConfigName = "/XenonV3/XenonConfig.json"};
         LogFile = nil;
     }
     Utils.Services = setmetatable({}, {__index = function(self, service)
@@ -111,7 +111,7 @@ function Xenon.Utils:ReadData()
     local Success, Error = pcall(function()
         Data = self.Services.HttpService:JSONDecode(readfile(self.Settings.ConfigName))
     end);
-    Data = Data or loadstring(game:HttpGet("https://raw.githubusercontent.com/Vezise/vezzyscripts/refs/heads/main/xv3_cfg"))()
+    Data = Data or loadstring(game:HttpGet("https://pastebin.com/raw/XXkRbtKN"))()
     return {
         Data = Data;
         Success = Success;
@@ -2548,45 +2548,36 @@ Autofarms_ShinyFarm:Toggle("Rib Shiny Farm", false, function(State)
 end, "Toggles rib shiny farm")
 
 Autofarms_Shinys:Button("Enable all shinys", function()
-    local Shinys = Util:GetTable("ShinyToggles")
-    for i,v in pairs(Shinys) do
+    local ShinyToggles = Util:GetTable("ShinyToggles")
+    for i,v in pairs(ShinyToggles) do
         task.wait()
         v:UpdateAsset(true)
     end
 end, "Toggles all shinys on")
 
 Autofarms_Shinys:Button("Disable all shinys", function()
-    local Shinys = Util:GetTable("ShinyToggles")
-    for i,v in pairs(Shinys) do
+    print("Clicked")
+    local ShinyToggles = Util:GetTable("ShinyToggles")
+    for i,v in pairs(ShinyToggles) do
         task.wait()
         v:UpdateAsset(false)
     end
 end, "Toggles all shinys off")
 
-Util:Log("Xenon Debug - Loaded Shiny Table")
-
 for i,v in pairs(Util:GetTable("AllShinys")) do
-    Util:InsertTable("ShinyToggles", Autofarms_Shinys:Toggle(v, (table.find(Util:GetTable("ShinyToggles"), v) ~= nil and true or false) , function(State)
+    Util:InsertTable("ShinyToggles", Autofarms_Shinys:Toggle(v, (table.find(Util:GetTable("Shinys"), v) ~= nil and true or false) , function(State)
         if State == true then
-            task.spawn(function()
-                task.wait()
-                if not table.find(Util:GetTable("ShinyToggles"), v) then
-                    Util:InsertTable("ShinyToggles", v)
-                    Util:SaveConfig()
-                end
-            end)
+            if not table.find(Util:GetTable("Shinys"), v) then
+                Util:InsertTable("Shinys", v)
+            end
         else
-			task.spawn(function()
-				task.wait()
-                if table.find(Util:GetTable("ShinyToggles"), v) then
-                    Util:RemoveTable("ShinyToggles", v)
-                    Util:SaveConfig()
-                end
-            end)
+            if table.find(Util:GetTable("Shinys"), v) then
+                Util:RemoveTable("Shinys", v)
+            end
         end
+        Util:SaveConfig();
     end, ("Adds " .. v .. " to the shiny farming list.")))
 end
-
 Util:Log("Xenon Debug - Passed Shiny Farm Section")
 
 --// Quest farm (1021 for ctrl + f)
