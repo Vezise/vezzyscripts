@@ -2424,7 +2424,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farming"), functio
             continue 
         end
 
-        if Util:HasStand() == true and Util:HasShiny() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) then --// They got a stand they wanted?
+        if Util:HasStand() == true and (Util:HasShiny() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) ~= nil) then --// They got a stand they wanted?
             if Util:GetState("Waiting") == false then --// They haven't been notified before?
                 Library:Notification("You have the shiny you wanted!", Util:CheckShiny(), 3)
                 if not Util:GetState("Disable Xenon Logs") then
@@ -2444,7 +2444,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farming"), functio
                     end
                 end
 
-                continue
+                break
             else
                 continue
             end
@@ -2454,7 +2454,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farming"), functio
             Util:SetState("Waiting", false)
         end
 
-        if Util:HasStand() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) == nil and Util:GetState("Shiny Farming") == true then
+        if Util:HasStand() == true and (Util:HasShiny() == true and Util:FindTable("ShinyToggles", Util:CheckShiny()) == nil) then
 
             task.spawn(function()
 				local gay, sex = pcall(function()
@@ -2478,7 +2478,7 @@ Autofarms_ShinyFarm:Toggle("Shiny Farm", Util:GetState("Shiny Farming"), functio
             end
 
             repeat task.wait() until Util:GetCharacter() and Util:GetCharacter():FindFirstChild("RemoteEvent")
-            --continue
+            continue
         end
 
         if Util:HasStand() == false and Util:GetState("Shiny Farming") == true and Util:CountItem("Mysterious Arrow") >= 1 then
