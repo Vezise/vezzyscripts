@@ -2195,7 +2195,7 @@ end, "keep any shiny while stand farming")
 Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), function(State)
     Util:SetState("Stand Farming", State)
 
-    if Util:GetState("Stand Farm") == true then
+    if Util:GetState("Stand Farming") == true then
         local HRP = Util:GetHRP()
         if HRP then
             HRP.CFrame = CFrame.new(-324, -32, 47)
@@ -2212,7 +2212,7 @@ Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), functio
     end
 
     if Util:GetState("Arrow Pity Farm") == false then
-        while Util:GetState("Stand Farm") == true do task.wait()
+        while Util:GetState("Stand Farming") == true do task.wait()
             if Util:CountItem("Mysterious Arrow") == 0 or Util:CountItem("Rokakaka") == 0 then
                 Util:FarmItems{
                     "Rokakaka";
@@ -2224,7 +2224,7 @@ Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), functio
                     StandRedeemedFarm:UpdateAsset(false)
             end
 
-            if (Util:HasStand() == true and Util:FindTable("Stands", Util:CheckStand()) and Util:GetState("Stand Farm") == true) or (Util:HasStand() and Util:GetState("Keep any shiny") == true and Util:HasShiny()) then --// They got a stand they wanted?
+            if (Util:HasStand() == true and Util:FindTable("Stands", Util:CheckStand()) and Util:GetState("Stand Farming") == true) or (Util:HasStand() and Util:GetState("Keep any shiny") == true and Util:HasShiny()) then --// They got a stand they wanted?
                 if Util:GetState("Waiting") == false then --// They haven't been notified before?
                     Library:Notification("You have the stand you wanted!", Util:CheckStand(), 6)
                     Util:SetState("Waiting", true) --// They now have been notified
@@ -2236,7 +2236,7 @@ Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), functio
 
             Util:SetState("Waiting", false)
 
-            if Util:HasStand() == true and Util:FindTable("Stands", Util:CheckStand()) == nil and Util:GetState("Stand Farm") == true then
+            if Util:HasStand() == true and Util:FindTable("Stands", Util:CheckStand()) == nil and Util:GetState("Stand Farming") == true then
                 if Util:GetState("Use Redeemed") == true then
                     Util:UseRedeemedRoka()
                 else
@@ -2246,7 +2246,7 @@ Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), functio
                 repeat task.wait() until Util:GetCharacter() and Util:GetCharacter():FindFirstChild("RemoteEvent")
             end
 
-            if Util:HasStand() == false and Util:GetState("Stand Farm") == true then
+            if Util:HasStand() == false and Util:GetState("Stand Farming") == true then
                 Util:Stats()
                 if Util:GetState("Use Redeemed") == true then
                     Util:UseRedeemedArrow()
@@ -2258,7 +2258,7 @@ Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), functio
             end
         end
     else
-        while (Util:GetState("Stand Farm") == true and Util:GetState("Arrow Pity Farm")) == true do task.wait()
+        while (Util:GetState("Stand Farming") == true and Util:GetState("Arrow Pity Farm")) == true do task.wait()
             if Util:CountItem("Mysterious Arrow") == 0 or Util:CountItem("Rokakaka") == 0 then
                 Util:FarmItems{
                     "Rokakaka";
@@ -2276,7 +2276,7 @@ Autofarms_StandFarm:Toggle("Stand Farm", Util:GetState("Stand Farming"), functio
                     repeat task.wait() until Util:GetCharacter() and Util:GetCharacter():FindFirstChild("RemoteEvent")
             end
 
-            if Util:HasStand() == false and Util:GetState("Stand Farm") == true then
+            if Util:HasStand() == false and Util:GetState("Stand Farming") == true then
                     Util:Stats()
                     if Util:GetState("Use Redeemed") == true then
                         Util:UseRedeemedArrow()
