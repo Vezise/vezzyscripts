@@ -1,18 +1,6 @@
-getgenv().standList =  {
-    ["The World"] = true,
-    ["Star Platinum"] = true,
-    ["Star Platinum: The World"] = true,
-    ["Crazy Diamond"] = true,
-    ["King Crimson"] = true,
-    ["King Crimson Requiem"] = true
-}
-getgenv().waitUntilCollect = 0.5 --Change this if ur getting kicked a lot
-getgenv().sortOrder = "Asc" --desc for less players, asc for more
-getgenv().lessPing = false --turn this on if u want lower ping servers, cant guarantee you will see same people using script, and data error 1
-getgenv().autoRequiem = true --turn this on for auto requiem
-getgenv().NPCTimeOut = 15 --timeout for npc not spawning
-getgenv().HamonCharge = 90 --change if u want to charge hamon after every kill (around 90)
-getgenv().webhook = "" --change this if u want to use ur own webhook
+-- code written by dank
+-- bug fixes by Vezise/vez/_vez0
+-- hamon fix by DuongNoob (cuz me vez was too lazy)
 
 game:GetService("CoreGui").DescendantAdded:Connect(function(child)
     if child.Name == "ErrorPrompt" then
