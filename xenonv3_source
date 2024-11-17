@@ -3384,8 +3384,11 @@ Misc_Sell:Toggle("Auto Sell", false, function(State)
 
     while Util:GetState("Auto Sell") == true do task.wait()
         for i,v in pairs(Util:GetTable("ChosenItemsToSell")) do
+			if not Util:GetPlayer().Backpack:FindFirstChild(v) then continue end
+            
             Util:GetHumanoid():EquipTool(Util:GetPlayer().Backpack:FindFirstChild(v))
             Util:GetCharacter().RemoteEvent:FireServer("EndDialogue", {NPC = "Merchant", Option = "Option1", Dialogue = "Dialogue5"})
+            task.wait()
         end
     end
 end, "auto sells all selected items")
