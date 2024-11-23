@@ -1,0 +1,567 @@
+getgenv().Info = {
+    Integer = {
+        --// WalkSpeed
+        ["DefaultWalkSpeed"] = 16;
+        ["HookedWalkSpeed"] = 50;
+
+        --// JumpPower
+        ["DefaultJumpPower"] = 50;
+        ["HookedJumpPower"] = 100;
+
+        --// Fly
+        ["FlySpeed"] = 1;
+
+        --// Infinite Dash
+        ["InfiniteDashDelay"] = 0.5;
+        ["InfiniteDashPower"] = 50;
+
+        --// Anti Time-Stop
+        ["AntiTimeStopDelay"] = 0.8;
+
+        --// Auto SBR
+        ["Stage1TPDelay"] = 1;
+        ["Stage2TPDelay"] = 1;
+        ["Stage3TPDelay"] = 1;
+        ["Stage4TPDelay"] = 1;
+        ["LastStageTPDelay"] = 1;
+        ["AllStageHideDelay"] = 0;
+        ["WinHideDelay"] = 3;
+    };
+    String = {};
+    State = {
+        ["WalkSpeed"] = false;
+        ["JumpPower"] = false;
+        ["FlyToggle"] = false;
+        ["AutoSprint"] = false;
+        ["AntiVampBurn"] = false;
+        ["AntiRockTrap"] = false;
+        ["AntiTS"] = false;
+    };
+    Table = {
+        ["AllMods"] = {"UzuKee", "BLOODTARO", "Dxscape", "Myst_Ari", "eurycIea", "v_cks", "ezguap", "Tsuzutou", "ReferToWithered", "Illus0", "Pyreiz", "VoidedFlame", "ROUXABOUT", "mixeriiiiiing", "MichDrajo", "hayst4", "ElmoNYC", "Core_CorruptionF", "Brillcake", "AxionTheRevenant", "sammyj0n", "ViveLesPatat", "Zimvasion", "vertiify", "redfoxP", "cakesucker05", "00kamiMio", "itscanii", "SirDeviloper", "0nkka", "Ramdharam", "Olliebutheskenny", "cswag_code", "TwoGio", "KoleRTX2", "Wilpuri", "remendyy", "SpaceNuggies", "CrimsonBeheIit", "warycoolio"};
+        ["AllTeleports"] = {
+            ["Newbie Giorno"] = CFrame.new(1, 0, -697);
+            ["Train Station Side 1"] = CFrame.new(-214, 0, 18);
+            ["Train Station Side 2"] = CFrame.new(-265, -30, -447);
+            ["Pizza Place"] = CFrame.new(113, 6, 71);
+            ["The Arcade"] = CFrame.new(255, 5, -239);
+            ["The Cafe"] = CFrame.new(-544, -25, -174);
+            ["Diavolo"] = CFrame.new(1126, 116, -129);
+            ["Dio P3"] = CFrame.new(-44, 0, -973);
+            ["Jotaro P3"] = CFrame.new(182, -25, 578);
+            ["Jotaro P6"] = CFrame.new(784, -42, 144);
+            ["Tallest Peak"] = CFrame.new(-237, 284, 305);
+            ["Hamon Merchant"] = CFrame.new(421, 8, -287);
+            ["Boxing Merchant"] = CFrame.new(281, 0, 101);
+            ["Pluck Merchant"] = CFrame.new(125, -27, 438);
+            ["Heaven Dimension"] = CFrame.new(8553, -479, 8154);
+            ["Arrowsmith"] = CFrame.new(-667, 16, -299);
+            ["Cosmetics Merchants"] = CFrame.new(512, 2, 22);
+            ["Leaky Eye Luca"] = CFrame.new(-382, 0, -711);
+            ["Chad"] = CFrame.new(-121, -24, 524);
+            ["Brad the Bat Merchant"] = CFrame.new(-14, -0, -286);
+            ["Dracula"] = CFrame.new(-420, -34, -75);
+            ["Kars"] = CFrame.new(264, -33, 112);
+            ["Homeless Man Jill"] = CFrame.new(-142, -31, -577);
+            ["Vampire Room"] = CFrame.new(391, -31, -166);
+            ["Enrico Pucci"] = CFrame.new(917, 34, -17);
+            ["Safe Spot"] = CFrame.new(-452, -20, 206);
+        };
+    };
+    Keybinds = {
+        ["ToggleUI"] = Enum.KeyCode.RightShift;
+        ["ToggleFly"] = Enum.KeyCode.RightControl;
+    };
+}
+
+--// Services (Protected) (not actually detected yet but just for incase in future)
+local Players = cloneref(game:GetService("Players"))
+local RunService = cloneref(game:GetService("RunService"))
+local UserInputService = cloneref(game:GetService("UserInputService"))
+local HttpService = cloneref(game:GetService("HttpService"))
+local StarterGui = cloneref(game:GetService("StarterGui"))
+local CoreGui = cloneref(game:GetService("CoreGui"))
+local VirtualUser = cloneref(game:GetService("VirtualUser"))
+local TeleportService = cloneref(game:GetService("TeleportService"))
+local ReplicatedStorage = cloneref(game:GetService("ReplicatedStorage"))
+local PhysicsService = cloneref(game:GetService("PhysicsService"))
+local TweenService = cloneref(game:GetService("TweenService"))
+local Lighting = cloneref(game:GetService("Lighting"))
+local CollectionService = cloneref(game:GetService("CollectionService"))
+
+--// Variables
+local Player = Players.LocalPlayer
+local PlayerGui = Player.PlayerGui
+local Character = Player.Character or Player.CharacterAdded:Wait()
+
+--// Functions
+local Xenon_IsSBR = function()
+    if game.PlaceId == 4643697430 then
+        return true
+    end
+    
+    return false
+end
+
+local Xenon_GetHRP = function()
+	if Character:FindFirstChild("HumanoidRootPart") == nil then
+		repeat
+            task.wait()
+        until Character:FindFirstChild("HumanoidRootPart") ~= nil
+    end
+	
+    return Character:FindFirstChild("HumanoidRootPart")
+end
+
+local Xenon_GetCFrame = function()
+	return Xenon_GetHRP.CFrame
+end
+
+local Xenon_GetHumanoid = function()
+	if Character:FindFirstChild("Humanoid") == nil then
+		repeat
+            task.wait()
+        until Character:FindFirstChild("Humanoid") ~= nil
+    end
+	
+    return Character:FindFirstChild("Humanoid")
+end
+
+local Xenon_GetRemoteEvent = function()
+	if Character:FindFirstChild("RemoteEvent") == nil then
+		repeat
+            task.wait()
+        until Character:FindFirstChild("RemoteEvent") ~= nil
+    end
+
+	return Character:FindFirstChild("RemoteEvent")
+end
+
+local Xenon_GetRemoteFunction = function()
+	if Character:FindFirstChild("RemoteFunction") == nil then
+		repeat
+            task.wait()
+        until Character:FindFirstChild("RemoteFunction") ~= nil
+    end
+	
+    return Character:FindFirstChild("RemoteFunction")
+end
+
+local Xenon_Fly = function()
+    local Keys_Pressed = {
+        ["W"] = 0;
+        ["A"] = 0;
+        ["S"] = 0;
+        ["D"] = 0;
+    }
+    
+    local Key_Info = {
+        ["W"] = {
+            ["Operator"] = "+";
+            ["Direction"] = "LookVector";
+        };
+        ["A"] = {
+            ["Operator"] = "-";
+            ["Direction"] = "RightVector";
+        };
+        ["S"] = {
+            ["Operator"] = "-";
+            ["Direction"] = "LookVector";
+        };
+        ["D"] = {
+            ["Operator"] = "+";
+            ["Direction"] = "RightVector";
+        };
+    }
+
+    local function GetKeyFromEnum(enum)
+        return enum.KeyCode.Name
+    end
+    
+    local function GetMass(Model)
+        local Mass = 0
+        for _, Part in Model:GetDescendants() do
+            if Part:IsA("BasePart") then
+                Mass = Mass + Part:GetMass()
+            end
+        end
+
+        return Mass
+    end
+    
+    local function Math(Operator, A, B)
+        if Operator == "-" then
+            return A-B
+        elseif Operator == "+" then
+            return A+B
+        end
+    end
+
+    UserInputService.InputBegan:Connect(function(Key, Typing)
+        if Typing then return end
+        
+        local Key_String = GetKeyFromEnum(Key)
+        if Keys_Pressed[Key_String] then
+            Keys_Pressed[Key_String] = 1
+        end
+    end)
+    
+    UserInputService.InputEnded:Connect(function(Key, Typing)
+        if Typing then return end
+        
+        local Key_String = GetKeyFromEnum(Key)
+        if Keys_Pressed[Key_String] then
+            Keys_Pressed[Key_String] = 0
+        end
+    end)
+
+    RunService:BindToRenderStep("Fly", 0, function()
+        Xenon_GetHumanoid().WalkSpeed = 0
+        Xenon_GetHumanoid().JumpPower = 0
+        
+        Xenon_GetHRP().CFrame = CFrame.new(
+            Xenon_GetHRP().Position,
+            Xenon_GetHRP().Position + workspace.CurrentCamera.CFrame.LookVector
+        )
+
+        local CharacterMass = GetMass(Character)
+        
+        local Velocity = Vector3.new(
+            0,
+            CharacterMass/workspace.Gravity,
+            0
+        )
+
+        for Integer, Value in Keys_Pressed do
+            if Value == 0 then continue end
+
+            Velocity = Math(Key_Info[Integer].Operator, Velocity, Xenon_GetHRP().CFrame[Key_Info[Integer].Direction] * Info.Integer["FlySpeed"] * CharacterMass)
+        end
+        
+        Xenon_GetHRP().Velocity = Velocity
+    end)
+end
+
+Xenon_AntiRockTrap = function(Child)
+    if Child.Name == "Rocks" then    
+        for _, Rock in workspace.IgnoreInstances.Rocks:GetChildren() do
+            if string.find(Rock.Name, "Rock") then
+                Rock.Size = Vector3.new(0,0,0)
+                Character.UpperTorso.Anchored = false
+            end
+        end
+    end
+end
+
+Xenon_AntiTimeStop = function(Child)
+    local OldCFrame = nil
+
+    if Child.Name == "TimeStopping" then
+        if Xenon_GetPlayer():DistanceFromCharacter(workspace.Living[tostring(Child.Parent)].PrimaryPart.Position) < 25 then
+            OldCFrame = Xenon_GetCFrame()
+            task.wait(0.1)
+
+            Xenon_GetHRP().CFrame += Vector3.new(800,1000,500)
+
+            task.wait(1)
+
+            Xenon_GetHRP().CFrame = OldCFrame
+        else
+            return
+        end
+    end
+end
+
+--// Ignore this
+if game.PlaceId ~= 2809202155 then
+    local Folder = Instance.new("Folder", workspace)
+    Folder.Name = "Item_Spawns"
+    local Folder2 = Instance.new("Folder", Folder)
+    Folder2.Name = "Items"
+end
+
+--// No-Clip Bypass (stupid, i know)
+local MapFolder = Instance.new("Folder", workspace)
+
+for _, Part in workspace.Map:GetChildren() do
+    task.spawn(function()
+        Part.Parent = MapFolder
+    end)
+end
+
+--// Anti-AFK
+Player.Idled:Connect(function()
+    VirtualUser:ClickButton2(Vector2.new())
+end)
+
+--// Mod Detection
+Players.PlayerAdded:Connect(function(Plr)
+    --[[if table.find(Info.Table["AllMods"], Plr.Name) then
+        Player:Kick("Xenon - Spotted a mod, rejoining..")
+    end]]
+
+    if Plr:IsInGroup(3194064) then
+		Player:Kick(`Xenon - Spotted a mod ({Plr.Name}), rejoining..`)
+    end
+end)
+
+task.spawn(function()
+    for _, Plr in Players:GetPlayers() do
+        --[[if table.find(Info.Table["AllMods"], Plr.Name) then
+            Player:Kick("Xenon - Spotted a mod, rejoining..")
+        end]]
+
+        if Plr:IsInGroup(3194064) then
+            Player:Kick(`Xenon - Spotted a mod ({Plr.Name}), rejoining..`)
+        end
+    end
+end)
+
+--// Hooks & Loading Screen
+if Xenon_GetHRP() and Xenon_IsSBR() == false then
+    local OldIndexItem;
+    OldIndexItem = hookmetamethod(Xenon_GetHRP().Position, "__index", newcclosure(function(self, key)
+        if not checkcaller() and key:lower() == 'magnitude' and getcallingscript().Name == "ItemSpawn" then
+            return 0
+        end
+
+        return OldIndexItem(self, key)
+    end))
+end
+
+local OldNewIndex;
+OldNewIndex = hookmetamethod(game, "__newindex", newcclosure(function(self, Key, Value, ...)
+    if Key == "WalkSpeed" then
+        Info.Integer["DefaultWalkSpeed"] = Value
+
+        if Info.State["WalkSpeed"] == true then
+            return OldNewIndex(self, Key, Info.Integer["HookedWalkSpeed"], ...)
+        end
+    end
+
+    if Key == "JumpPower" then
+        Info.Integer["DefaultJumpPower"] = Value
+
+        if Info.State["JumpPower"] == true then
+            return OldNewIndex(self, Key, Info.Integer["HookedJumpPower"], ...)
+        end
+    end
+
+    return OldNewIndex(self, Key, Value, ...)
+end))
+
+local OldIndex;
+OldIndex = hookmetamethod(game, "__index", newcclosure(function(self, Key, ...)
+    if Key == "WalkSpeed" then
+        return Info.Integer["DefaultWalkSpeed"]
+    end
+
+    if Key == "JumpPower" then
+        return Info.Integer["DefaultJumpPower"]
+    end
+
+    if Info.State["AntiVampBurn"] == true and Key == "ClockTime" then
+        return 0
+    end
+
+    return OldIndex(self, Key, ...)
+end))
+
+--// This remote being fired is what lets you play the game
+if not CollectionService:HasTag(Player, "PressedPlay") then
+    Xenon_GetRemoteEvent():FireServer("PressedPlay")
+end
+
+if not Xenon_IsSBR() then
+    print("Xenon Debug - Loading HUD")
+
+    if not PlayerGui:FindFirstChild("HUD") then
+        local HUD = ReplicatedStorage.Objects.HUD:Clone()
+        HUD.Parent = PlayerGui
+    end
+
+    --// Get rid of loading screen/main menu
+    pcall(function()
+        PlayerGui:FindFirstChild("LoadingScreen1"):Destroy()
+    end)   
+
+    task.wait(.5)
+
+    pcall(function()
+        PlayerGui:FindFirstChild("LoadingScreen"):Destroy()
+    end)
+
+    print("Xenon Debug - Skipped Loading Screen")
+
+    --// Get rid of loading screen song
+    pcall(function()
+        workspace.LoadingScreen.Song:Destroy()
+    end)
+
+    --// Get rid of DepthOfField from main menu
+    for _, Effect in Lighting:GetChildren() do
+        if Effect.Name == "DepthOfField" then
+            Effect.Enabled = false
+        end
+    end
+
+    Lighting.ChildAdded:Connect(function(Child)
+        if Child:IsA("Blur") then
+            Child:Destroy()
+        end
+    end)
+
+    print("Xenon Debug - Passed Loading Screen Checks")
+elseif Xenon_IsSBR() then
+    PlayerGui.Chat.Frame.ChatChannelParentFrame.Visible = true
+    PlayerGui.Chat.Frame.ChatChannelParentFrame.Position = UDim2.new(0,0,0,-156)
+    PlayerGui.Chat.Frame.Position = UDim2.new(0,0,1,95)
+    print("Xenon Debug - Fixed chat for SBR")
+end
+
+local OldNamecallTP;
+OldNamecallTP = hookmetamethod(game, '__namecall', newcclosure(function(self, ...)
+    local Arguments = {...}
+    local Method =  getnamecallmethod()
+        
+    if Method == "InvokeServer" and Arguments[1] == "idklolbrah2de" then
+        return "  ___XP DE KEY"
+    end
+        
+    return OldNamecallTP(self, ...)
+end))
+
+local FunctionLibrary = require(ReplicatedStorage:WaitForChild('Modules').FunctionLibrary)
+local Old = FunctionLibrary.pcall
+
+FunctionLibrary.pcall = function(...)
+    local f = ...
+
+    if type(f) == 'function' and #getupvalues(f) == 11 then 
+        return
+    end
+    
+    return Old(...)
+end
+
+print("Xenon Debug - Passed all hooks!")
+
+--// Library
+local Library = loadstring(game:HttpGet("https://pastebin.com/raw/SbuuZiTS"))()
+
+local UI = Library.UI("Xenon V4 - ALPHA")
+local Credits = UI:Tab("Credits & Info", 6026568227)
+local PlayerTab = UI:Tab("Player", 6023426915)
+local Stands = UI:Tab("Stands", 6034744057)
+local Teleports = UI:Tab("Teleports", 6031265970)
+local Autofarm = UI:Tab("Autofarm", 6031360365)
+local Misc = UI:Tab("Misc", 6022668951)
+
+local CharacterContainer = PlayerTab:Container("Character Modifications")
+local ExtraContainer = PlayerTab:Container("Extra")
+local TeleportsContainer = Teleports:Container("Teleports")
+
+UI:SetToggleKey(Info.Keybinds["ToggleUI"])
+
+task.spawn(function()
+    task.wait(1)
+    --// just a ui thing cuz too lazy to edit it
+    CoreGui.TUI2.BottomMenu.Position = UDim2.new(99, 0, 99, 0)
+    CoreGui.TUI2.Widgets.Widget.Position = UDim2.new(99, 0, 99, 0)
+    CoreGui.TUI2.Widgets.Bookmarks.Position = UDim2.new(99, 0, 99, 0)
+    CoreGui.TUI2.Widgets.Music.Position = UDim2.new(99, 0, 99, 0)
+end)
+
+CharacterContainer:Toggle("Speed", false, function(State)
+    Info.State["WalkSpeed"] = State
+
+    if Info.State["WalkSpeed"] then
+		Humanoid.WalkSpeed = Info.Integer["HookedWalkSpeed"]
+    else
+		Humanoid.WalkSpeed = Info.Integer["DefaultWalkSpeed"]
+	end
+end)
+
+CharacterContainer:Slider("Speed Strength", 16, 500, Info.Integer["HookedWalkSpeed"], function(Value)
+    Info.Integer["HookedWalkSpeed"] = Value
+end)
+
+CharacterContainer:Toggle("Jump", false, function(State)
+    Info.State["JumpPower"] = State
+
+    if Info.State["JumpPower"] then
+		Humanoid.WalkSpeed = Info.Integer["HookedJumpPower"]
+    else
+		Humanoid.WalkSpeed = Info.Integer["DefaultJumpPower"]
+	end
+end)
+
+CharacterContainer:Slider("Jump Strength", 16, 500, Info.Integer["HookedJumpPower"], function(Value)
+    Info.Integer["HookedJumpPower"] = Value
+end)
+
+CharacterContainer:Toggle("Fly", false, function(State)
+    Info.State["FlyToggle"] = State
+    if Info.State["FlyToggle"] then
+        Xenon_Fly()
+    else
+        RunService:UnbindFromRenderStep("Fly")
+        
+        if Info.State["WalkSpeed"] == true then
+            Xenon_GetHumanoid().WalkSpeed = Info.Integer["HookedWalkSpeed"]
+        else
+            Xenon_GetHumanoid().WalkSpeed = Info.Integer["DefaultWalkSpeed"]
+        end
+    end
+end)
+
+CharacterContainer:Slider("Fly Strength", 16, 500, Info.Integer["FlySpeed"], function(Value)
+    Info.Integer["FlySpeed"] = Value
+end)
+
+for Place, CFrame in Info.Table["AllTeleports"] do
+    TeleportsContainer:Button(Place, function()
+		Xenon_GetHRP().CFrame = CFrame
+    end)
+end
+
+CharacterContainer:Toggle("Auto Sprint", false, function(State)
+    Info.State["AutoSprint"] = true
+
+    while Info.State["AutoSprint"] == true do
+        if Xenon_GetRemoteFunction():InvokeServer("ReturnSprint").IsSprinting == true then continue end
+        
+        Xenon_GetRemoteFunction():InvokeServer("ToggleSprinting")
+        task.wait()
+    end
+end)
+
+ExtraContainer:Toggle("Anti Vamp Burn", false, function(State)
+    Info.State["AntiVampBurn"] = State
+
+    Xenon_GetRemoteEvent():FireServer("VampireBurnOff")
+end, "Turns on anti vamp burn")
+
+ExtraContainer:Toggle("Anti Rock Trap", false, function(State)
+    Info.State["AntiRockTrap"] = State
+    getgenv().AntiRTLoop = nil
+
+    if Info.State["AntiRockTrap"] == true then
+        AntiRTLoop = workspace.IgnoreInstances.ChildAdded:Connect(Xenon_AntiRockTrap(Child))
+    end
+end, "Turns on anti rock trap")
+
+ExtraContainer:Toggle("Anti-Timestop", false, function(State)
+    Info.State["AntiTimeStop"] = State
+    getgenv().AntiTSLoop = nil
+
+	if Info.State["AntiTimeStop"] then
+		AntiTSLoop = workspace.Living.DescendantAdded:Connect(Xenon_AntiTimeStop(Child))
+	end
+end, "Turns on Anti-Timestop")
+
+
+--[[ jus saving these for when auto stw
+if Backpack:FindFirstChild("DIO’s Headband") then end
+if Backpack:FindFirstChild("Stand Virus Capsule") then end
+]]
