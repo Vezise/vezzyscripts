@@ -36,6 +36,7 @@ getgenv().Info = {
         ["AntiVampBurn"] = false;
         ["AntiRockTrap"] = false;
         ["AntiTS"] = false;
+        ["ControlStand"] = false;
     };
     Table = {
         ["AllMods"] = {"UzuKee", "BLOODTARO", "Dxscape", "Myst_Ari", "eurycIea", "v_cks", "ezguap", "Tsuzutou", "ReferToWithered", "Illus0", "Pyreiz", "VoidedFlame", "ROUXABOUT", "mixeriiiiiing", "MichDrajo", "hayst4", "ElmoNYC", "Core_CorruptionF", "Brillcake", "AxionTheRevenant", "sammyj0n", "ViveLesPatat", "Zimvasion", "vertiify", "redfoxP", "cakesucker05", "00kamiMio", "itscanii", "SirDeviloper", "0nkka", "Ramdharam", "Olliebutheskenny", "cswag_code", "TwoGio", "KoleRTX2", "Wilpuri", "remendyy", "SpaceNuggies", "CrimsonBeheIit", "warycoolio"};
@@ -94,6 +95,10 @@ local Player = Players.LocalPlayer
 local PlayerGui = Player.PlayerGui
 local Character = Player.Character or Player.CharacterAdded:Wait()
 
+Player.CharacterAdded:Connect(function(NewChar)
+    Character = NewChar
+end)
+
 --// Functions
 local Xenon_IsSBR = function()
     if game.PlaceId == 4643697430 then
@@ -114,7 +119,7 @@ local Xenon_GetHRP = function()
 end
 
 local Xenon_GetCFrame = function()
-	return Xenon_GetHRP.CFrame
+	return Xenon_GetHRP().CFrame
 end
 
 local Xenon_GetHumanoid = function()
@@ -147,6 +152,37 @@ local Xenon_GetRemoteFunction = function()
     return Character:FindFirstChild("RemoteFunction")
 end
 
+local Xenon_IsStandSummoned = function()
+	if Character:FindFirstChild("StandMorph") ~= nil then
+		return true
+    else
+		return false
+	end
+end
+local Xenon_SummonStand = function()
+    if Character:FindFirstChild("StandMorph") == nil then
+        repeat
+            Xenon_GetRemoteFunction():InvokeServer("ToggleStand", "Toggle")
+
+            task.wait()
+        until Character:FindFirstChild("StandMorph") ~= nil
+    end
+end
+
+local Xenon_GetStand = function()
+	Xenon_SummonStand()
+
+    return Character:FindFirstChild("StandMorph")
+end
+
+local Xenon_Teleport = function(cframe)
+	if Xenon_IsStandSummoned() == true then
+		Xenon_GetStand():PivotTo(cframe)
+	end
+
+    Character:PivotTo(cframe)
+end
+
 local Xenon_Fly = function()
     local Keys_Pressed = {
         ["W"] = 0;
@@ -154,7 +190,7 @@ local Xenon_Fly = function()
         ["S"] = 0;
         ["D"] = 0;
     }
-    
+
     local Key_Info = {
         ["W"] = {
             ["Operator"] = "+";
@@ -218,14 +254,13 @@ local Xenon_Fly = function()
     RunService:BindToRenderStep("Fly", 0, function()
         Xenon_GetHumanoid().WalkSpeed = 0
         Xenon_GetHumanoid().JumpPower = 0
-        
+
         Xenon_GetHRP().CFrame = CFrame.new(
             Xenon_GetHRP().Position,
             Xenon_GetHRP().Position + workspace.CurrentCamera.CFrame.LookVector
         )
 
         local CharacterMass = GetMass(Character)
-        
         local Velocity = Vector3.new(
             0,
             CharacterMass/workspace.Gravity,
@@ -242,7 +277,7 @@ local Xenon_Fly = function()
     end)
 end
 
-Xenon_AntiRockTrap = function(Child)
+local Xenon_AntiRockTrap = function(Child)
     if Child.Name == "Rocks" then    
         for _, Rock in workspace.IgnoreInstances.Rocks:GetChildren() do
             if string.find(Rock.Name, "Rock") then
@@ -253,7 +288,7 @@ Xenon_AntiRockTrap = function(Child)
     end
 end
 
-Xenon_AntiTimeStop = function(Child)
+local Xenon_AntiTimeStop = function(Child)
     local OldCFrame = nil
 
     if Child.Name == "TimeStopping" then
@@ -261,15 +296,37 @@ Xenon_AntiTimeStop = function(Child)
             OldCFrame = Xenon_GetCFrame()
             task.wait(0.1)
 
-            Xenon_GetHRP().CFrame += Vector3.new(800,1000,500)
+            Xenon_Teleport(CFrame.new(800,1000,500))
 
             task.wait(1)
 
-            Xenon_GetHRP().CFrame = OldCFrame
+            Xenon_Teleport(OldCFrame)
         else
             return
         end
     end
+end
+
+local Xenon_CloneAnimation = function(Animation)
+    local NewAnimation = Xenon_GetStand().AnimationController:LoadAnimation(Animation.Animation)
+    NewAnimation.Priority = Enum.AnimationPriority.Action
+    NewAnimation.TimePosition = Animation.TimePosition
+    NewAnimation.Looped = Animation.Looped
+    NewAnimation:Play()
+end
+
+local Xenon_PlayerToStandAnimation = function()
+    Xenon_GetHumanoid().AnimationPlayed:Connect(function(Animation)
+        Xenon_CloneAnimation(Animation)
+
+        Animation.Stopped:Connect(function()
+            for _, Anim in Xenon_GetStand().AnimationController:GetPlayingAnimationTracks() do
+                if Anim.Animation == Anim.Animation then
+                    Anim:Stop()
+                end
+            end
+		end)
+    end)
 end
 
 --// Ignore this
@@ -484,6 +541,10 @@ end)
 
 CharacterContainer:Slider("Speed Strength", 16, 500, Info.Integer["HookedWalkSpeed"], function(Value)
     Info.Integer["HookedWalkSpeed"] = Value
+
+    if Xenon_IsStandSummoned() == true then
+		Xenon_GetStand().AnimationController.WalkSpeed = Value
+	end
 end)
 
 CharacterContainer:Toggle("Jump", false, function(State)
@@ -498,10 +559,15 @@ end)
 
 CharacterContainer:Slider("Jump Strength", 16, 500, Info.Integer["HookedJumpPower"], function(Value)
     Info.Integer["HookedJumpPower"] = Value
+
+    if Xenon_IsStandSummoned() == true then
+        Xenon_GetStand().AnimationController.JumpPower = Value
+	end
 end)
 
 CharacterContainer:Toggle("Fly", false, function(State)
     Info.State["FlyToggle"] = State
+
     if Info.State["FlyToggle"] then
         Xenon_Fly()
     else
@@ -519,9 +585,93 @@ CharacterContainer:Slider("Fly Strength", 16, 500, Info.Integer["FlySpeed"], fun
     Info.Integer["FlySpeed"] = Value
 end)
 
+CharacterContainer:Toggle("Control Stand", false, function(State)
+    Info.State["ControlStand"] = State
+
+    local CameraValue = nil
+
+    local S, F = pcall(function()
+        if Info.State["ControlStand"] == true then
+			if Character:FindFirstChild("FocusCam") == nil then
+                CameraValue = Instance.new("ObjectValue", Character)
+                CameraValue.Name = "FocusCam"
+                CameraValue.Value = Xenon_GetStand().AnimationController
+            end
+
+            Xenon_GetStand().PrimaryPart.StandAttach:FindFirstChild("AlignPosition").Enabled = false
+
+            task.spawn(function()
+                for _, Part in Xenon_GetStand():GetChildren() do
+                    if Part:IsA("BasePart") or Part:IsA("UnionOperation") or Part:IsA("MeshPart") then
+                        Part.CollisionGroupId = 1
+                    end
+                end
+            end)
+
+            task.spawn(function()
+                for _, Part in Character:GetChildren() do
+                    if Part:IsA("BasePart") or Part:IsA("UnionOperation") then
+                        Part.CollisionGroupId = 2
+                    end
+                end
+            end)
+
+            --Xenon_PlayerToStandAnimation()
+
+            while Info.State["ControlStand"] == true do
+				task.spawn(function()
+					if Xenon_GetHumanoid().Jump then
+                        Xenon_GetStand().AnimationController.Jump = true
+                    end
+				end)
+
+                Xenon_GetStand().AnimationController:Move(
+                    workspace.CurrentCamera.CFrame:VectorToObjectSpace(Xenon_GetHumanoid().MoveDirection),
+                    true
+                )
+
+                Xenon_GetHRP().CFrame = Xenon_GetStand().PrimaryPart.CFrame + Vector3.new(
+                    0,
+                    -30,
+                    0
+                )
+
+                Xenon_GetHRP().Velocity = Vector3.new(0, 0, 0)
+                task.wait()
+            end
+        else
+            if Character:FindFirstChild("FocusCam") then
+				Character:FindFirstChild("FocusCam"):Destroy()
+			end
+
+            Xenon_GetStand().PrimaryPart.StandAttach:FindFirstChild("AlignPosition").Enabled = true
+
+            for _, Part in Character:GetChildren() do
+                task.spawn(function()
+                    if Part:IsA("BasePart") or Part:IsA("UnionOperation") then
+                        Part.CollisionGroupId = 10
+                    end
+                end)
+            end
+
+            Xenon_GetHRP().Velocity = Vector3.new(0, 0, 0)
+            Xenon_GetHRP().CFrame = Xenon_GetStand().PrimaryPart.CFrame
+
+            for _, Part in Xenon_GetStand():GetChildren() do
+                task.spawn(function()
+                    if Part:IsA("BasePart") or Part:IsA("UnionOperation") or Part:IsA("MeshPart") then
+                        Part.CollisionGroupId = 2
+                    end
+                end)
+            end
+        end
+    end)
+    print("Xenon Debug - Control Stand - Success:", S, "/ Error:", F)
+end)
+
 for Place, CFrame in Info.Table["AllTeleports"] do
     TeleportsContainer:Button(Place, function()
-		Xenon_GetHRP().CFrame = CFrame
+		Xenon_Teleport(CFrame)
     end)
 end
 
