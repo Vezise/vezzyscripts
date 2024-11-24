@@ -617,6 +617,7 @@ local Teleports = UI:Tab("Teleports", 6031265970)
 local Autofarm = UI:Tab("Autofarm", 6031360365)
 local Misc = UI:Tab("Misc", 6022668951)
 
+local CreditsContainer = Credits:Container("Credits")
 local CharacterContainer = PlayerTab:Container("Character Modifications")
 local InfiniteDashContainer = PlayerTab:Container("Infinite Dash")
 local ExtraContainer = PlayerTab:Container("Extra")
@@ -632,6 +633,10 @@ task.spawn(function()
     CoreGui.TUI2.Widgets.Bookmarks.Position = UDim2.new(99, 0, 99, 0)
     CoreGui.TUI2.Widgets.Music.Position = UDim2.new(99, 0, 99, 0)
 end)
+
+CreditsContainer:Label("Developer: _vez0")
+CreditsContainer:Label("UI: enxquity")
+CreditsContainer:Label("Bypasses: enxquity & sens6222")
 
 CharacterContainer:Toggle("Speed", false, function(State)
     Info.State["WalkSpeed"] = State
