@@ -14,6 +14,7 @@ getgenv().Info = {
         --// Infinite Dash
         ["InfiniteDashDelay"] = 0.5;
         ["InfiniteDashPower"] = 50;
+        ["InfiniteDashTick"] = tick();
 
         --// Anti Time-Stop
         ["AntiTimeStopDelay"] = 0.8;
@@ -37,6 +38,7 @@ getgenv().Info = {
         ["AntiRockTrap"] = false;
         ["AntiTS"] = false;
         ["ControlStand"] = false;
+        ["InfiniteDash"] = false;
     };
     Table = {
         ["AllMods"] = {"UzuKee", "BLOODTARO", "Dxscape", "Myst_Ari", "eurycIea", "v_cks", "ezguap", "Tsuzutou", "ReferToWithered", "Illus0", "Pyreiz", "VoidedFlame", "ROUXABOUT", "mixeriiiiiing", "MichDrajo", "hayst4", "ElmoNYC", "Core_CorruptionF", "Brillcake", "AxionTheRevenant", "sammyj0n", "ViveLesPatat", "Zimvasion", "vertiify", "redfoxP", "cakesucker05", "00kamiMio", "itscanii", "SirDeviloper", "0nkka", "Ramdharam", "Olliebutheskenny", "cswag_code", "TwoGio", "KoleRTX2", "Wilpuri", "remendyy", "SpaceNuggies", "CrimsonBeheIit", "warycoolio"};
@@ -89,6 +91,7 @@ local PhysicsService = cloneref(game:GetService("PhysicsService"))
 local TweenService = cloneref(game:GetService("TweenService"))
 local Lighting = cloneref(game:GetService("Lighting"))
 local CollectionService = cloneref(game:GetService("CollectionService"))
+local Debris = cloneref(game:GetService("Debris"))
 
 --// Variables
 local Player = Players.LocalPlayer
@@ -153,19 +156,19 @@ local Xenon_GetRemoteFunction = function()
 end
 
 local Xenon_IsStandSummoned = function()
-	if Character:FindFirstChild("StandMorph") ~= nil then
+	if Character:FindFirstChild("SummonedStand").Value == true then
 		return true
     else
 		return false
 	end
 end
 local Xenon_SummonStand = function()
-    if Character:FindFirstChild("StandMorph") == nil then
+    if Character:FindFirstChild("SummonedStand").Value == false then
         repeat
             Xenon_GetRemoteFunction():InvokeServer("ToggleStand", "Toggle")
 
             task.wait()
-        until Character:FindFirstChild("StandMorph") ~= nil
+        until Character:FindFirstChild("SummonedStand").Value == true
     end
 end
 
@@ -292,7 +295,7 @@ local Xenon_AntiTimeStop = function(Child)
     local OldCFrame = nil
 
     if Child.Name == "TimeStopping" then
-        if Xenon_GetPlayer():DistanceFromCharacter(workspace.Living[tostring(Child.Parent)].PrimaryPart.Position) < 25 then
+        if Player:DistanceFromCharacter(workspace.Living[tostring(Child.Parent)].PrimaryPart.Position) < 25 then
             OldCFrame = Xenon_GetCFrame()
             task.wait(0.1)
 
@@ -327,6 +330,106 @@ local Xenon_PlayerToStandAnimation = function()
             end
 		end)
     end)
+end
+
+local Xenon_SendWebhook = function(webhook, msg, title)
+    local webhookcheck = (identifyexecutor and identifyexecutor() or "Unsupported exploit")
+    local url = webhook
+    local data;
+    data = {
+        ["embeds"] = {
+            {
+                ["title"] = title,
+                ["description"] = msg,
+                ["type"] = "rich",
+                ["color"] = tonumber(0x7269ff),
+            }
+        }
+    }
+
+    repeat task.wait() until data
+
+    local newdata = game:GetService("HttpService"):JSONEncode(data)
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+
+    local request = http_request or request or HttpPost or syn.request or http.request
+    local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
+    request(abcdef)
+end
+
+local Xenon_UseMove = function(Move)
+    Move = Move
+
+    if Move == string.lower("m1") or Move == string.lower("m2") then
+        Xenon_GetRemoteFunction():InvokeServer(
+            "Attack",
+            Move
+        )
+    end
+
+    if typeof(Move) == "Enum" then
+        Xenon_GetRemoteEvent():FireServer(
+            "InputBegan", {
+                ["Input"] = Move
+            }
+        )
+    end
+end
+
+local Xenon_GetStroke = function()
+    StrokeDir = 180
+    local Anim = "6926086304"
+        
+    if (game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.A)) then
+        StrokeDir = 90
+        Anim = "6926086567"
+    end
+        
+    if (game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.D)) and StrokeDir == 180 then
+        StrokeDir = -90
+        Anim = "6926086883"
+    end
+        
+    if (game:GetService("UserInputService"):IsKeyDown(Enum.KeyCode.W)) and StrokeDir == 180 then
+        StrokeDir = 0
+        Anim = "6926086032"
+    end
+        
+    return StrokeDir, Anim
+end
+
+local Xenon_OutlinePlayer = function(Chars)
+    local Highlight = Instance.new("Highlight", CoreGui.ESP)
+    
+    Highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+    Highlight.Adornee = Chars
+    Highlight.FillColor = Color3.fromRGB(255, 255, 255)
+    Highlight.FillTransparency = 1
+    Highlight.FillTransparency = 1
+end
+
+local Xenon_LabelPlayer = function(Chars)
+    local BGui = Instance.new("BillboardGui", CoreGui.ESP)
+    local Frame = Instance.new("Frame", BGui)
+    local TextLabel = Instance.new("TextLabel", Frame)
+    
+    BGui.Adornee = Chars:WaitForChild("Head")
+    BGui.StudsOffset = Vector3.new(0, 3, 0)
+    BGui.AlwaysOnTop = true
+    
+    BGui.Size = UDim2.new(4, 0, 0.5, 0)
+    Frame.Size = UDim2.new(1, 0, 1, 0)
+    TextLabel.Size = UDim2.new(1, 0, 1, 0)
+    
+    Frame.BackgroundTransparency = 1
+    TextLabel.BackgroundTransparency = 1
+    
+    TextLabel.Text = Chars.Name
+    TextLabel.Font = Enum.Font.Ubuntu
+    TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TextLabel.TextScaled = false
 end
 
 --// Ignore this
@@ -424,7 +527,7 @@ OldIndex = hookmetamethod(game, "__index", newcclosure(function(self, Key, ...)
     return OldIndex(self, Key, ...)
 end))
 
---// This remote being fired is what lets you play the game
+--// For any skids reading, this remote being fired is what lets you play the game
 if not CollectionService:HasTag(Player, "PressedPlay") then
     Xenon_GetRemoteEvent():FireServer("PressedPlay")
 end
@@ -515,14 +618,15 @@ local Autofarm = UI:Tab("Autofarm", 6031360365)
 local Misc = UI:Tab("Misc", 6022668951)
 
 local CharacterContainer = PlayerTab:Container("Character Modifications")
+local InfiniteDashContainer = PlayerTab:Container("Infinite Dash")
 local ExtraContainer = PlayerTab:Container("Extra")
 local TeleportsContainer = Teleports:Container("Teleports")
 
 UI:SetToggleKey(Info.Keybinds["ToggleUI"])
 
+--// Ignore this
 task.spawn(function()
     task.wait(1)
-    --// just a ui thing cuz too lazy to edit it
     CoreGui.TUI2.BottomMenu.Position = UDim2.new(99, 0, 99, 0)
     CoreGui.TUI2.Widgets.Widget.Position = UDim2.new(99, 0, 99, 0)
     CoreGui.TUI2.Widgets.Bookmarks.Position = UDim2.new(99, 0, 99, 0)
@@ -684,6 +788,49 @@ CharacterContainer:Toggle("Auto Sprint", false, function(State)
         Xenon_GetRemoteFunction():InvokeServer("ToggleSprinting")
         task.wait()
     end
+end)
+
+
+InfiniteDashContainer:Toggle("Infinite Dash", false, function(State)
+    Info.State["Infinite Dash"] = State
+    if getgenv().InfiniteDash then
+		getgenv().InfiniteDash:Disconnect()
+	end
+
+    local DashAnims = Instance.new("Folder", workspace)
+    if Info.State["Infinite Dash"] == true then
+        getgenv().InfiniteDash = UserInputService.InputBegan:Connect(function(Input, GameProcessed)
+            if GameProcessed then return end
+
+            if Input.KeyCode == Enum.KeyCode[Player.PlayerStats.DashKey.Value] and (tick()-Info.Integer["InfiniteDashTick"]) >= Info.Integer["InfiniteDashDelay"] then
+                Info.Integer["InfiniteDashTick"] = tick()
+
+                local Dir, Anim_ = Xenon_GetStroke()
+                local Anim = Instance.new("Animation", DashAnims)
+                Anim.Name = "YBA_AntiCheat_Bypass_REAL"
+                Anim.AnimationId = `rbxassetid://{Anim_}`
+                local Anim2 = Xenon_GetHumanoid():LoadAnimation(Anim)
+                Anim2:Play()
+                GAYPENIS = Instance.new("BodyVelocity", Xenon_GetHRP())
+                GAYPENIS.Velocity = (
+                    Xenon_GetHRP().CFrame * CFrame.Angles(
+                        0,
+                        math.rad(Dir),
+                        0)
+                    ).LookVector * Info.Integer["InfiniteDashPower"]
+                GAYPENIS.MaxForce = Vector3.new(55555,1000,55555)
+                Debris:AddItem(GAYPENIS, 0.25)
+            end
+        end)
+    end
+end)
+
+InfiniteDashContainer:Slider("Dash Power", 10, 1000, 50, function(Value)
+    Info.Integer["InfiniteDashPower"] = Value
+end)
+
+InfiniteDashContainer:Slider("Dash Delay", 0, 3.5, 1, function(Value)
+    Info.Integer["InfiniteDashDelay"] = Value
 end)
 
 ExtraContainer:Toggle("Anti Vamp Burn", false, function(State)
