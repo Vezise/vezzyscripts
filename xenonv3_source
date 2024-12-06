@@ -1278,12 +1278,13 @@ local Char = Util:GetCharacter()
 
 if Char and Char.PrimaryPart and Util:IsSBR() == false then
     local OldIndexItem;
-    OldIndexItem = hookmetamethod(Char.PrimaryPart.Position, "__index", newcclosure(function(self, key)
-        if not checkcaller() and key:lower() == 'magnitude' and getcallingscript().Name == "ItemSpawn" then
-            return 0;
+    OldIndexItem = hookfunction(getrawmetatable(Util:GetHRP().Position).__index, function(self, key)
+        if getcallingscript().Name == "ItemSpawn" and key:lower() == "magnitude" then
+            return 0
         end
+
         return OldIndexItem(self, key)
-    end))
+    end)
 end
 
 Util:Log("Xenon Debug - Passed Item Hook")
