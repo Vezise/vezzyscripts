@@ -1636,7 +1636,7 @@ local Credits_Developers = Credits:Section("Developers")
 local Credits_Info = Credits:Section("Info")
 
 Credits_Developers:Label("Main Developer: enxquity")
-Credits_Developers:Label("Co-Developer: vezrr")
+Credits_Developers:Label("Co-Developer: _vez0")
 Credits_Developers:Label("UI Designer: enxquity")
 Credits_Developers:Label("Extra Features: _scep. & crtrz")
 
