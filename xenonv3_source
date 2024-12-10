@@ -969,7 +969,7 @@ function Xenon.Utils:Kill(Enemy)
 
                     if self:CheckStand() ~= "None" then
                         Character.StandMorph.PrimaryPart.CFrame = EnemyHRP.CFrame - EnemyHRP.CFrame.LookVector * 1.1 -- stand behind npc
-                        Character.PrimaryPart.CFrame = Character.StandMorph.PrimaryPart.CFrame + Character.StandMorph.PrimaryPart.CFrame.LookVector * math.random(-3,-2) + Vector3.new(0,-20,0) 
+                        Character.PrimaryPart.CFrame = Character.StandMorph.PrimaryPart.CFrame + Character.StandMorph.PrimaryPart.CFrame.LookVector * math.random(-3,-2) + Vector3.new(0,-35,0) 
                     else
                         Character.PrimaryPart.CFrame = EnemyHRP.CFrame - EnemyHRP.CFrame.LookVector * 2.3
                     end
