@@ -419,7 +419,7 @@ function Xenon.Utils:IsMax(Item)
         ["Ancient Scroll"] = 10,
         ["Dio's Diary"] = 10,
         ["Caesar's Headband"] = 10,
-        ["Christmas Present"] = 25,
+        ["Christmas Present"] = 45,
         ["Quinton's Glove"] = 10,
         ["Lucky Arrow"] = 10
     }
