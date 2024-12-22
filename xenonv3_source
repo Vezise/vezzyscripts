@@ -36,7 +36,7 @@ function Xenon.Utils.MakeUtilController(Settings)
         Ints = {};
         Strings = {};
         Tables = {};
-        Settings = Settings or {ConfigName = "/XenonV3/XenonConfig.json"};
+        Settings = Settings or {ConfigName = "XenonV3/XenonConfig.json"};
         LogFile = nil;
     }
     Utils.Services = setmetatable({}, {__index = function(self, service)
@@ -71,8 +71,8 @@ end
 function Xenon.Utils:Log(Text)
     if self.LogFile == nil then
         local num = 0
-        repeat num = num + 1 until isfile("/XenonV3/Logs/XenonV3_ScriptLog_" .. num .. ".txt") == false
-        self.LogFile = "/XenonV3/Logs/XenonV3_ScriptLog_" .. num .. ".txt"
+        repeat num = num + 1 until isfile("XenonV3/Logs/XenonV3_ScriptLog_" .. num .. ".txt") == false
+        self.LogFile = "XenonV3/Logs/XenonV3_ScriptLog_" .. num .. ".txt"
         writefile(self.LogFile, "")
     end
     appendfile(self.LogFile, Text .. "\n")
@@ -86,8 +86,8 @@ function Xenon.Utils:MakeFolder()
 	if isfolder("XenonV3") == false then 
         makefolder("XenonV3")
     end
-    if isfolder("/XenonV3/Logs") == false then 
-        makefolder("/XenonV3/Logs")
+    if isfolder("XenonV3/Logs") == false then 
+        makefolder("XenonV3/Logs")
     end
 end
 
