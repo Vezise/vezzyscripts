@@ -1311,7 +1311,7 @@ Util:AddValues{
         ["FlySpeed"] = 0.5;
         ["TSDelay"] = 0.8;
 
-        ["Item Collection Delay"] = 0.3;
+        ["Item Collection Delay"] = 0.6;
 
         ["Pity Amount"] = 20;
 
@@ -2060,7 +2060,7 @@ Autofarms_ItemFarm:Toggle("Item Notification", false, function(State)
     Util:SetState("Item Notify", State)
 end, "Toggles notifications when an items spawns")
 
-Autofarms_ItemFarm:Slider("Collection Delay", 0.2, 3, 0.5, function(Value)
+Autofarms_ItemFarm:Slider("Collection Delay", 0.2, 3, 0.6, function(Value)
     Util:SetInt("Item Collection Delay", Value)
 end, true, "Changes the delay before picking up an item.")
 
