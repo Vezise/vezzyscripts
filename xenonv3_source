@@ -3177,7 +3177,7 @@ Misc_Other:Toggle("Hide all player names", false, function(state)
     end
 end, "Hides all players names")
 
-Misc_Other:Toggle("Steal dropped money", false, function(State)
+Misc_Other:Toggle("Steal dropped money", true, function(State)
     if State and Util:GetCharacter() and Util:GetHRP() then
         for i,v in pairs(workspace:GetChildren()) do
             if v:IsA("MeshPart") and v.Name == "Money" then
