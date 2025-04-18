@@ -1,5 +1,5 @@
 game:GetService("StarterGui"):SetCore("SendNotification",{
-	Title = "yba is ass by vezrr",
+	Title = "yba is ass by _vez0",
 	Text = "This script is for Steel Ball Run",
 })
 
@@ -284,7 +284,7 @@ Player.PlayerGui.Chat.Frame.Position = UDim2.new(0, 0, 1, 95)
 --// UI Library
 local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
 
-local Window = Library.CreateLib("yba is ass by vezrr - V3.06 - discord.gg/2DzNtgGP9K", colors)
+local Window = Library.CreateLib("yba is ass by _vez0 - V3.06 - discord.gg/2DzNtgGP9K", colors)
 local MainTab = Window:NewTab("Main")
 local SBRTab = Window:NewTab("Auto SBR")
 local TeleportsTab = Window:NewTab("Teleports")
@@ -901,7 +901,7 @@ Keybinds:NewKeybind("Toggle UI", "Toggles UI", Enum.KeyCode.RightShift, function
     Library:ToggleUI()
 end)
 
-Credits:NewLabel("Owner & Developer: vezrr")
+Credits:NewLabel("Owner & Developer: _vez0")
 Credits:NewLabel("Fly & Bypasses: enxquity")
 Credits:NewLabel("Godmode: crtrz")
 Credits:NewLabel("UI: Kavo (Kavo UI Library)")
